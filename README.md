@@ -4,7 +4,7 @@ A datetime parser in Python by Ari24-cb24 and NekoFantic
 
 V 1.0
 
-### Ideen für Datenarchitektur vom Parser zum Evaluator
+## Ideen für Datenarchitektur vom Parser zum Evaluator
 
 ````python
 """
