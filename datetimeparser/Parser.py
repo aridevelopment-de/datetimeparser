@@ -126,9 +126,45 @@ class Parser:
 
     def parse_absolute_prepositions(self):
         splitted = self.get_absolute_preposition_parts(self.string)
+
+        if splitted is None:
+            return None
+
         tokens = self.convert_absolute_preposition_tokens(splitted)
 
         return tokens
+
+    def parse_constants(self):
+        keywords = [*Constants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL, *DatetimeConstants.ALL]
+
+        for keyword in keywords:
+            if self.string.lower() in [kw for kw in keyword.get_all()]:
+                return [keyword]
+            else:
+                for kw in keyword.get_all():
+                    if kw in self.string.lower():
+                        data = self.string.split(kw)
+
+                        if data[0]:
+                            # preposition
+                            # next
+
+                            if keyword in DatetimeConstants.ALL:
+                                if keyword in DatetimeConstants.TIME:
+                                    return RelativeTime.from_keyword(keyword, delta=data[0].lower() == "next")
+                                elif keyword in DatetimeConstants.DATE:
+                                    return RelativeDate.from_keyword(keyword, delta=data[0].lower() == "next")
+
+                        elif data[1]:
+                            # currently only year
+                            # xmas 2025
+
+                            if data[1].strip().isnumeric():
+                                year = int(data[1])
+
+                                if 1970 <= year <= 9999:
+                                    return [keyword, AbsoluteDateTime(year=year)]
+                        break
 
     def parse(self):
         """
@@ -151,7 +187,8 @@ class Parser:
 
         PROCEDURE = [
             self.parse_absolute_date_formats,
-            # self.parse_absolute_date_formats,
+            self.parse_absolute_prepositions,
+            self.parse_constants
         ]
 
         result = None

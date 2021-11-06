@@ -117,6 +117,7 @@ in 6 min 2 sec
 [RelativeWeekDay.FRIDAY]
 next xyDay
 
+
 .ban @user next year and 2 months
 .ban @user next 1 year
 .ban @user next a year

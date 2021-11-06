@@ -20,20 +20,31 @@ class RelativeDate:
         self.weeks = weeks
         self.days = days
 
+    @classmethod
+    def from_keyword(cls, keyword, delta=1):
+        if keyword == DatetimeConstants.DAYS:
+            return RelativeDate(days=delta)
+        elif keyword == DatetimeConstants.WEEKS:
+            return RelativeDate(weeks=delta)
+        elif keyword == DatetimeConstants.MONTHS:
+            return RelativeDate(months=delta)
+        elif keyword == DatetimeConstants.YEARS:
+            return RelativeDate(years=delta)
+
 class RelativeTime:
     def __init__(self, hours=None, minutes=None, seconds=None):
         self.hours = hours
         self.minutes = minutes
         self.seconds = seconds
 
-class RelativeWeekDay(enum.Enum):
-    MONDAY = auto()
-    TUESDAY = auto()
-    WEDNESDAY = auto()
-    THURSDAY = auto()
-    FRIDAY = auto()
-    SATURDAY = auto()
-    SUNDAY = auto()
+    @classmethod
+    def from_keyword(cls, keyword, delta=1):
+        if keyword == DatetimeConstants.SECONDS:
+            return RelativeTime(seconds=delta)
+        elif keyword == DatetimeConstants.MINUTES:
+            return RelativeTime(minutes=delta)
+        elif keyword == DatetimeConstants.HOURS:
+            return RelativeTime(hours=delta)
 
 class Constant:
     def __init__(self, name, alias=None):
@@ -58,6 +69,30 @@ class Constants:
 
     ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS]
 
+class DatetimeConstants:
+    SECONDS = Keyword('seconds', ['second', 'sec', 'secs'])
+    MINUTES = Keyword('minutes', ['minute', 'min', 'mins'])
+    HOURS = Keyword('hours', ['hour'])
+    DAYS = Keyword('days', ['day'])
+    WEEKS = Keyword('weeks', ['week'])
+    MONTHS = Keyword('months', ['month'])
+    YEARS = Keyword('years', ['year'])
+
+    TIME = [SECONDS, MINUTES, HOURS]
+    DATE = [DAYS, WEEKS, MONTHS, YEARS]
+    ALL = [SECONDS, MINUTES, HOURS, DAYS, WEEKS, MONTHS, YEARS]
+
+class WeekdayConstants:
+    MONDAY = Constant('monday')
+    TUESDAY = Constant('tuesday')
+    WEDNESDAY = Constant('wednesday')
+    THURSDAY = Constant('thursday')
+    FRIDAY = Constant('friday')
+    SATURDAY = Constant('saturday')
+    SUNDAY = Constant('sunday')
+
+    ALL = [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]
+
 class MonthConstants:
     JANUARY = Constant('january', ['jan'])
     FEBRUARY = Constant('february', ['feb'])
@@ -81,11 +116,3 @@ class Keywords:
     NEXT = Keyword('next')
     IN = Keyword('in')
     FOR = Keyword('for')
-
-    SECONDS = Keyword('seconds', ['second', 'sec', 'secs'])
-    MINUTES = Keyword('minutes', ['minute', 'min', 'mins'])
-    HOURS = Keyword('hours', ['hour'])
-    DAYS = Keyword('days', ['day'])
-    WEEKS = Keyword('weeks', ['week'])
-    MONTHS = Keyword('months', ['month'])
-    YEARS = Keyword('years', ['year'])
