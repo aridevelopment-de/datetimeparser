@@ -35,12 +35,38 @@ class RelativeWeekDay:
     SUNDAY = auto()
 
 class Constant:
-    def __init__(self, name, alias):
+    def __init__(self, name, alias=None):
         self.name = name
-        self.alias = alias
+
+        if alias is not None:
+            self.alias = alias
+        else:
+            self.alias = []
+
+    def get_all(self):
+        return [self.name, *self.alias]
+
+class Keyword(Constant):
+    pass
 
 class Constants:
     CHRISTMAS = Constant('christmas', ['next christmas', 'xmas', 'next xmas'])
     SILVESTER = Constant('silvester', ['next silvester', 'new years eve', 'next new years eve'])
     EASTERN = Constant('eastern', ['next eastern', 'easter', 'next easter'])
     NICHOLAS = Constant('nicholas', ['next nicholas', 'nicholas day', 'next nicholas day'])
+
+class Keywords:
+    OF = Keyword('of')
+    AFTER = Keyword('after')
+    BEFORE = Keyword('before')
+    NEXT = Keyword('next')
+    IN = Keyword('in')
+    FOR = Keyword('for')
+
+    SECONDS = Keyword('seconds', ['second', 'sec', 'secs'])
+    MINUTES = Keyword('minutes', ['minute', 'min', 'mins'])
+    HOURS = Keyword('hours', ['hour'])
+    DAYS = Keyword('days', ['day'])
+    WEEKS = Keyword('weeks', ['week'])
+    MONTHS = Keyword('months', ['month'])
+    YEARS = Keyword('years', ['year'])
