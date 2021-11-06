@@ -1,19 +1,34 @@
 import enum
 from enum import Enum, auto
 
-class AbsoluteDateTime:
+class Printable:
+    FIELDS = []
+
+    def __str__(self):
+        return f'<{str(self.__class__)} {" ".join("{%s=%s}" % (field, getattr(self, field)) for field in self.FIELDS if getattr(self, field) is not None)}>'
+
+    def __repr__(self):
+        return f'<{str(self.__class__)} {" ".join("{%s=%s}" % (field, getattr(self, field)) for field in self.FIELDS if getattr(self, field) is not None)}>'
+
+class AbsoluteDateTime(Printable):
+    FIELDS = ["year", "month", "day"]
+
     def __init__(self, year=None, month=None, day=None):
         self.year = year
         self.month = month
         self.day = day
 
-class AbsoluteClockTime:
+class AbsoluteClockTime(Printable):
+    FIELDS = ["hour", "minute", "second"]
+
     def __init__(self, hour=None, minute=None, second=None):
         self.hour = hour
         self.minute = minute
         self.second = second
 
-class RelativeDate:
+class RelativeDate(Printable):
+    FIELDS = ["years", "months", "weeks", "days"]
+
     def __init__(self, years=None, months=None, weeks=None, days=None):
         self.years = years
         self.months = months
@@ -31,7 +46,9 @@ class RelativeDate:
         elif keyword == DatetimeConstants.YEARS:
             return RelativeDate(years=delta)
 
-class RelativeTime:
+class RelativeTime(Printable):
+    FIELDS = ["hours", "minutes", "seconds"]
+
     def __init__(self, hours=None, minutes=None, seconds=None):
         self.hours = hours
         self.minutes = minutes
@@ -46,7 +63,9 @@ class RelativeTime:
         elif keyword == DatetimeConstants.HOURS:
             return RelativeTime(hours=delta)
 
-class Constant:
+class Constant(Printable):
+    FIELDS = ["name", "alias"]
+
     def __init__(self, name, alias=None):
         self.name = name
 
