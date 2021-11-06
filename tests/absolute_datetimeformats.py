@@ -1,4 +1,10 @@
-from datetimeparser.Parser import Parser
+try:
+    from datetimeparser.Parser import Parser
+except ImportError:
+    import sys
+    sys.path.insert(0, "..")
+
+    from datetimeparser.Parser import Parser
 
 test_cases = [
     "2017.08.03 03:04:05",
