@@ -42,7 +42,7 @@ Alias:
 - next easter
 ````
 
-- nicholas
+- ``nicholas``
 ````markdown
 + Year configurable
 
@@ -69,6 +69,7 @@ dd.mm.yyyy
 
 # Präpositionen: 'Of', 'After', 'Before'
 [AbsoluteWeek(3), keyword.OF, AbsoluteYear(2016)]
+3rd week of (year) 2016
 3rd of august
 <1-5>. week of <month>
 fifth week of august
