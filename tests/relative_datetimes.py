@@ -7,16 +7,11 @@ except ImportError:
     from datetimeparser.Parser import Parser
 
 test_cases = [
-    "next christmas",
-    "christmas",
-    "new years eve",
-    "xmas 2025",
-    "eastern 2010",
-    "next second",
-    "next hour",
-    "next year",
-    "next friday",
-    "next 2 years"
+    "in 1Y 2m 3W 3d 5H 6M 7S",
+    "in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds",
+    "in a year and in 2 months, in 3 seconds and 4 days",
+    "for a year",
+    "for 2 days and 1 year"
 ]
 
 for testcase in test_cases[-1:]:
