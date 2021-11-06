@@ -7,6 +7,7 @@ V 1.0
 ## Liste an Events
 
 - ``christmas``
+
 ````markdown
 + Year configurable
 
@@ -19,6 +20,7 @@ Alias:
 ````
 
 - ``silvester``
+
 ````markdown
 + Year configurable
 
@@ -31,6 +33,7 @@ Alias:
 ````
 
 - ``eastern``
+
 ````markdown
 + Year configurable
 
@@ -43,6 +46,7 @@ Alias:
 ````
 
 - ``nicholas``
+
 ````markdown
 + Year configurable
 
@@ -81,6 +85,7 @@ fifth week of august
 3 days before august
 
 [RelativeMonth(3), Keyword.BEFORE, RelativeWeek(5), Keyword.OF, AbsoluteMonth.AUGUST]
+
 3 months before the fifth week of august
 <monthlyTime> of <constant timespan>
 <relativer> after <absoluter>

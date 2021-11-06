@@ -108,7 +108,6 @@ class Parser:
                         return (AbsoluteDateTime(year=data),)
         else:
             return self.convert_absolute_preposition_tokens(data)
-
         return data
 
     def convert_absolute_preposition_tokens(self, data):
@@ -152,7 +151,7 @@ class Parser:
 
         PROCEDURE = [
             self.parse_absolute_date_formats,
-            self.parse_absolute_prepositions
+            # self.parse_absolute_date_formats,
         ]
 
         result = None
