@@ -4,6 +4,9 @@ A datetime parser in Python by Ari24-cb24 and NekoFantic
 
 V 1.0
 
+## Erinnerung für den Parser
+- Auf falsche Eingaben überprüfen
+
 ## Liste an Events
 
 - ``christmas``
@@ -116,6 +119,7 @@ in 6 min 2 sec
 
 [RelativeWeekDay.FRIDAY]
 next xyDay
+
 
 .ban @user next year and 2 months
 .ban @user next 1 year
