@@ -4,6 +4,56 @@ A datetime parser in Python by Ari24-cb24 and NekoFantic
 
 V 1.0
 
+## Liste an Events
+
+- ``christmas``
+````markdown
++ Year configurable
+
+When: 24.12.YYYY
+
+Alias:
+- next christmas
+- xmas
+- next xmas
+````
+
+- ``silvester``
+````markdown
++ Year configurable
+
+When: 31.12.YYYY
+
+Alias:
+- next silvester
+- new years eve
+- next new years eve
+````
+
+- ``eastern``
+````markdown
++ Year configurable
+
+When: <NonFixedDay>.04.YYYY
+
+Alias:
+- easter
+- next eastern
+- next easter
+````
+
+- nicholas
+````markdown
++ Year configurable
+
+When: 05.12.YYYY
+
+Alias:
+- next nicholas
+- nicholas day
+- next nicholas day
+`````
+
 ## Ideen für Datenarchitektur vom Parser zum Evaluator
 
 ````python
@@ -31,8 +81,7 @@ fifth week of august
 <relativer> after <absoluter>
 <relativer> before <absoluter>
 
-[Constant.CHRISTMAS]
-
+[Constant.CHRISTMAS, AbsoluteDateTime(year=2040)]
 events (christmas/birth jesus christus, silvester/new years eve, etc)
 <event> <specific_time>
 
