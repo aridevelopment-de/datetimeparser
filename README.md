@@ -72,6 +72,7 @@ hh:mm:ss
 dd.mm.yyyy
 
 # Präpositionen: 'Of', 'After', 'Before'
+# Rule: first - tenth (nicht weiter gehen)
 [RelativeDate(week=3), RelativeTime(), keyword.OF, AbsoluteDateTime(year=2016)]
 3rd week of (year) 2016
 3rd of august
@@ -82,6 +83,9 @@ fifth week of august
 2st week of year 2023
 1 day after 2025
 3 days before august
+
+[RelativeMonth(3), Keyword.BEFORE, RelativeWeek(5), Keyword.OF, AbsoluteMonth.AUGUST]
+
 3 months before the fifth week of august
 <monthlyTime> of <constant timespan>
 <relativer> after <absoluter>

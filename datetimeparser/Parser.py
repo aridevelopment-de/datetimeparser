@@ -63,20 +63,51 @@ class Parser:
 
         if self.get_absolute_preposition_parts(absolute) is not None:
             absolute = self.get_absolute_preposition_parts(absolute)
-        else:
-            absolute = (absolute,)
 
         return {'type': 'relative', 'data': relative}, \
                {'type': 'keyword', 'data': word}, \
                {'type': 'absolute', 'data': absolute}
 
     def parse_relative_statement(self, string):
+        """
+        TODO: Use the parser for the whole relative part
+        :param string:
+        :return:
+        """
         return string
 
     def parse_absolute_keyword(self, string):
-        return string
+        string = string.lower()
+
+        for pr in self.ABSOLUTE_PREPOSITION_TOKENS:
+            for kw in pr.get_all():
+                if string == kw:
+                    return pr
+
+        raise ValueError('no preposition given')
 
     def parse_absolute_statement(self, data):
+        if isinstance(data, str):
+            """
+            Constants
+            Years
+            Months
+            Weekdays
+            """
+
+            data = data.lower()
+            keywords = [*Constants.ALL, *MonthConstants.ALL]
+
+            for keyword in keywords:
+                if data in [kw for kw in keyword.get_all()]:
+                    return (keyword,)
+                elif data.isnumeric():
+                    data = int(data)
+
+                    if 1970 <= data <= 9999:
+                        return (AbsoluteDateTime(year=data),)
+        else:
+            return self.convert_absolute_preposition_tokens(data)
         return data
 
     def convert_absolute_preposition_tokens(self, data):
@@ -88,15 +119,16 @@ class Parser:
             elif part['type'] == 'keyword':
                 new_data.append(self.parse_absolute_keyword(part['data']))
             elif part['type'] == 'absolute':
-                new_data.append(self.parse_absolute_statement(part['data']))
+                for d in self.parse_absolute_statement(part['data']):
+                    new_data.append(d)
 
         return new_data
 
     def parse_absolute_prepositions(self):
         splitted = self.get_absolute_preposition_parts(self.string)
-        # tokens = self.convert_absolute_preposition_tokens(splitted)
+        tokens = self.convert_absolute_preposition_tokens(splitted)
 
-        return splitted
+        return tokens
 
     def parse(self):
         """
@@ -118,8 +150,8 @@ class Parser:
         """
 
         PROCEDURE = [
+            self.parse_absolute_date_formats,
             # self.parse_absolute_date_formats,
-            self.parse_absolute_prepositions
         ]
 
         result = None

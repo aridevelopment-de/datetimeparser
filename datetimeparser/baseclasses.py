@@ -1,3 +1,4 @@
+import enum
 from enum import Enum, auto
 
 class AbsoluteDateTime:
@@ -25,7 +26,7 @@ class RelativeTime:
         self.minutes = minutes
         self.seconds = seconds
 
-class RelativeWeekDay:
+class RelativeWeekDay(enum.Enum):
     MONDAY = auto()
     TUESDAY = auto()
     WEDNESDAY = auto()
@@ -54,6 +55,24 @@ class Constants:
     SILVESTER = Constant('silvester', ['next silvester', 'new years eve', 'next new years eve'])
     EASTERN = Constant('eastern', ['next eastern', 'easter', 'next easter'])
     NICHOLAS = Constant('nicholas', ['next nicholas', 'nicholas day', 'next nicholas day'])
+
+    ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS]
+
+class MonthConstants:
+    JANUARY = Constant('january', ['jan'])
+    FEBRUARY = Constant('february', ['feb'])
+    MARCH = Constant('march', ['mar'])
+    APRIL = Constant('april', ['apr'])
+    MAY = Constant('may')
+    JUNE = Constant('june', ['jun'])
+    JULY = Constant('july', ['jul'])
+    AUGUST = Constant('august', ['aug'])
+    SEPTEMBER = Constant('september', ['sep'])
+    OCTOBER = Constant('october', ['oct'])
+    NOVEMBER = Constant('november', ['nov'])
+    DECEMBER = Constant('december', ['dec'])
+
+    ALL = [JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER]
 
 class Keywords:
     OF = Keyword('of')
