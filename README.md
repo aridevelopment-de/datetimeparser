@@ -60,15 +60,16 @@ Alias:
 """
 Absolutes:
 
-[AbsoluteDateTime(year=1, month=1, day=1), AbsoluteClockTime(hour=1, minute=1, second=1)]
-
+[AbsoluteDateTime(year=2020, month=3, day=2)]
+[AbsoluteClockTime(hour=3, minute=2, second=1)]
 yyyy.mm.dd hh:mm:ss
 dd.mm.yyyy hh:mm:ss
 hh:mm:ss
 dd.mm.yyyy
 
 # Präpositionen: 'Of', 'After', 'Before'
-[AbsoluteWeek(3), keyword.OF, AbsoluteYear(2016)]
+# Rule: first - tenth (nicht weiter gehen)
+[RelativeDate(week=3), RelativeTime(), keyword.OF, AbsoluteDateTime(year=2016)]
 3rd week of (year) 2016
 3rd of august
 <1-5>. week of <month>
@@ -77,6 +78,9 @@ fifth week of august
 1st week of august
 2st week of year 2023
 1 day after 2025
+3 days before august
+
+[RelativeMonth(3), Keyword.BEFORE, RelativeWeek(5), Keyword.OF, AbsoluteMonth.AUGUST]
 3 months before the fifth week of august
 <monthlyTime> of <constant timespan>
 <relativer> after <absoluter>
