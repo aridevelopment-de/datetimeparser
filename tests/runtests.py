@@ -1,11 +1,19 @@
-import importlib
 import time
 
-import absolute_datetimeformats
-import absolute_prepositions
-import relative_events
-import relative_datetimes
+try:
+    import absolute_datetimeformats
+    import absolute_prepositions
+    import relative_events
+    import relative_datetimes
+except ImportError:
+    import sys
 
+    sys.path.insert(0, "..")
+
+    import absolute_datetimeformats
+    import absolute_prepositions
+    import relative_events
+    import relative_datetimes
 
 TESTS = [
     absolute_datetimeformats,
