@@ -1,0 +1,7 @@
+[flake8]
+ignore=F405,E501,F403
+per-file-ignores =
+    Parser.py: C901,F405
+    Evaluator.py: C901,F405
+    baseclasses.py: E302
+exclude=tests

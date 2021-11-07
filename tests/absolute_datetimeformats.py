@@ -1,14 +1,14 @@
 def run():
     try:
         from datetimeparser.Parser import Parser
-        from datetimeparser.Evaluater import Evaluator
+        from datetimeparser.Evaluator import Evaluator
         from Colors import Colors
     except ImportError:
         import sys
         sys.path.insert(0, "..")
 
         from datetimeparser.Parser import Parser
-        from datetimeparser.Evaluater import Evaluator
+        from datetimeparser.Evaluator import Evaluator
         from Colors import Colors
 
     test_cases = [
@@ -29,9 +29,8 @@ def run():
         e = Evaluator(parser_result)
         evaluator_result = e.evaluate()
 
-        print(Colors.ANSI_GREEN + "Testcase:", Colors.ANSI_YELLOW + testcase + Colors.ANSI_RESET)
+        print(Colors.ANSI_GREEN + "Testcase:", Colors.ANSI_CYAN + testcase + Colors.ANSI_RESET)
         print(Colors.ANSI_GREEN + "Parser:", Colors.ANSI_YELLOW + str(parser_result) + Colors.ANSI_RESET)
         print(Colors.ANSI_GREEN + "Evaluator:", Colors.ANSI_YELLOW + str(evaluator_result) + Colors.ANSI_RESET)
         print(Colors.ANSI_BLUE + ("=" * 50))
         print()
-  

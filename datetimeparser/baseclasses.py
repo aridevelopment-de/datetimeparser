@@ -1,6 +1,3 @@
-import enum
-from enum import Enum, auto
-
 class Printable:
     FIELDS = []
 

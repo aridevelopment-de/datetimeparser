@@ -1,18 +1,19 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from .baseclasses import *
+
 
 class Evaluator:
     def __init__(self, parsed_object: list):
         self.parsed_object = parsed_object
-    
+
     def evaluate(self) -> datetime:
         out = ""
         if len(self.parsed_object) == 2:
             for object_type in self.parsed_object:
                 if isinstance(object_type, AbsoluteDateTime):
                     out += f"{object_type.year}-{object_type.month}-{object_type.day} "
-                    
+
                 if isinstance(object_type, AbsoluteClockTime):
                     out += f"{object_type.hour}:{object_type.minute}:{object_type.second}"
         else:
