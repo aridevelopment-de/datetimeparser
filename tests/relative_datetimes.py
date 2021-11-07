@@ -1,11 +1,13 @@
 def run():
     try:
         from datetimeparser.Parser import Parser
+        from Colors import Colors
     except ImportError:
         import sys
         sys.path.insert(0, "..")
 
         from datetimeparser.Parser import Parser
+        from Colors import Colors
 
     test_cases = [
         "in 1Y 2m 3W 3d 5H 6M 7S",
@@ -19,8 +21,8 @@ def run():
         p = Parser(testcase)
         parser_result = p.parse()
 
-        print("Testcase:", testcase)
-        print("Parser:", parser_result)
-        print("Evaluator:", None)
-        print("="*10)
+        print(Colors.ANSI_GREEN + "Testcase:", Colors.ANSI_YELLOW + testcase + Colors.ANSI_RESET)
+        print(Colors.ANSI_GREEN + "Parser:", Colors.ANSI_YELLOW + str(parser_result) + Colors.ANSI_RESET)
+        print(Colors.ANSI_GREEN + "Evaluator:", Colors.ANSI_YELLOW + str(None) + Colors.ANSI_RESET)
+        print(Colors.ANSI_BLUE + ("=" * 50))
         print()
