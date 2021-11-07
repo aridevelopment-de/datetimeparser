@@ -2,6 +2,7 @@ import datetime
 
 from .baseclasses import *
 
+
 class Parser:
     DATETIME_FORMATS = [
         "%Y.%m.%d %H:%M:%S",
@@ -64,9 +65,7 @@ class Parser:
         if self.__get_absolute_preposition_parts(absolute) is not None:
             absolute = self.__get_absolute_preposition_parts(absolute)
 
-        return {'type': 'relative', 'data': relative}, \
-               {'type': 'keyword', 'data': word}, \
-               {'type': 'absolute', 'data': absolute}
+        return {'type': 'relative', 'data': relative}, {'type': 'keyword', 'data': word}, {'type': 'absolute', 'data': absolute}
 
     def __parse_relative_statement(self, string):
         """
@@ -209,7 +208,6 @@ class Parser:
                             if len(data[0].split()) > 1:
                                 preposition, number = data[0].split()
 
-                                # TODO: also check for numbers
                                 if number.isnumeric():
                                     number = int(number)
                                 else:
