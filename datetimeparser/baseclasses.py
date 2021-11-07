@@ -13,7 +13,7 @@ class Printable:
 class AbsoluteDateTime(Printable):
     FIELDS = ["year", "month", "day"]
 
-    def __init__(self, year=None, month=None, day=None):
+    def __init__(self, year=0, month=0, day=0):
         self.year = year
         self.month = month
         self.day = day
@@ -21,7 +21,7 @@ class AbsoluteDateTime(Printable):
 class AbsoluteClockTime(Printable):
     FIELDS = ["hour", "minute", "second"]
 
-    def __init__(self, hour=None, minute=None, second=None):
+    def __init__(self, hour=0, minute=0, second=0):
         self.hour = hour
         self.minute = minute
         self.second = second
@@ -29,7 +29,7 @@ class AbsoluteClockTime(Printable):
 class RelativeDate(Printable):
     FIELDS = ["years", "months", "weeks", "days"]
 
-    def __init__(self, years=None, months=None, weeks=None, days=None):
+    def __init__(self, years=0, months=0, weeks=0, days=0):
         self.years = years
         self.months = months
         self.weeks = weeks
@@ -49,7 +49,7 @@ class RelativeDate(Printable):
 class RelativeTime(Printable):
     FIELDS = ["hours", "minutes", "seconds"]
 
-    def __init__(self, hours=None, minutes=None, seconds=None):
+    def __init__(self, hours=0, minutes=0, seconds=0):
         self.hours = hours
         self.minutes = minutes
         self.seconds = seconds

@@ -1,10 +1,12 @@
 try:
     from datetimeparser.Parser import Parser
+    from datetimeparser.Evaluater import Evaluator
 except ImportError:
     import sys
     sys.path.insert(0, "..")
 
     from datetimeparser.Parser import Parser
+    from datetimeparser.Evaluater import Evaluator
 
 test_cases = [
     "2017.08.03 03:04:05",
@@ -22,4 +24,6 @@ for testcase in test_cases:
 
     print("Testcase:", testcase)
     print(result)
+    print(Evaluator(result).evaluate())
     print()
+  
