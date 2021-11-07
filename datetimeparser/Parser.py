@@ -45,7 +45,7 @@ class Parser:
 
         return None
 
-    def get_absolute_preposition_parts(self, string):
+    def __get_absolute_preposition_parts(self, string):
         if not any(kw in string for pr in self.ABSOLUTE_PREPOSITION_TOKENS for kw in pr.get_all()):
             return None
 
@@ -61,14 +61,14 @@ class Parser:
         relative = string[:char_count - len(word) - 2]
         absolute = string[char_count:]
 
-        if self.get_absolute_preposition_parts(absolute) is not None:
-            absolute = self.get_absolute_preposition_parts(absolute)
+        if self.__get_absolute_preposition_parts(absolute) is not None:
+            absolute = self.__get_absolute_preposition_parts(absolute)
 
         return {'type': 'relative', 'data': relative}, \
                {'type': 'keyword', 'data': word}, \
                {'type': 'absolute', 'data': absolute}
 
-    def parse_relative_statement(self, string):
+    def __parse_relative_statement(self, string):
         """
         TODO: Use the parser for the whole relative part
         :param string:
@@ -76,7 +76,7 @@ class Parser:
         """
         return string
 
-    def parse_absolute_keyword(self, string):
+    def __parse_absolute_keyword(self, string):
         string = string.lower()
 
         for pr in self.ABSOLUTE_PREPOSITION_TOKENS:
@@ -86,7 +86,7 @@ class Parser:
 
         raise ValueError('no preposition given')
 
-    def parse_absolute_statement(self, data):
+    def __parse_absolute_statement(self, data):
         if isinstance(data, str):
             """
             Constants
@@ -107,28 +107,68 @@ class Parser:
                     if 1970 <= data <= 9999:
                         return (AbsoluteDateTime(year=data),)
         else:
-            return self.convert_absolute_preposition_tokens(data)
+            return self.__convert_absolute_preposition_tokens(data)
         return data
 
-    def convert_absolute_preposition_tokens(self, data):
+    def __convert_absolute_preposition_tokens(self, data):
         new_data = []
 
         for part in data:
             if part['type'] == 'relative':
-                new_data.append(self.parse_relative_statement(part['data']))
+                new_data.append(self.__parse_relative_statement(part['data']))
             elif part['type'] == 'keyword':
-                new_data.append(self.parse_absolute_keyword(part['data']))
+                new_data.append(self.__parse_absolute_keyword(part['data']))
             elif part['type'] == 'absolute':
-                for d in self.parse_absolute_statement(part['data']):
+                for d in self.__parse_absolute_statement(part['data']):
                     new_data.append(d)
 
         return new_data
 
     def parse_absolute_prepositions(self):
-        splitted = self.get_absolute_preposition_parts(self.string)
-        tokens = self.convert_absolute_preposition_tokens(splitted)
+        splitted = self.__get_absolute_preposition_parts(self.string)
+
+        if splitted is None:
+            return None
+
+        tokens = self.__convert_absolute_preposition_tokens(splitted)
 
         return tokens
+
+    def parse_constants(self):
+        # It's important that WeekdayConstant goes before DatetimeConstants because `friday` contains the word `day`
+        keywords = [*Constants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL, *DatetimeConstants.ALL]
+
+        for keyword in keywords:
+            if self.string.lower() in [kw for kw in keyword.get_all()]:
+                return [keyword]
+            else:
+                for kw in keyword.get_all():
+                    if kw in self.string.lower():
+                        data = self.string.split(kw)
+
+                        if data[0]:
+                            # preposition
+                            # next <day> <friday>
+
+                            if keyword in DatetimeConstants.ALL:
+                                if keyword in DatetimeConstants.TIME:
+                                    return RelativeTime.from_keyword(keyword, delta=int(data[0].strip().lower() == "next"))
+                                elif keyword in DatetimeConstants.DATE:
+                                    return RelativeDate.from_keyword(keyword, delta=int(data[0].strip().lower() == "next"))
+                            elif keyword in WeekdayConstants.ALL:
+                                return keyword
+
+                        elif data[1]:
+                            # currently only year
+                            # xmas 2025
+
+                            if data[1].strip().isnumeric():
+                                year = int(data[1])
+
+                                if 1970 <= year <= 9999:
+                                    return [keyword, AbsoluteDateTime(year=year)]
+
+                        return
 
     def parse(self):
         """
@@ -151,7 +191,8 @@ class Parser:
 
         PROCEDURE = [
             self.parse_absolute_date_formats,
-            # self.parse_absolute_date_formats,
+            self.parse_absolute_prepositions,
+            self.parse_constants
         ]
 
         result = None

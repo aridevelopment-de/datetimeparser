@@ -1,41 +1,71 @@
 import enum
 from enum import Enum, auto
 
-class AbsoluteDateTime:
-    def __init__(self, year=None, month=None, day=None):
+class Printable:
+    FIELDS = []
+
+    def __str__(self):
+        return f'<{str(self.__class__)} {" ".join("{%s=%s}" % (field, getattr(self, field)) for field in self.FIELDS if getattr(self, field) is not None)}>'
+
+    def __repr__(self):
+        return f'<{str(self.__class__)} {" ".join("{%s=%s}" % (field, getattr(self, field)) for field in self.FIELDS if getattr(self, field) is not None)}>'
+
+class AbsoluteDateTime(Printable):
+    FIELDS = ["year", "month", "day"]
+
+    def __init__(self, year=0, month=0, day=0):
         self.year = year
         self.month = month
         self.day = day
 
-class AbsoluteClockTime:
-    def __init__(self, hour=None, minute=None, second=None):
+class AbsoluteClockTime(Printable):
+    FIELDS = ["hour", "minute", "second"]
+
+    def __init__(self, hour=0, minute=0, second=0):
         self.hour = hour
         self.minute = minute
         self.second = second
 
-class RelativeDate:
-    def __init__(self, years=None, months=None, weeks=None, days=None):
+class RelativeDate(Printable):
+    FIELDS = ["years", "months", "weeks", "days"]
+
+    def __init__(self, years=0, months=0, weeks=0, days=0):
         self.years = years
         self.months = months
         self.weeks = weeks
         self.days = days
 
-class RelativeTime:
+    @classmethod
+    def from_keyword(cls, keyword, delta=1):
+        if keyword == DatetimeConstants.DAYS:
+            return RelativeDate(days=delta)
+        elif keyword == DatetimeConstants.WEEKS:
+            return RelativeDate(weeks=delta)
+        elif keyword == DatetimeConstants.MONTHS:
+            return RelativeDate(months=delta)
+        elif keyword == DatetimeConstants.YEARS:
+            return RelativeDate(years=delta)
+
+class RelativeTime(Printable):
+    FIELDS = ["hours", "minutes", "seconds"]
+
     def __init__(self, hours=0, minutes=0, seconds=0):
         self.hours = hours
         self.minutes = minutes
         self.seconds = seconds
 
-class RelativeWeekDay(enum.Enum):
-    MONDAY = auto()
-    TUESDAY = auto()
-    WEDNESDAY = auto()
-    THURSDAY = auto()
-    FRIDAY = auto()
-    SATURDAY = auto()
-    SUNDAY = auto()
+    @classmethod
+    def from_keyword(cls, keyword, delta=1):
+        if keyword == DatetimeConstants.SECONDS:
+            return RelativeTime(seconds=delta)
+        elif keyword == DatetimeConstants.MINUTES:
+            return RelativeTime(minutes=delta)
+        elif keyword == DatetimeConstants.HOURS:
+            return RelativeTime(hours=delta)
 
-class Constant:
+class Constant(Printable):
+    FIELDS = ["name", "alias"]
+
     def __init__(self, name, alias=None):
         self.name = name
 
@@ -57,6 +87,30 @@ class Constants:
     NICHOLAS = Constant('nicholas', ['next nicholas', 'nicholas day', 'next nicholas day'])
 
     ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS]
+
+class DatetimeConstants:
+    SECONDS = Keyword('seconds', ['second', 'sec', 'secs'])
+    MINUTES = Keyword('minutes', ['minute', 'min', 'mins'])
+    HOURS = Keyword('hours', ['hour'])
+    DAYS = Keyword('days', ['day'])
+    WEEKS = Keyword('weeks', ['week'])
+    MONTHS = Keyword('months', ['month'])
+    YEARS = Keyword('years', ['year'])
+
+    TIME = [SECONDS, MINUTES, HOURS]
+    DATE = [DAYS, WEEKS, MONTHS, YEARS]
+    ALL = [SECONDS, MINUTES, HOURS, DAYS, WEEKS, MONTHS, YEARS]
+
+class WeekdayConstants:
+    MONDAY = Constant('monday')
+    TUESDAY = Constant('tuesday')
+    WEDNESDAY = Constant('wednesday')
+    THURSDAY = Constant('thursday')
+    FRIDAY = Constant('friday')
+    SATURDAY = Constant('saturday')
+    SUNDAY = Constant('sunday')
+
+    ALL = [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]
 
 class MonthConstants:
     JANUARY = Constant('january', ['jan'])
@@ -81,11 +135,3 @@ class Keywords:
     NEXT = Keyword('next')
     IN = Keyword('in')
     FOR = Keyword('for')
-
-    SECONDS = Keyword('seconds', ['second', 'sec', 'secs'])
-    MINUTES = Keyword('minutes', ['minute', 'min', 'mins'])
-    HOURS = Keyword('hours', ['hour'])
-    DAYS = Keyword('days', ['day'])
-    WEEKS = Keyword('weeks', ['week'])
-    MONTHS = Keyword('months', ['month'])
-    YEARS = Keyword('years', ['year'])

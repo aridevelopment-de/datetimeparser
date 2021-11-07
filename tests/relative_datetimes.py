@@ -7,16 +7,14 @@ except ImportError:
     from datetimeparser.Parser import Parser
 
 test_cases = [
-    "second day after christmas",
-    "3rd week of august",
-    "4. week of august",
-    "1st of august",
-    "fifth month of 2021",
-    "second day after august",
-    "3 months before the fifth week of august"
+    "in 1Y 2m 3W 3d 5H 6M 7S",
+    "in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds",
+    "in a year and in 2 months, in 3 seconds and 4 days",
+    "for a year",
+    "for 2 days and 1 year"
 ]
 
-for testcase in test_cases:
+for testcase in test_cases[-1:]:
     p = Parser(testcase)
     result = p.parse()
 
