@@ -82,7 +82,7 @@ class Parser:
             string = string[0].strip()
 
             # check the first tenth numbers
-            for kw in NumberConstants.ALL:
+            for kw in NumberCountConstants.ALL:
                 for alias in kw.get_all():
                     if alias == string:
                         return (kw.value,)
@@ -200,7 +200,7 @@ class Parser:
                             # preposition
                             # next [day] [friday]
                             # next 2 days
-                            # next 2 years
+                            # next two years
                             # last 2 years
 
                             preposition = data[0]
@@ -209,10 +209,21 @@ class Parser:
                             if len(data[0].split()) > 1:
                                 preposition, number = data[0].split()
 
-                                if not number.isnumeric():
-                                    raise ValueError(f"Value '{number}' in context '{preposition} {number} {kw}' is not a number")
+                                # TODO: also check for numbers
+                                if number.isnumeric():
+                                    number = int(number)
+                                else:
+                                    for n in NumberConstants.ALL:
+                                        for number_keyword in n.get_all():
+                                            if number in number_keyword:
+                                                number = n.value
+                                                break
+                                        else:
+                                            continue
 
-                                number = int(number)
+                                        break
+                                    else:
+                                        raise ValueError(f"Value '{number}' in context '{preposition} {number} {kw}' is not a number")
 
                                 if preposition == "last":
                                     number *= -1

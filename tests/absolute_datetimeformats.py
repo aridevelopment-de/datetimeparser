@@ -20,10 +20,14 @@ test_cases = [
 
 for testcase in test_cases:
     p = Parser(testcase)
-    result = p.parse()
+    parser_result = p.parse()
+
+    e = Evaluator(parser_result)
+    evaluator_result = e.evaluate()
 
     print("Testcase:", testcase)
-    print(result)
-    print(Evaluator(result).evaluate())
+    print("Parser:", parser_result)
+    print("Evaluator:", evaluator_result)
+    print("=" * 10)
     print()
   
