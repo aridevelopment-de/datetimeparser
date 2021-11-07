@@ -91,6 +91,22 @@ class Constants:
     ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS]
 
 class NumberConstants:
+    # TODO: Add up to 31?
+    ONE = Constant('one', value=1)
+    TWO = Constant('two', value=2)
+    THREE = Constant('three', value=3)
+    FOUR = Constant('four', value=4)
+    FIVE = Constant('five', value=5)
+    SIX = Constant('six', value=6)
+    SEVEN = Constant('seven', value=7)
+    EIGHT = Constant('eight', value=8)
+    NINE = Constant('nine', value=9)
+    TEN = Constant('ten', value=10)
+
+    ALL = [ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN]
+
+class NumberCountConstants:
+    # TODO: Add up to 31?
     FIRST = Constant('first', ['1st', '1.'], value=1)
     SECOND = Constant('second', ['2nd', '2.'], value=2)
     THIRD = Constant('third', ['3rd', '3.'], value=3)

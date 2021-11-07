@@ -17,15 +17,17 @@ test_cases = [
     "next year",
     "next friday",
     "next 2 years",
-    "next three months",
     "last month",
-    "last 4 years"
+    "last 4 years",
+    "next three months"
 ]
 
-for testcase in test_cases[-4:]:
+for testcase in test_cases:
     p = Parser(testcase)
-    result = p.parse()
+    parser_result = p.parse()
 
     print("Testcase:", testcase)
-    print(result)
+    print("Parser:", parser_result)
+    print("Evaluator:", None)
+    print("=" * 10)
     print()
