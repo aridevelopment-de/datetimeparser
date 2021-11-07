@@ -23,7 +23,7 @@ TESTS = [
 ]
 
 for test in TESTS:
-    print("=" * 6, f"TEST: {test}", end=" " + ("=" * 6) + "\n")
+    print("\u001B[0;1m" + "=" * 6, f"TEST: {test}", end=" " + ("=" * 6) + "\u001b[0m\n")
     print()
 
     getattr(test, "run")()
