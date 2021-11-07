@@ -5,7 +5,7 @@ try:
     import absolute_prepositions
     import relative_events
     import relative_datetimes
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     import sys
 
     sys.path.insert(0, "..")
