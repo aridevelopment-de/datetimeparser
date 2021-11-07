@@ -23,7 +23,7 @@ def run():
         p = Parser(testcase)
         parser_result = p.parse()
 
-        print(Colors.ANSI_GREEN + "Testcase:", Colors.ANSI_YELLOW + testcase + Colors.ANSI_RESET)
+        print(Colors.ANSI_GREEN + "Testcase:", Colors.ANSI_CYAN + testcase + Colors.ANSI_RESET)
         print(Colors.ANSI_GREEN + "Parser:", Colors.ANSI_YELLOW + str(parser_result) + Colors.ANSI_RESET)
         print(Colors.ANSI_GREEN + "Evaluator:", Colors.ANSI_YELLOW + str(None) + Colors.ANSI_RESET)
         print(Colors.ANSI_BLUE + ("=" * 50))
