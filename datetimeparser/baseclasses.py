@@ -1,3 +1,5 @@
+import enum
+
 class Printable:
     FIELDS = []
 
@@ -164,3 +166,8 @@ class Keywords:
     NEXT = Keyword('next')
     IN = Keyword('in')
     FOR = Keyword('for')
+
+class Method(enum.Enum):
+    ABSOLUTE_PREPOSITIONS = enum.auto()
+    ABSOLUTE_DATE_FORMATS = enum.auto()
+    CONSTANTS = enum.auto()
