@@ -18,15 +18,12 @@ test_cases = [
     "07:16"
 ]
 
-#for testcase in test_cases:
-#    p = Parser(testcase)
-#    result = p.parse()
-#
-#    print("Testcase:", testcase)
-#    print(result)
-#    print()
-
 for testcase in test_cases:
-    e = Evaluator(Parser(testcase).parse())
-    dt_object = e.evaluate()
-    print(dt_object)
+    p = Parser(testcase)
+    result = p.parse()
+
+    print("Testcase:", testcase)
+    print(result)
+    print(Evaluator(result).evaluate())
+    print()
+  
