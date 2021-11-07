@@ -40,6 +40,6 @@ jobs:
       working-directory: tests
       run: |
         # --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-        pytest runtests.py
-        
+        # pytest runtests.py
+        python runtests.py
         
