@@ -16,10 +16,13 @@ test_cases = [
     "next hour",
     "next year",
     "next friday",
-    "next 2 years"
+    "next 2 years",
+    "next three months",
+    "last month",
+    "last 4 years"
 ]
 
-for testcase in test_cases[-1:]:
+for testcase in test_cases[-4:]:
     p = Parser(testcase)
     result = p.parse()
 

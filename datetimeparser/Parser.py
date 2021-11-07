@@ -70,11 +70,60 @@ class Parser:
 
     def __parse_relative_statement(self, string):
         """
-        TODO: Use the parser for the whole relative part
         :param string:
         :return:
         """
-        return string
+
+        string = string.split()
+
+        if len(string) == 1:
+            # 1st, first, 1.
+
+            string = string[0].strip()
+
+            # check the first tenth numbers
+            for kw in NumberConstants.ALL:
+                for alias in kw.get_all():
+                    if alias == string:
+                        return (kw.value,)
+
+            # now do manually checks
+            # 3th
+            if string.endswith("th"):
+                if string[:-2].isnumeric():
+                    return (int(string[:-2]),)
+
+            # 3.
+            if string.endswith("."):
+                if string[:-1].isnumeric():
+                    return (int(string[:-1]),)
+
+            # 3
+            if string.strip().isnumeric():
+                return (int(string.strip()),)
+
+            raise ValueError(f'{string} is not a valid number')
+
+        else:
+            # second day, 3rd week, 4. month, three months, 3 months
+            # special case: the fifth week
+
+            if string[0].strip().lower() == "the":
+                string = string[1:]
+
+            if len(string) > 2:
+                raise ValueError(f'Too many values to unpack ({string})')
+
+            number, value = string
+            number = self.__parse_relative_statement(number)[0]
+
+            ALL = [*Constants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL, *DatetimeConstants.ALL]
+
+            for kw in ALL:
+                if value.strip().lower() in [alias for alias in kw.get_all()]:
+                    return number, kw
+
+        raise ValueError(f'Unknown string {string}')
 
     def __parse_absolute_keyword(self, string):
         string = string.lower()
@@ -115,7 +164,8 @@ class Parser:
 
         for part in data:
             if part['type'] == 'relative':
-                new_data.append(self.__parse_relative_statement(part['data']))
+                for d in self.__parse_relative_statement(part['data']):
+                    new_data.append(d)
             elif part['type'] == 'keyword':
                 new_data.append(self.__parse_absolute_keyword(part['data']))
             elif part['type'] == 'absolute':
@@ -148,13 +198,32 @@ class Parser:
 
                         if data[0]:
                             # preposition
-                            # next <day> <friday>
+                            # next [day] [friday]
+                            # next 2 days
+                            # next 2 years
+                            # last 2 years
+
+                            preposition = data[0]
+                            number = None
+
+                            if len(data[0].split()) > 1:
+                                preposition, number = data[0].split()
+
+                                if not number.isnumeric():
+                                    raise ValueError(f"Value '{number}' in context '{preposition} {number} {kw}' is not a number")
+
+                                number = int(number)
+
+                                if preposition == "last":
+                                    number *= -1
+                            else:
+                                number = int(preposition.strip().lower() == "next")
 
                             if keyword in DatetimeConstants.ALL:
                                 if keyword in DatetimeConstants.TIME:
-                                    return RelativeTime.from_keyword(keyword, delta=int(data[0].strip().lower() == "next"))
+                                    return RelativeTime.from_keyword(keyword, delta=number)
                                 elif keyword in DatetimeConstants.DATE:
-                                    return RelativeDate.from_keyword(keyword, delta=int(data[0].strip().lower() == "next"))
+                                    return RelativeDate.from_keyword(keyword, delta=number)
                             elif keyword in WeekdayConstants.ALL:
                                 return keyword
 

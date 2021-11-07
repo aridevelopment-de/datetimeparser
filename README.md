@@ -109,7 +109,7 @@ tomorrow
 
 Relatives:
 
-# Keywords: 'next', 'in', 'for'
+# Keywords: 'next', 'in', 'for', 'last'
 
 [RelativeDate(year=1, month=2, weeks=3, days=4), RelativeTime(hours=5, minutes=6, seconds=7)]
 in 1Y 2m 3W 4d 5H 6M 7S
@@ -120,6 +120,8 @@ for 1 year
 
 [RelativeWeekDay.FRIDAY]
 next xyDay
+next 3 years
+last 3 years
 
 
 .ban @user next year and 2 months

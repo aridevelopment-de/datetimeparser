@@ -64,15 +64,17 @@ class RelativeTime(Printable):
             return RelativeTime(hours=delta)
 
 class Constant(Printable):
-    FIELDS = ["name", "alias"]
+    FIELDS = ["name", "alias", "value"]
 
-    def __init__(self, name, alias=None):
+    def __init__(self, name, alias=None, value=None):
         self.name = name
 
         if alias is not None:
             self.alias = alias
         else:
             self.alias = []
+
+        self.value = value
 
     def get_all(self):
         return [self.name, *self.alias]
@@ -87,6 +89,20 @@ class Constants:
     NICHOLAS = Constant('nicholas', ['next nicholas', 'nicholas day', 'next nicholas day'])
 
     ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS]
+
+class NumberConstants:
+    FIRST = Constant('first', ['1st', '1.'], value=1)
+    SECOND = Constant('second', ['2nd', '2.'], value=2)
+    THIRD = Constant('third', ['3rd', '3.'], value=3)
+    FOURTH = Constant('fourth', ['4th', '4.'], value=4)
+    FIFTH = Constant('fifth', ['5th', '5.'], value=5)
+    SIXTH = Constant('sixth', ['6th', '6.'], value=6)
+    SEVENTH = Constant('seventh', ['7th', '7.'], value=7)
+    EIGHTH = Constant('eighth', ['8th', '8.'], value=8)
+    NINTH = Constant('ninth', ['9th', '9.'], value=9)
+    TENTH = Constant('tenth', ['10th', '10.'], value=10)
+
+    ALL = [FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH, TENTH]
 
 class DatetimeConstants:
     SECONDS = Keyword('seconds', ['second', 'sec', 'secs'])
