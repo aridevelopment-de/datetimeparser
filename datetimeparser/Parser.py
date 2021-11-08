@@ -40,7 +40,7 @@ class Parser:
 
                 timings.append(AbsoluteClockTime(hour=time.hour, minute=time.minute, second=time.second))
 
-                return timings
+                return Method.ABSOLUTE_DATE_FORMATS, timings
             except ValueError:
                 continue
 
@@ -181,7 +181,7 @@ class Parser:
 
         tokens = self.__convert_absolute_preposition_tokens(splitted)
 
-        return tokens
+        return Method.ABSOLUTE_PREPOSITIONS, tokens
 
     def parse_constants(self):
         # It's important that WeekdayConstant goes before DatetimeConstants because `friday` contains the word `day`
@@ -189,7 +189,7 @@ class Parser:
 
         for keyword in keywords:
             if self.string.lower() in [kw for kw in keyword.get_all()]:
-                return [keyword]
+                return Method.CONSTANTS, [keyword]
             else:
                 for kw in keyword.get_all():
                     if kw in self.string.lower():
@@ -230,11 +230,11 @@ class Parser:
 
                             if keyword in DatetimeConstants.ALL:
                                 if keyword in DatetimeConstants.TIME:
-                                    return RelativeTime.from_keyword(keyword, delta=number)
+                                    return Method.CONSTANTS, [RelativeTime.from_keyword(keyword, delta=number)]
                                 elif keyword in DatetimeConstants.DATE:
-                                    return RelativeDate.from_keyword(keyword, delta=number)
+                                    return Method.CONSTANTS, [RelativeDate.from_keyword(keyword, delta=number)]
                             elif keyword in WeekdayConstants.ALL:
-                                return keyword
+                                return Method.CONSTANTS, [keyword]
 
                         elif data[1]:
                             # currently only year
@@ -244,7 +244,7 @@ class Parser:
                                 year = int(data[1])
 
                                 if 1970 <= year <= 9999:
-                                    return [keyword, AbsoluteDateTime(year=year)]
+                                    return Method.CONSTANTS, [keyword, AbsoluteDateTime(year=year)]
 
                         return
 
