@@ -31,6 +31,6 @@ def run():
 
         print(Colors.ANSI_GREEN + "Testcase:", Colors.ANSI_CYAN + testcase + Colors.ANSI_RESET)
         print(Colors.ANSI_GREEN + "Parser:", Colors.ANSI_YELLOW + str(parser_result) + Colors.ANSI_RESET)
-        print(Colors.ANSI_GREEN + "Evaluator:", Colors.ANSI_YELLOW + str(evaluator_result) + Colors.ANSI_RESET)
+        print(Colors.ANSI_GREEN + "Evaluator:", Colors.ANSI_PURPLE + str(evaluator_result) + Colors.ANSI_RESET)
         print(Colors.ANSI_BLUE + ("=" * 50))
         print()
