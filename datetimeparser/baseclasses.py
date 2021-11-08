@@ -132,6 +132,23 @@ class DatetimeConstants:
     DATE = [DAYS, WEEKS, MONTHS, YEARS]
     ALL = [SECONDS, MINUTES, HOURS, DAYS, WEEKS, MONTHS, YEARS]
 
+    @classmethod
+    def convert_from_mini_date(cls, md):
+        if md == "S":
+            return cls.SECONDS
+        elif md == "M":
+            return cls.MINUTES
+        elif md == "H":
+            return cls.HOURS
+        elif md.lower() == "w":
+            return cls.WEEKS
+        elif md == "d":
+            return cls.DAYS
+        elif md == "m":
+            return cls.MONTHS
+        elif md.lower() == "y":
+            return cls.YEARS
+
 class WeekdayConstants:
     MONDAY = Constant('monday')
     TUESDAY = Constant('tuesday')
@@ -171,3 +188,4 @@ class Method(enum.Enum):
     ABSOLUTE_PREPOSITIONS = enum.auto()
     ABSOLUTE_DATE_FORMATS = enum.auto()
     CONSTANTS = enum.auto()
+    RELATIVE_DATETIMES = enum.auto

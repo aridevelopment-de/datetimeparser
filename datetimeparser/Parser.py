@@ -248,6 +248,106 @@ class Parser:
 
                         return
 
+    def parse_relative_datetimes(self):
+        PREPOSITIONS = ["in", "next"]
+
+        for preposition in PREPOSITIONS:
+            if self.string.startswith(preposition):
+                self.string = self.string[len(preposition):]
+
+        """
+        idea:
+        1 Year and 2 months, 3d 5 minutes
+        
+        split by space
+        ['1', 'Year', 'and', '2', 'months,', '3d', '5', 'minutes']
+        
+        go through every element
+        if there's a comma at the end of the string:
+            cut it away
+        
+        if the string is equal to "and":
+            continue
+        
+        if its numeric [or 'a']:
+            append to new list
+        
+        if its a written number:
+            append value to new list
+            
+        if its a valid keyword (year, month, days, minutes, ...):
+            append the Keyword to the new list
+        
+        if the characters up until the last character (30d -> 30) are numeric and the last character is a valid keyword:
+            append the number to new list
+            append the keyword to the new list
+        """
+
+        data = self.string.strip().split()
+        new_data = []
+
+        for part in data:
+            if part.lower() == "and":
+                continue
+
+            elif part.lower() == "a":
+                new_data.append(1)
+
+            elif part.endswith(","):
+                part = part[:-1]
+
+            if part.isnumeric():
+                new_data.append(int(part))
+
+            for kw in NumberConstants.ALL:
+                if part.lower() in kw.get_all():
+                    new_data.append(kw.value)
+                    break
+
+            for keyword in DatetimeConstants.ALL:
+                if part.lower() in keyword.get_all():
+                    new_data.append(keyword)
+                    break
+            else:
+                if part[:-1].isnumeric():
+                    number = int(part[:-1])
+                    keyword = part[-1]
+
+                    keyword = DatetimeConstants.convert_from_mini_date(keyword)
+
+                    if keyword is not None:
+                        new_data.append(number)
+                        new_data.append(keyword)
+
+        date = RelativeDate()
+        time = RelativeTime()
+
+        if len(new_data) % 2 != 0:
+            return None
+
+        while new_data:
+            number = new_data.pop(0)
+            type_ = new_data.pop(0)
+
+            if type_ in DatetimeConstants.DATE:
+                if type_ == DatetimeConstants.DAYS:
+                    date.days = number
+                elif type_ == DatetimeConstants.WEEKS:
+                    date.weeks = number
+                elif type_ == DatetimeConstants.MONTHS:
+                    date.months = number
+                elif type_ == DatetimeConstants.YEARS:
+                    date.years = number
+            elif type_ in DatetimeConstants.TIME:
+                if type_ == DatetimeConstants.SECONDS:
+                    time.seconds = number
+                elif type_ == DatetimeConstants.MINUTES:
+                    time.minutes = number
+                elif type_ == DatetimeConstants.HOURS:
+                    time.hours = number
+
+        return Method.RELATIVE_DATETIMES, [date, time]
+
     def parse(self):
         """
         first, check absolute
@@ -269,6 +369,7 @@ class Parser:
 
         PROCEDURE = [
             self.parse_absolute_date_formats,
+            self.parse_relative_datetimes,
             self.parse_absolute_prepositions,
             self.parse_constants
         ]

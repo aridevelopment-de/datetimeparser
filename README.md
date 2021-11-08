@@ -117,6 +117,7 @@ in 1 Year(s) 2 Month(s) 2 Week(s) 4 Day(s) 5 Hour(s) 6 Minute(s) 7 Second(s)
 in a year in 2 months in a week in a hour
 in 6 min 2 sec
 for 1 year
+1 year 10 seconds
 
 [RelativeWeekDay.FRIDAY]
 next xyDay

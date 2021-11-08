@@ -14,7 +14,9 @@ def run():
         "in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds",
         "in a year and in 2 months, in 3 seconds and 4 days",
         "for a year",
-        "for 2 days and 1 year"
+        "for 2 days and 1 year",
+        "1 year 10 seconds",
+        "two years 3 minutes and 1 hour"
     ]
 
     for testcase in test_cases:
@@ -26,3 +28,7 @@ def run():
         print(Colors.ANSI_GREEN + "Evaluator:", Colors.ANSI_YELLOW + str(None) + Colors.ANSI_RESET)
         print(Colors.ANSI_BLUE + ("=" * 50))
         print()
+
+
+if __name__ == '__main__':
+    run()
