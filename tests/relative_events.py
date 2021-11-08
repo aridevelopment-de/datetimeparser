@@ -25,7 +25,7 @@ def run():
         "next three months"
     ]
 
-    for testcase in test_cases[:1]:
+    for testcase in test_cases:
         p = Parser(testcase)
         parser_result = p.parse()
 
