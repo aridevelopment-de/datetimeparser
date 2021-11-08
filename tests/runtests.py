@@ -18,8 +18,8 @@ except (ImportError, ModuleNotFoundError):
 TESTS = [
     absolute_datetimeformats,
     absolute_prepositions,
-    relative_events
-    # relative_datetimes
+    relative_events,
+    relative_datetimes
 ]
 
 for test in TESTS:

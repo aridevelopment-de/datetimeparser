@@ -322,6 +322,9 @@ class Parser:
         date = RelativeDate()
         time = RelativeTime()
 
+        if len(new_data) % 2 != 0:
+            return None
+
         while new_data:
             number = new_data.pop(0)
             type_ = new_data.pop(0)
