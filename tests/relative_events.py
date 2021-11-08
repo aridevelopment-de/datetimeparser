@@ -25,7 +25,7 @@ def run():
         "next three months"
     ]
 
-    for testcase in test_cases:
+    for testcase in test_cases[:1]:
         p = Parser(testcase)
         parser_result = p.parse()
 
@@ -34,3 +34,7 @@ def run():
         print(Colors.ANSI_GREEN + "Evaluator:", Colors.ANSI_YELLOW + str(None) + Colors.ANSI_RESET)
         print(Colors.ANSI_BLUE + ("=" * 50))
         print()
+
+
+if __name__ == '__main__':
+    run()

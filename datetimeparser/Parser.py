@@ -189,7 +189,7 @@ class Parser:
 
         for keyword in keywords:
             if self.string.lower() in [kw for kw in keyword.get_all()]:
-                return [keyword]
+                return Method.CONSTANTS, [keyword]
             else:
                 for kw in keyword.get_all():
                     if kw in self.string.lower():
