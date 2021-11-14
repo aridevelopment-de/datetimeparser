@@ -257,26 +257,26 @@ class Parser:
         """
         idea:
         1 Year and 2 months, 3d 5 minutes
-        
+
         split by space
         ['1', 'Year', 'and', '2', 'months,', '3d', '5', 'minutes']
-        
+
         go through every element
         if there's a comma at the end of the string:
             cut it away
-        
+
         if the string is equal to "and":
             continue
-        
+
         if its numeric [or 'a']:
             append to new list
-        
+
         if its a written number:
             append value to new list
-            
+
         if its a valid keyword (year, month, days, minutes, ...):
             append the Keyword to the new list
-        
+
         if the characters up until the last character (30d -> 30) are numeric and the last character is a valid keyword:
             append the number to new list
             append the keyword to the new list

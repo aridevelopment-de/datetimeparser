@@ -16,7 +16,9 @@ class TestValidator:
         self.real_cases = real_cases
 
     def validate(self):
-        for testcase in self.test_cases:
+        failed = []
+
+        for i, testcase in enumerate(self.test_cases):
             print(Colors.ANSI_GREEN + "Testcase:", Colors.ANSI_CYAN + testcase + Colors.ANSI_RESET)
 
             p = Parser(testcase)
@@ -28,5 +30,19 @@ class TestValidator:
             evaluator_result = e.evaluate()
 
             print(Colors.ANSI_GREEN + "Evaluator:", (Colors.ANSI_PURPLE if evaluator_result is not None else Colors.ANSI_RED) + str(evaluator_result) + Colors.ANSI_RESET)
+            print()
+
+            if i < len(self.real_cases):
+                test_success = evaluator_result == self.real_cases[i]
+
+                if not test_success:
+                    failed.append(testcase)
+
+                print(Colors.ANSI_BLUE + "Expected:", Colors.ANSI_CYAN + str(self.real_cases[i]) + Colors.ANSI_RESET)
+                print(Colors.ANSI_BLUE + "Success?:", (Colors.ANSI_GREEN if test_success else Colors.ANSI_RED) + str(test_success) + Colors.ANSI_RESET)
+                print()
+
             print(Colors.ANSI_BLUE + ("=" * 80) + Colors.ANSI_RESET)
             print()
+
+        return failed, len(self.test_cases)
