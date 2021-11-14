@@ -27,6 +27,6 @@ class TestValidator:
             e = Evaluator(parser_result)
             evaluator_result = e.evaluate()
 
-            print(Colors.ANSI_GREEN + "Evaluator:", (Colors.ANSI_YELLOW if evaluator_result is not None else Colors.ANSI_RED) + str(evaluator_result) + Colors.ANSI_RESET)
+            print(Colors.ANSI_GREEN + "Evaluator:", (Colors.ANSI_PURPLE if evaluator_result is not None else Colors.ANSI_RED) + str(evaluator_result) + Colors.ANSI_RESET)
             print(Colors.ANSI_BLUE + ("=" * 80) + Colors.ANSI_RESET)
             print()
