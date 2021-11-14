@@ -27,7 +27,7 @@ class Evaluator:
     EVENTS = {
         "silvester": lambda year: f"{year}-12-31 0:00:00",
         "nicholas": lambda year: f"{year}-12-06 0:00:00",
-        "christmas": lambda year: f"{year}-12-24 0:00:00",
+        "christmas": lambda year: f"{year}-12-25 0:00:00",
         "halloween": lambda year: f"{year}-10-31 0:00:00",
     }
 
