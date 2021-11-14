@@ -189,52 +189,44 @@ class Parser:
 
         for keyword in keywords:
             if self.string.lower() in [kw for kw in keyword.get_all()]:
+                # Check if the string is already a constant
                 return Method.CONSTANTS, [keyword]
             else:
                 for kw in keyword.get_all():
                     if kw in self.string.lower():
+                        # Otherwise check for prepositions
                         data = self.string.split(kw)
+
+                        if len(data) != 2:
+                            return None
 
                         if data[0]:
                             # preposition
-                            # next [day] [friday]
-                            # next 2 days
-                            # next two years
-                            # last 2 years
+                            # next [friday]
+                            """
+                            **Don't do next 3 days in here**
+                            The above is parsed in relative_datetimes
+                            so there is no need to parse it here
+                            """
 
-                            preposition = data[0]
-                            number = None
+                            preposition = data[0].strip()
+                            weekday = keyword
 
-                            if len(data[0].split()) > 1:
-                                preposition, number = data[0].split()
+                            number = 0
+                            if preposition == "next":
+                                number = 1
+                            elif preposition == "last":
+                                number = -1
 
-                                if number.isnumeric():
-                                    number = int(number)
-                                else:
-                                    for n in NumberConstants.ALL:
-                                        for number_keyword in n.get_all():
-                                            if number in number_keyword:
-                                                number = n.value
-                                                break
-                                        else:
-                                            continue
-
-                                        break
-                                    else:
-                                        raise ValueError(f"Value '{number}' in context '{preposition} {number} {kw}' is not a number")
-
-                                if preposition == "last":
-                                    number *= -1
+                            if weekday in DatetimeConstants.ALL:
+                                if weekday in DatetimeConstants.TIME:
+                                    return Method.CONSTANTS, [RelativeTime.from_keyword(weekday, delta=number)]
+                                elif weekday in DatetimeConstants.DATE:
+                                    return Method.CONSTANTS, [RelativeDate.from_keyword(weekday, delta=number)]
+                            elif weekday in WeekdayConstants.ALL:
+                                return Method.CONSTANTS, [weekday]
                             else:
-                                number = int(preposition.strip().lower() == "next")
-
-                            if keyword in DatetimeConstants.ALL:
-                                if keyword in DatetimeConstants.TIME:
-                                    return Method.CONSTANTS, [RelativeTime.from_keyword(keyword, delta=number)]
-                                elif keyword in DatetimeConstants.DATE:
-                                    return Method.CONSTANTS, [RelativeDate.from_keyword(keyword, delta=number)]
-                            elif keyword in WeekdayConstants.ALL:
-                                return Method.CONSTANTS, [keyword]
+                                return None
 
                         elif data[1]:
                             # currently only year
@@ -249,11 +241,18 @@ class Parser:
                         return
 
     def parse_relative_datetimes(self):
-        PREPOSITIONS = ["in", "next"]
+        PREPOSITIONS = ["in", "for", "next", "last"]
+
+        data = self.string
+        preposition = ""
 
         for preposition in PREPOSITIONS:
-            if self.string.startswith(preposition):
-                self.string = self.string[len(preposition):]
+            # Even if it doesn't start with a preposition, we still need to check if it's a relative datetime
+            if data.startswith(preposition):
+                data = data[len(preposition):]
+                break
+        else:
+            preposition = ""
 
         """
         idea:
@@ -283,34 +282,52 @@ class Parser:
             append the keyword to the new list
         """
 
-        data = self.string.strip().split()
+        data = data.strip().split()
         new_data = []
 
         for part in data:
-            if part.lower() == "and":
+            not_possible = True
+
+            # We Skip these 3 "prepositions"
+            if part.lower() in ["and", "in", "for"]:
+                not_possible = False
                 continue
 
             elif part.lower() == "a":
-                new_data.append(1)
+                new_data.append(1 if preposition != "last" else -1)
+                not_possible = False
 
             elif part.endswith(","):
                 part = part[:-1]
+                not_possible = False
 
             if part.isnumeric():
-                new_data.append(int(part))
+                new_data.append(int(part) if preposition != "last" else -int(part))
+                not_possible = False
 
             for kw in NumberConstants.ALL:
                 if part.lower() in kw.get_all():
                     new_data.append(kw.value)
+                    not_possible = False
                     break
 
             for keyword in DatetimeConstants.ALL:
+                # Seconds, minutes, ...
                 if part.lower() in keyword.get_all():
+                    if not new_data:
+                        # If there is no number before the keyword, we need to add one ourselves
+                        new_data.append(1 if preposition != "last" else -1)
+                    elif not isinstance(new_data[-1], int):
+                        # If the element before the keyword is not a number we have to add one ourselves
+                        new_data.append(1 if preposition != "last" else -1)
+
                     new_data.append(keyword)
+                    not_possible = False
                     break
             else:
                 if part[:-1].isnumeric():
-                    number = int(part[:-1])
+                    # 1S, 2Y, 3D, ...
+                    number = int(part[:-1]) if preposition != "last" else -int(part[:-1])
                     keyword = part[-1]
 
                     keyword = DatetimeConstants.convert_from_mini_date(keyword)
@@ -318,6 +335,11 @@ class Parser:
                     if keyword is not None:
                         new_data.append(number)
                         new_data.append(keyword)
+
+                        not_possible = False
+
+            if not_possible:
+                return None
 
         date = RelativeDate()
         time = RelativeTime()
