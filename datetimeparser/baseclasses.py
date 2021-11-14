@@ -1,5 +1,3 @@
-import enum
-
 class Printable:
     FIELDS = []
 
@@ -184,8 +182,18 @@ class Keywords:
     IN = Keyword('in')
     FOR = Keyword('for')
 
-class Method(enum.Enum):
-    ABSOLUTE_PREPOSITIONS = enum.auto()
-    ABSOLUTE_DATE_FORMATS = enum.auto()
-    CONSTANTS = enum.auto()
-    RELATIVE_DATETIMES = enum.auto
+class MethodEnum:
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return f"<Method: {self.name}>"
+
+    def __repr__(self):
+        return f"<Method: {self.name}>"
+
+class Method:
+    ABSOLUTE_PREPOSITIONS = MethodEnum('absolute_prepositions')
+    ABSOLUTE_DATE_FORMATS = MethodEnum('absolute_date_formats')
+    CONSTANTS = MethodEnum('constants')
+    RELATIVE_DATETIMES = MethodEnum('relative_datetimes')
