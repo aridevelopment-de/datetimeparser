@@ -14,7 +14,7 @@ tests = [
 ]
 
 validation = [
-    datetime.datetime(year=2018, month=8, day=3, hour=3, minute=4, second=5),
+    datetime.datetime(year=2017, month=8, day=3, hour=3, minute=4, second=5),
     datetime.datetime(year=2017, month=5, day=5, hour=3, minute=4, second=10),
     datetime.datetime(year=2022, month=1, day=10),
     datetime.datetime(year=2023, month=1, day=10),

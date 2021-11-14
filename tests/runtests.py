@@ -1,4 +1,5 @@
 import time
+import sys
 
 try:
     import absolute_datetimeformats
@@ -68,3 +69,8 @@ for module in results:
             print(f"\t\t{Colors.ANSI_RED}- Failed testcase: {Colors.ANSI_CYAN}{test}")
 
         print()
+
+if sum(map(lambda e: len(e[0]), list(results.values()))) > 0:
+    sys.exit(1)
+else:
+    sys.exit(0)
