@@ -1,3 +1,7 @@
+import datetime
+
+now = datetime.datetime.now()
+
 tests = [
     "in 1Y 2m 3W 3d 5H 6M 7S",
     "in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds",
@@ -11,6 +15,7 @@ tests = [
     "next three months"
 ]
 
+# TODO: Validation cases are still undecided, see `general_tests.py`
 validation = [
 
 ]
