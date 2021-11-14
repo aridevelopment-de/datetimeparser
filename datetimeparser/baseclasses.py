@@ -84,6 +84,7 @@ class Constants:
     SILVESTER = Constant('silvester', ['next silvester', 'new years eve', 'next new years eve'])
     EASTERN = Constant('eastern', ['next eastern', 'easter', 'next easter'])
     NICHOLAS = Constant('nicholas', ['next nicholas', 'nicholas day', 'next nicholas day'])
+    HALLOWEEN = Constant('halloween', ['next halloween'])
 
     ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS]
 
