@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 from .baseclasses import *
 
@@ -20,10 +21,11 @@ def eastern_calc(year: int) -> str:
     else:
         return f"{year}-03-{OS} 0:00:00"
 
-curent_date = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d"), "%Y-%m-%d")
-curent_datetime = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
 class Evaluator:
+    CURENT_DATE = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d"), "%Y-%m-%d")
+    CURENT_DATETIME = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+
     EVENTS = {
         "silvester": lambda year: f"{year}-12-31 0:00:00",
         "nicholas": lambda year: f"{year}-12-06 0:00:00",
@@ -32,13 +34,13 @@ class Evaluator:
     }
 
     DAYS = {
-        "monday": f"{curent_date + timedelta((0-curent_date.weekday())%7)}",
-        "tuesday": f"{curent_date + timedelta((1-curent_date.weekday())%7)}",
-        "wednesday": f"{curent_date + timedelta((2-curent_date.weekday())%7)}",
-        "thursday": f"{curent_date + timedelta((3-curent_date.weekday())%7)}",
-        "friday": f"{curent_date + timedelta((4-curent_date.weekday())%7)}",
-        "saturday": f"{curent_date + timedelta((5-curent_date.weekday())%7)}",
-        "sunday": f"{curent_date + timedelta((6-curent_date.weekday())%7)}"
+        "monday": f"{CURENT_DATE + timedelta((0-CURENT_DATE.weekday())%7)}",
+        "tuesday": f"{CURENT_DATE + timedelta((1-CURENT_DATE.weekday())%7)}",
+        "wednesday": f"{CURENT_DATE + timedelta((2-CURENT_DATE.weekday())%7)}",
+        "thursday": f"{CURENT_DATE + timedelta((3-CURENT_DATE.weekday())%7)}",
+        "friday": f"{CURENT_DATE + timedelta((4-CURENT_DATE.weekday())%7)}",
+        "saturday": f"{CURENT_DATE + timedelta((5-CURENT_DATE.weekday())%7)}",
+        "sunday": f"{CURENT_DATE + timedelta((6-CURENT_DATE.weekday())%7)}"
     }
 
 
@@ -62,7 +64,7 @@ class Evaluator:
                 if isinstance(self.parsed_object[1][0], AbsoluteDateTime):
                     out += f"{self.parsed_object[1][0].year}-{self.parsed_object[1][0].month}-{self.parsed_object[1][0].day} 0:00:00"
                 if isinstance(self.parsed_object[1][0], AbsoluteClockTime):
-                    out += f"{datetime.strftime(curent_date, '%Y-%m-%d')} {self.parsed_object[1][0].hour}:{self.parsed_object[1][0].minute}:{self.parsed_object[1][0].second}"
+                    out += f"{datetime.strftime(self.CURENT_DATE, '%Y-%m-%d')} {self.parsed_object[1][0].hour}:{self.parsed_object[1][0].minute}:{self.parsed_object[1][0].second}"
         
 
         if self.parsed_object[0] == Method.ABSOLUTE_PREPOSITIONS:
@@ -87,7 +89,20 @@ class Evaluator:
 
 
         if self.parsed_object[0] == Method.RELATIVE_DATETIMES:
-            pass
+
+            new = self.CURENT_DATETIME
+
+            new += relativedelta(
+                years=self.parsed_object[1][0].years,
+                months=self.parsed_object[1][0].months,
+                weeks=self.parsed_object[1][0].weeks,
+                days=self.parsed_object[1][0].days,
+                hours=self.parsed_object[1][1].hours,
+                minutes=self.parsed_object[1][1].minutes,
+                seconds=self.parsed_object[1][1].seconds
+                )
+            
+            out += f"{datetime.strftime(new, '%Y-%m-%d %H:%M:%S')}"
 
 
         if out:
