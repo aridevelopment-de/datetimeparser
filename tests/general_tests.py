@@ -3,7 +3,8 @@ import datetime
 today = datetime.datetime.today()
 
 tests = [
-    "next 3 years and 2 months"
+    "next 3 years and 2 months",
+    "begin of summer"
 ]
 
 # TODO

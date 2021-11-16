@@ -7,59 +7,27 @@ V 1.0
 ## Erinnerung für den Parser
 - Auf falsche Eingaben überprüfen
 
-## Liste an Events
+## List of events
 
-- ``christmas``
-
-````markdown
-+ Year configurable
-
-When: 24.12.YYYY
-
-Alias:
-- next christmas
-- xmas
-- next xmas
-````
-
-- ``silvester``
-
-````markdown
-+ Year configurable
-
-When: 31.12.YYYY
-
-Alias:
-- next silvester
-- new years eve
-- next new years eve
-````
-
-- ``eastern``
-
-````markdown
-+ Year configurable
-
-When: <NonFixedDay>.04.YYYY
-
-Alias:
-- easter
-- next eastern
-- next easter
-````
-
-- ``nicholas``
-
-````markdown
-+ Year configurable
-
-When: 05.12.YYYY
-
-Alias:
-- next nicholas
-- nicholas day
-- next nicholas day
-`````
+- ``christmas (next christmas, xmas, next xmas)``: 24.12.YYYY
+- ``silvester (next silvester, new years eve, next new years eve)`` 31.12.YYYY
+- ``eastern (next eastern, easter, next easter)``: DD.04.YYYY
+- ``nicholas (next nicholas, nicholas day, next nicholas day)``: 05.12.YYYY
+- ``halloween (next halloween)``: 31.10.YYYY
+- ``valentines (next valentines, valentines day, next valentines day)``: 14.02.YYYY
+- ``april fools day (next april fools day, april fool day, next april fool day)``: 01.04.YYYY
+- ``saint patrick's day [patrick's/patricks](next saint patrick's day, saint patricks day, next saint patricks day)``: 17.03.YYYY
+- ``thanksgiving (next thanksgiving)``: 26.11.YYYY
+- ``summer begin (summer, next summer, begin of summer, begin of the summer)``
+- ``winter begin (winter, next winter, begin of winter, begin of the winter)``
+- ``fall begin [fall/autumn](fall, next fall, begin of fall, begin of the fall)``
+- ``spring begin (spring, next spring, begin of spring, begin of the spring)``
+- ``summer end (end of summer, end of the summer)``
+- ``winter end (end of winter, end of the winter)``
+- ``fall end [fall/autumn](end of fall, end of the fall)``
+- ``spring end (end of spring, end of the spring)``
+- ``aoc begin [aoc/advent of code](aoc, next aoc, begin of aoc, begin of the aoc)``
+- ``aoc end [aoc/advent of code](end of aoc, end of the aoc)``
 
 ## Ideen für Datenarchitektur vom Parser zum Evaluator
 
