@@ -8,10 +8,13 @@ assignees: Ari24-cb24, NekoFanatic
 ---
 
 ## List of new constants/events
+
 ...
 
 ## Formulars to calculate these constants
+
 ...
 
 ## Some extra notes
+
 ...
