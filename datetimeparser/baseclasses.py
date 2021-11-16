@@ -85,8 +85,26 @@ class Constants:
     EASTERN = Constant('eastern', ['next eastern', 'easter', 'next easter'])
     NICHOLAS = Constant('nicholas', ['next nicholas', 'nicholas day', 'next nicholas day'])
     HALLOWEEN = Constant('halloween', ['next halloween'])
+    APRIL_FOOLS_DAY = Constant('april fools day', ['next april fools day', 'april fool day', 'next april fool day'])
+    THANKSGIVING = Constant('thanksgiving', ['next thanksgiving'])
+    SAINT_PATRICKS_DAY = Constant('saint patrick\'s day', ['next saint patrick\'s day', 'saint patricks day', 'next saint patricks day'])
+    VALENTINES_DAY = Constant('valentines day', ['next valentines day', 'valentine', 'next valentine'])
 
-    ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS]
+    SUMMER_BEGIN = Constant('summer begin', ['summer', 'next summer', 'begin of summer', 'begin of the summer'])
+    WINTER_BEGIN = Constant('winter begin', ['winter', 'next winter', 'begin of winter', 'begin of the winter'])
+    SPRING_BEGIN = Constant('spring begin', ['spring', 'next spring', 'begin of spring', 'begin of the spring'])
+    FALL_BEGIN = Constant('fall begin', ['fall', 'begin of fall', 'begin of the fall', 'autumn begin', 'autumn', 'begin of autumn', 'begin of the autumn'])
+    SUMMER_END = Constant('summer end', ['end of summer', 'end of the summer'])
+    WINTER_END = Constant('winter end', ['end of winter', 'end of the winter'])
+    SPRING_END = Constant('spring end', ['end of spring', 'end of the spring'])
+    FALL_END = Constant('fall end', ['end of fall', 'end of the fall', 'autumn end', 'end of autumn', 'end of the autumn'])
+
+    BEGIN_AOC = Constant('aoc begin', ['aoc', 'next aoc', 'begin of aoc', 'begin of the aoc', 'advent of code begin', 'advent of code', 'next advent of code', 'begin of advent of code', 'begin of the advent of code'])
+    END_AOC = Constant('aoc end', ['end of aoc', 'end of the aoc', 'advent of code end', 'end of advent of code', 'end of the advent of code'])
+
+    ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY,
+           SUMMER_BEGIN, WINTER_BEGIN, SPRING_BEGIN, FALL_BEGIN, SUMMER_END, WINTER_END, SPRING_END, FALL_END,
+           BEGIN_AOC, END_AOC]
 
 class NumberConstants:
     # TODO: Add up to 31?
