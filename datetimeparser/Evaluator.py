@@ -22,6 +22,10 @@ def eastern_calc(year: int) -> str:
         return f"{year}-03-{OS} 0:00:00"
 
 
+def thanksgiving_calc(year: int) -> str:
+    pass
+
+
 class Evaluator:
     CURENT_DATE = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d"), "%Y-%m-%d")
     CURENT_DATETIME = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
@@ -31,6 +35,7 @@ class Evaluator:
         "nicholas": lambda year: f"{year}-12-06 0:00:00",
         "christmas": lambda year: f"{year}-12-25 0:00:00",
         "halloween": lambda year: f"{year}-10-31 0:00:00",
+        "april fools day": lambda year: f"{year}-04-01 0:00:00",
     }
 
     DAYS = {
@@ -77,13 +82,25 @@ class Evaluator:
                 for object_type in self.parsed_object[1]:
                     if isinstance(object_type, Constant):
                         if str(object_type.name) == "eastern":
-                            out = f"{eastern_calc(self.parsed_object[1][1].year)}"
+                            dt = datetime.strptime(f"{eastern_calc(self.parsed_object[1][1].year)}", "%Y-%m-%d %H:%M:%S")
+                        elif str(object_type.name) == "thanksgiving":
+                            dt = datetime.strptime(f"{thanksgiving_calc(self.parsed_object[1][1].year)}", "%Y-%m-%d %H:%M:%S")
                         else:
-                            out += f"{self.EVENTS[str(object_type.name)](self.parsed_object[1][1].year)}"
+                            dt = datetime.strptime(f"{self.EVENTS[str(object_type.name)](self.parsed_object[1][1].year)}", "%Y-%m-%d %H:%M:%S")
+                        if self.CURENT_DATETIME > dt and self.parsed_object[1][1].year == 0:
+                            dt += relativedelta(years=1)
+                            out += f"{dt}"
+                        else:
+                            out += f"{dt}"
 
             else:
                 if self.parsed_object[1][0].name in self.EVENTS:
-                    out += f"{self.EVENTS[str(self.parsed_object[1][0].name)](datetime.strftime(datetime.today(), '%Y'))}"
+                    dt = datetime.strptime(f"{self.EVENTS[str(self.parsed_object[1][0].name)](datetime.strftime(datetime.today(), '%Y'))}", "%Y-%m-%d %H:%M:%S")
+                    if self.CURENT_DATETIME > dt:
+                        dt += relativedelta(years=1)
+                        out += f"{dt}"
+                    else:
+                        out += f"{dt}"
                 else:
                     out += f"{self.DAYS[str(self.parsed_object[1][0].name)]}"
 
