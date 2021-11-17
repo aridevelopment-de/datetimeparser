@@ -7,7 +7,7 @@ assignees: Ari24-cb24
 
 ---
 
-## Expected input
+## Given input
 
 ...
 
