@@ -4,7 +4,7 @@ today = datetime.datetime.today()
 
 tests = [
     "next 3 years and 2 months",
-    "begin of summer"
+    "in 2d, 500 h 2 seconds and 4 minutes"
 ]
 
 # TODO

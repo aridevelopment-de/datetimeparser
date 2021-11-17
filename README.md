@@ -14,9 +14,9 @@ V 1.0
 - ``eastern (next eastern, easter, next easter)``: DD.04.YYYY
 - ``nicholas (next nicholas, nicholas day, next nicholas day)``: 05.12.YYYY
 - ``halloween (next halloween)``: 31.10.YYYY
-- ``valentines (next valentines, valentines day, next valentines day)``: 14.02.YYYY
+- ``valentines [valentines/valentine](next valentines, valentines day, next valentines day)``: 14.02.YYYY
 - ``april fools day (next april fools day, april fool day, next april fool day)``: 01.04.YYYY
-- ``saint patrick's day [patrick's/patricks](next saint patrick's day, saint patricks day, next saint patricks day)``: 17.03.YYYY
+- ``saint patrick's day [saint/st./st][patrick's/patricks](next saint patrick's day)``: 17.03.YYYY
 - ``thanksgiving (next thanksgiving)``: 26.11.YYYY
 - ``summer begin (summer, next summer, begin of summer, begin of the summer)``
 - ``winter begin (winter, next winter, begin of winter, begin of the winter)``
@@ -28,6 +28,7 @@ V 1.0
 - ``spring end (end of spring, end of the spring)``
 - ``aoc begin [aoc/advent of code](aoc, next aoc, begin of aoc, begin of the aoc)``
 - ``aoc end [aoc/advent of code](end of aoc, end of the aoc)``
+- ``end of year (the end of year, the end of the year)``
 
 ## Ideen für Datenarchitektur vom Parser zum Evaluator
 

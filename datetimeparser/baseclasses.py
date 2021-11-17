@@ -87,24 +87,36 @@ class Constants:
     HALLOWEEN = Constant('halloween', ['next halloween'])
     APRIL_FOOLS_DAY = Constant('april fools day', ['next april fools day', 'april fool day', 'next april fool day'])
     THANKSGIVING = Constant('thanksgiving', ['next thanksgiving'])
-    SAINT_PATRICKS_DAY = Constant('saint patrick\'s day', ['next saint patrick\'s day', 'saint patricks day', 'next saint patricks day'])
-    VALENTINES_DAY = Constant('valentines day', ['next valentines day', 'valentine', 'next valentine'])
+    SAINT_PATRICKS_DAY = Constant('saint patrick\'s day', ['next saint patrick\'s day', 'saint patricks day',
+                                                           'next saint patricks day', 'st. patrick\'s day',
+                                                           'next st. patrick\'s day', 'saint st. day',
+                                                           'next st. patricks day', 'st patrick\'s day',
+                                                           'next st patrick\'s day', 'st patricks day',
+                                                           'next st patricks day'])
+    VALENTINES_DAY = Constant('valentines day', ['next valentines day', 'valentine', 'next valentine', 'valentine day', 'next valentine day'])
 
     SUMMER_BEGIN = Constant('summer begin', ['summer', 'next summer', 'begin of summer', 'begin of the summer'])
     WINTER_BEGIN = Constant('winter begin', ['winter', 'next winter', 'begin of winter', 'begin of the winter'])
     SPRING_BEGIN = Constant('spring begin', ['spring', 'next spring', 'begin of spring', 'begin of the spring'])
-    FALL_BEGIN = Constant('fall begin', ['fall', 'begin of fall', 'begin of the fall', 'autumn begin', 'autumn', 'begin of autumn', 'begin of the autumn'])
+    FALL_BEGIN = Constant('fall begin', ['fall', 'begin of fall', 'begin of the fall', 'autumn begin', 'autumn',
+                                         'begin of autumn', 'begin of the autumn'])
     SUMMER_END = Constant('summer end', ['end of summer', 'end of the summer'])
     WINTER_END = Constant('winter end', ['end of winter', 'end of the winter'])
     SPRING_END = Constant('spring end', ['end of spring', 'end of the spring'])
     FALL_END = Constant('fall end', ['end of fall', 'end of the fall', 'autumn end', 'end of autumn', 'end of the autumn'])
 
-    BEGIN_AOC = Constant('aoc begin', ['aoc', 'next aoc', 'begin of aoc', 'begin of the aoc', 'advent of code begin', 'advent of code', 'next advent of code', 'begin of advent of code', 'begin of the advent of code'])
-    END_AOC = Constant('aoc end', ['end of aoc', 'end of the aoc', 'advent of code end', 'end of advent of code', 'end of the advent of code'])
+    BEGIN_AOC = Constant('aoc begin', ['aoc', 'next aoc', 'begin of aoc', 'begin of the aoc', 'advent of code begin',
+                                       'advent of code', 'next advent of code', 'begin of advent of code',
+                                       'begin of the advent of code'])
+    END_AOC = Constant('aoc end', ['end of aoc', 'end of the aoc', 'advent of code end', 'end of advent of code',
+                                   'end of the advent of code'])
 
-    ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY,
-           SUMMER_BEGIN, WINTER_BEGIN, SPRING_BEGIN, FALL_BEGIN, SUMMER_END, WINTER_END, SPRING_END, FALL_END,
-           BEGIN_AOC, END_AOC]
+    END_OF_YEAR = Constant('end of year', ['the end of year', 'the end of the year', 'end of the year'])
+
+    ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY, VALENTINES_DAY,
+           SUMMER_END, WINTER_END, SPRING_END, FALL_END, SUMMER_BEGIN, WINTER_BEGIN, SPRING_BEGIN, FALL_BEGIN,
+           BEGIN_AOC, END_AOC,
+           END_OF_YEAR]
 
 class NumberConstants:
     # TODO: Add up to 31?
@@ -151,11 +163,11 @@ class DatetimeConstants:
 
     @classmethod
     def convert_from_mini_date(cls, md):
-        if md == "S":
+        if md.lower() == "s":
             return cls.SECONDS
         elif md == "M":
             return cls.MINUTES
-        elif md == "H":
+        elif md.lower() == "h":
             return cls.HOURS
         elif md.lower() == "w":
             return cls.WEEKS

@@ -12,7 +12,23 @@ tests = [
     "last month",
     "next hour",
     "next year",
-    "eastern 2010"
+    "eastern 2010",
+    "halloween 2030",
+    "next april fools day",
+    "thanksgiving",
+    "next st patricks day",
+    "valentine day 2010",  # fail
+    "summer",
+    "winter 2021",
+    "next spring",
+    "begin of fall 2010",
+    "summer end",
+    "end of winter",
+    "end of the spring",
+    "end of autumn 2020",
+    "begin of advent of code 2022",
+    "end of aoc 2022",
+    "end of the year"
 ]
 
 validation = [
