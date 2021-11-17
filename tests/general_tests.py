@@ -4,8 +4,9 @@ today = datetime.datetime.today()
 
 tests = [
     "next 3 years and 2 months",
-    "in 2d, 500 h 2 seconds and 4 minutes"
-]
+    "in 2d, 500 h 2 seconds and 4 minutes",
+    "2 days after christmas 2023"
+][-1:]
 
 # TODO
 """
