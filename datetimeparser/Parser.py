@@ -141,6 +141,7 @@ class Parser:
             Years
             Months
             Weekdays
+            Constants <year>
             """
 
             data = data.lower()
@@ -149,13 +150,24 @@ class Parser:
             for keyword in keywords:
                 if data in [kw for kw in keyword.get_all()]:
                     return (keyword,)
-                elif data.isnumeric():
-                    data = int(data)
+                else:
+                    for kw in keyword.get_all():
+                        d = data.split()
 
-                    if 1970 <= data <= 9999:
-                        return (AbsoluteDateTime(year=data),)
+                        if d[-1].isnumeric() and " ".join(d[:-1]).lower() == kw:
+                            year = int(d[-1])
+
+                            if 1970 < year < 9999:
+                                return keyword, AbsoluteDateTime(year=year)
+                    else:
+                        if data.isnumeric():
+                            data = int(data)
+
+                            if 1970 <= data <= 9999:
+                                return (AbsoluteDateTime(year=data),)
         else:
             return self.__convert_absolute_preposition_tokens(data)
+
         return data
 
     def __convert_absolute_preposition_tokens(self, data):

@@ -17,7 +17,7 @@ tests = [
     "next april fools day",
     "thanksgiving",
     "next st patricks day",
-    "valentine day 2010",  # fail
+    "valentine day 2010",
     "summer",
     "winter 2021",
     "next spring",
