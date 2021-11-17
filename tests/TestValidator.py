@@ -1,3 +1,5 @@
+import time
+
 try:
     from datetimeparser.Parser import Parser
     from datetimeparser.Evaluator import Evaluator
@@ -24,10 +26,14 @@ class TestValidator:
             p = Parser(testcase)
             parser_result = p.parse()
 
+            time.sleep(.1)
+
             print(Colors.ANSI_GREEN + "Parser:", (Colors.ANSI_YELLOW if parser_result is not None else Colors.ANSI_RED) + str(parser_result) + Colors.ANSI_RESET)
 
             e = Evaluator(parser_result)
             evaluator_result = e.evaluate()
+
+            time.sleep(.1)
 
             print(Colors.ANSI_GREEN + "Evaluator:", (Colors.ANSI_PURPLE if evaluator_result is not None else Colors.ANSI_RED) + str(evaluator_result) + Colors.ANSI_RESET)
             print()
