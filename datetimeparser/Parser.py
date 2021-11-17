@@ -101,7 +101,7 @@ class Parser:
             if string.strip().isnumeric():
                 return (int(string.strip()),)
 
-            raise ValueError(f'{string} is not a valid number')
+            raise ValueError(f'{string} is not a valid number in context {self.string}')
 
         else:
             # second day, 3rd week, 4. month, three months, 3 months
@@ -195,12 +195,15 @@ class Parser:
                 for kw in keyword.get_all():
                     if kw in self.string.lower():
                         # Otherwise check for prepositions
-                        data = self.string.split(kw)
+                        """
+                        It can be only one of the following:
+                        last <word>
+                        next <word>
+                        <word> 2020
+                        """
+                        data = self.string.split()
 
-                        if len(data) != 2:
-                            return None
-
-                        if data[0]:
+                        if data[0].strip().lower() in ('last', 'next') and " ".join(data[1:]).lower() == kw:
                             # preposition
                             # next [friday]
                             """
@@ -228,17 +231,14 @@ class Parser:
                             else:
                                 return None
 
-                        elif data[1]:
+                        elif data[-1].isnumeric() and " ".join(data[:-1]).lower() == kw:
                             # currently only year
                             # xmas 2025
 
-                            if data[1].strip().isnumeric():
-                                year = int(data[1])
+                            year = int(data[-1])
 
-                                if 1970 <= year <= 9999:
-                                    return Method.CONSTANTS, [keyword, AbsoluteDateTime(year=year)]
-
-                        return
+                            if 1970 <= year <= 9999:
+                                return Method.CONSTANTS, [keyword, AbsoluteDateTime(year=year)]
 
     def parse_relative_datetimes(self):
         PREPOSITIONS = ["in", "for", "next", "last"]
@@ -404,8 +404,8 @@ class Parser:
         PROCEDURE = [
             self.parse_absolute_date_formats,
             self.parse_relative_datetimes,
-            self.parse_absolute_prepositions,
-            self.parse_constants
+            self.parse_constants,
+            self.parse_absolute_prepositions
         ]
 
         result = None
