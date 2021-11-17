@@ -151,11 +151,11 @@ class DatetimeConstants:
 
     @classmethod
     def convert_from_mini_date(cls, md):
-        if md == "S":
+        if md.lower() == "s":
             return cls.SECONDS
         elif md == "M":
             return cls.MINUTES
-        elif md == "H":
+        elif md.lower() == "h":
             return cls.HOURS
         elif md.lower() == "w":
             return cls.WEEKS

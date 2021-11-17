@@ -290,7 +290,6 @@ class Parser:
 
             # We Skip these 3 "prepositions"
             if part.lower() in ["and", "in", "for"]:
-                not_possible = False
                 continue
 
             elif part.lower() == "a":
@@ -299,7 +298,20 @@ class Parser:
 
             elif part.endswith(","):
                 part = part[:-1]
-                not_possible = False
+
+            if len(part) == 1:
+                keyword = DatetimeConstants.convert_from_mini_date(part)
+
+                if keyword is not None:
+                    if not new_data:
+                        # If there is no number before the keyword, we need to add one ourselves
+                        new_data.append(1 if preposition != "last" else -1)
+                    elif not isinstance(new_data[-1], int):
+                        # If the element before the keyword is not a number we have to add one ourselves
+                        new_data.append(1 if preposition != "last" else -1)
+
+                    new_data.append(keyword)
+                    not_possible = False
 
             if part.isnumeric():
                 new_data.append(int(part) if preposition != "last" else -int(part))
