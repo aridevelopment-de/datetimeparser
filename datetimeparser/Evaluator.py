@@ -23,7 +23,16 @@ def eastern_calc(year: int) -> str:
 
 
 def thanksgiving_calc(year: int) -> str:
-    pass
+    YEAR = datetime.strptime(f"{year}-11-29 0:00:00", "%Y-%m-%d %H:%M:%S")
+    DATE = datetime.strptime(f"{year}-11-3 0:00:00", "%Y-%m-%d %H:%M:%S")
+    return YEAR - timedelta(days=(DATE.weekday() + 2))
+
+
+def days_feb(year: int) -> str:
+    if int(year) % 400 == 0 or int(year) % 4 == 0 and not int(year) % 100 == 0:
+        return "29"
+    else:
+        return "28"
 
 
 class Evaluator:
@@ -36,6 +45,27 @@ class Evaluator:
         "christmas": lambda year: f"{year}-12-25 0:00:00",
         "halloween": lambda year: f"{year}-10-31 0:00:00",
         "april fools day": lambda year: f"{year}-04-01 0:00:00",
+        "eastern": eastern_calc,
+        "thanksgiving": thanksgiving_calc,
+        "saint patrick's day": lambda year: f"{year}-03-17 0:00:00",
+        "valentines day": lambda year: f"{year}-02-14 0:00:00",
+
+        # metereological dates, if someone has any problem with that... -> fork this project, build a function for that and create a pull request :)
+        "spring begin": lambda year: f"{year}-03-01 0:00:00",
+        "spring end": lambda year: f"{year}-05-31 23:59:59",
+        "summer begin": lambda year: f"{year}-06-01 0:00:00",
+        "summer end": lambda year: f"{year}-08-31 23:59:59",
+        "fall begin": lambda year: f"{year}-09-01 0:00:00",
+        "fall end": lambda year: f"{year}-11-30 23:59:59",
+        "winter begin": lambda year: f"{year}-12-01 0:00:00",
+        "winter end": lambda year: f"{year}-02-{days_feb(year)} 23:59:59",
+
+        "aoc begin": lambda year: f"{year}-12-01 6:00:00",
+        "aoc end": lambda year: f"{year}-12-30 6:00:00",
+
+        "end of year": lambda year: f"{year}-12-31 23:59:59",
+
+        "infinity": -1
     }
 
     DAYS = {
@@ -81,12 +111,7 @@ class Evaluator:
             if len(self.parsed_object[1]) == 2:
                 for object_type in self.parsed_object[1]:
                     if isinstance(object_type, Constant):
-                        if str(object_type.name) == "eastern":
-                            dt = datetime.strptime(f"{eastern_calc(self.parsed_object[1][1].year)}", "%Y-%m-%d %H:%M:%S")
-                        elif str(object_type.name) == "thanksgiving":
-                            dt = datetime.strptime(f"{thanksgiving_calc(self.parsed_object[1][1].year)}", "%Y-%m-%d %H:%M:%S")
-                        else:
-                            dt = datetime.strptime(f"{self.EVENTS[str(object_type.name)](self.parsed_object[1][1].year)}", "%Y-%m-%d %H:%M:%S")
+                        dt = datetime.strptime(f"{self.EVENTS[str(object_type.name)](self.parsed_object[1][1].year)}", "%Y-%m-%d %H:%M:%S")
                         if self.CURENT_DATETIME > dt and self.parsed_object[1][1].year == 0:
                             dt += relativedelta(years=1)
                             out += f"{dt}"
@@ -95,6 +120,8 @@ class Evaluator:
 
             else:
                 if self.parsed_object[1][0].name in self.EVENTS:
+                    if self.parsed_object[1][0].name == "infinity":
+                            return self.EVENTS["infinity"]
                     dt = datetime.strptime(f"{self.EVENTS[str(self.parsed_object[1][0].name)](datetime.strftime(datetime.today(), '%Y'))}", "%Y-%m-%d %H:%M:%S")
                     if self.CURENT_DATETIME > dt:
                         dt += relativedelta(years=1)

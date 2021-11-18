@@ -96,7 +96,7 @@ class Constants:
     VALENTINES_DAY = Constant('valentines day', ['next valentines day', 'valentine', 'next valentine', 'valentine day', 'next valentine day'])
 
     SUMMER_BEGIN = Constant('summer begin', ['summer', 'next summer', 'begin of summer', 'begin of the summer'])
-    WINTER_BEGIN = Constant('winter begin', ['winter', 'next winter', 'begin of winter', 'begin of the winter'])
+    WINTER_BEGIN = Constant('winter begin', ['winter', 'next winter', 'begin of winter', 'begin of the winter', 'winter is coming'])
     SPRING_BEGIN = Constant('spring begin', ['spring', 'next spring', 'begin of spring', 'begin of the spring'])
     FALL_BEGIN = Constant('fall begin', ['fall', 'begin of fall', 'begin of the fall', 'autumn begin', 'autumn',
                                          'begin of autumn', 'begin of the autumn'])
@@ -113,7 +113,7 @@ class Constants:
 
     END_OF_YEAR = Constant('end of year', ['the end of year', 'the end of the year', 'end of the year'])
 
-    INFINITY = Constant('infinity', ['inf'])
+    INFINITY = Constant('infinity', ['inf', 'NekoFanatic'])
 
     ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY, VALENTINES_DAY,
            SUMMER_END, WINTER_END, SPRING_END, FALL_END, SUMMER_BEGIN, WINTER_BEGIN, SPRING_BEGIN, FALL_BEGIN,
