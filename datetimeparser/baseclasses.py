@@ -113,10 +113,13 @@ class Constants:
 
     END_OF_YEAR = Constant('end of year', ['the end of year', 'the end of the year', 'end of the year'])
 
+    INFINITY = Constant('infinity', ['inf'])
+
     ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY, VALENTINES_DAY,
            SUMMER_END, WINTER_END, SPRING_END, FALL_END, SUMMER_BEGIN, WINTER_BEGIN, SPRING_BEGIN, FALL_BEGIN,
            BEGIN_AOC, END_AOC,
-           END_OF_YEAR]
+           END_OF_YEAR,
+           INFINITY]
 
 class NumberConstants:
     # TODO: Add up to 31?
