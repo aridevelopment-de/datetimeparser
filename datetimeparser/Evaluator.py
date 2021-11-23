@@ -61,7 +61,7 @@ class Evaluator:
         "winter end": lambda year: f"{year}-02-{days_feb(year)} 23:59:59",
 
         "aoc begin": lambda year: f"{year}-12-01 6:00:00",
-        "aoc end": lambda year: f"{year}-12-30 6:00:00",
+        "aoc end": lambda year: f"{year}-12-26 6:00:00",
 
         "end of year": lambda year: f"{year}-12-31 23:59:59",
 
