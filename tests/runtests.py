@@ -25,11 +25,11 @@ except (ImportError, ModuleNotFoundError):
     from Colors import Colors
 
 TESTS = [
-    absolute_datetimeformats,
+    # absolute_datetimeformats,
     absolute_prepositions,
-    relative_events,
-    relative_datetimes,
-    general_tests
+    # relative_events,
+    # relative_datetimes,
+    # general_tests
 ]
 
 results = {}

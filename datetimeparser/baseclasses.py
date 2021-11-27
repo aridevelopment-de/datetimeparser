@@ -33,6 +33,27 @@ class RelativeDate(Printable):
         self.days = days
 
     @classmethod
+    def join(cls, o1, o2):
+        new = RelativeDate()
+
+        for field in cls.FIELDS:
+            d1 = getattr(o1, field)
+            d2 = getattr(o2, field)
+
+            if d1 == 0 and d2 == 0:
+                continue
+
+            if d1 != 0 and d2 != 0:
+                setattr(new, field, d2)
+
+            if d1 == 0:
+                setattr(new, field, d2)
+            elif d2 == 0:
+                setattr(new, field, d1)
+
+        return new
+
+    @classmethod
     def from_keyword(cls, keyword, delta=1):
         if keyword == DatetimeConstants.DAYS:
             return RelativeDate(days=delta)
@@ -50,6 +71,27 @@ class RelativeTime(Printable):
         self.hours = hours
         self.minutes = minutes
         self.seconds = seconds
+
+    @classmethod
+    def join(cls, o1, o2):
+        new = RelativeTime()
+
+        for field in cls.FIELDS:
+            d1 = getattr(o1, field)
+            d2 = getattr(o2, field)
+
+            if d1 == 0 and d2 == 0:
+                continue
+
+            if d1 != 0 and d2 != 0:
+                setattr(new, field, d2)
+
+            if d1 == 0:
+                setattr(new, field, d2)
+            elif d2 == 0:
+                setattr(new, field, d1)
+
+        return new
 
     @classmethod
     def from_keyword(cls, keyword, delta=1):
