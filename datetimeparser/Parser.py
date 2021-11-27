@@ -73,56 +73,88 @@ class Parser:
         :return:
         """
 
-        string = string.split()
+        parts = string.split()
+        data = []
 
-        if len(string) == 1:
-            # 1st, first, 1.
+        """
+        kinda the same as parse_relative_datetimes
+        
+        a day and 3 minutes after 4 months before christmas 2021
+        10 days and 2 hours after xmas
+        the 5th day after next christmas
+        
+        we'll parse here:
+        
+        3 seconds, 2 minutes and 4 hours
+        a day and 3 minutes
+        10 days and 2 hours
+        the 5th day
+        the fifth day
+        3rd week
+        4. week
+        """
 
-            string = string[0].strip()
+        for part in parts:
+            part = part.strip()
 
-            # check the first tenth numbers
+            if part.endswith(","):
+                part = part[:-1]
+
+            if part.lower() in ("and", ",", "the"):
+                continue
+
+            if part.lower() == "a":
+                data.append(1)
+                continue
+
+            if part.isnumeric():
+                data.append(int(part))
+                continue
+
+            found_one = False
+
+            # 1st, 1., first
             for kw in NumberCountConstants.ALL:
                 for alias in kw.get_all():
-                    if alias == string:
-                        return (kw.value,)
+                    if alias == part.lower():
+                        data.append(kw.value)
+                        found_one = True
+                        break
+                else:
+                    continue
 
-            # now do manually checks
-            # 3th
-            if string.endswith("th"):
-                if string[:-2].isnumeric():
-                    return (int(string[:-2]),)
+                break
 
-            # 3.
-            if string.endswith("."):
-                if string[:-1].isnumeric():
-                    return (int(string[:-1]),)
+            if found_one:
+                continue
 
-            # 3
-            if string.strip().isnumeric():
-                return (int(string.strip()),)
+            # one, two, three
+            for kw in NumberConstants.ALL:
+                for alias in kw.get_all():
+                    if alias == part.lower():
+                        data.append(kw.value)
+                        found_one = True
+                        break
+                else:
+                    continue
 
-            raise ValueError(f'{string} is not a valid number in context {self.string}')
+                break
 
-        else:
-            # second day, 3rd week, 4. month, three months, 3 months
-            # special case: the fifth week
+            if found_one:
+                continue
 
-            if string[0].strip().lower() == "the":
-                string = string[1:]
+            # date and time
+            for kw in DatetimeConstants.ALL:
+                for alias in kw.get_all():
+                    if alias == part.lower():
+                        data.append(kw)
+                        break
+                else:
+                    continue
 
-            if len(string) > 2:
-                raise ValueError(f'Too many values to unpack ({string})')
+                break
 
-            number, value = string
-            number = self.__parse_relative_statement(number)[0]
-
-            ALL = [*Constants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL, *DatetimeConstants.ALL]
-
-            for kw in ALL:
-                if value.strip().lower() in [alias for alias in kw.get_all()]:
-                    return number, kw
-
-        raise ValueError(f'Unknown string {string}')
+        return data
 
     def __parse_absolute_keyword(self, string):
         string = string.lower()
@@ -173,9 +205,17 @@ class Parser:
     def __convert_absolute_preposition_tokens(self, data):
         new_data = []
 
-        for part in data:
+        for i, part in enumerate(data):
             if part['type'] == 'relative':
+                relative_data = []
+
                 for d in self.__parse_relative_statement(part['data']):
+                    relative_data.append(d)
+
+                next_preposition = [*filter(lambda e: e['type'] == 'keyword', data[i:])][0]['data']
+                relative_data = self.__convert_absolute_prepositions_better_relative(relative_data, next_preposition)
+
+                for d in relative_data:
                     new_data.append(d)
             elif part['type'] == 'keyword':
                 new_data.append(self.__parse_absolute_keyword(part['data']))
@@ -184,6 +224,39 @@ class Parser:
                     new_data.append(d)
 
         return new_data
+
+    @staticmethod
+    def __convert_absolute_prepositions_better_relative(tokens, preposition):
+        # We currently support every preposition ('after', 'before', 'in')
+        if len(tokens) == 1 or len(tokens) % 2 != 0:
+            return tokens
+
+        new_tokens = []
+
+        for i in range(0, len(tokens), 2):
+            value, unit = tokens[i], tokens[i + 1]
+
+            if isinstance(value, int) and unit in DatetimeConstants.ALL:
+                value *= -1 if preposition == 'before' else 1
+
+                if unit in DatetimeConstants.DATE:
+                    data = RelativeDate.from_keyword(unit, value)
+                elif unit in DatetimeConstants.TIME:
+                    data = RelativeTime.from_keyword(unit, value)
+                else:
+                    raise RuntimeError("Unknown unit:", unit)
+
+                if i == 0:
+                    new_tokens.append(data)
+                else:
+                    if type(new_tokens[-1]) is type(data):
+                        token_before = new_tokens.pop()
+                        new_obj = token_before.join(token_before, data)
+                        new_tokens.append(new_obj)
+                    else:
+                        new_tokens.append(data)
+
+        return new_tokens
 
     def parse_absolute_prepositions(self):
         splitted = self.__get_absolute_preposition_parts(self.string)
@@ -252,10 +325,10 @@ class Parser:
                             if 1970 <= year <= 9999:
                                 return Method.CONSTANTS, [keyword, AbsoluteDateTime(year=year)]
 
-    def parse_relative_datetimes(self):
+    @staticmethod
+    def parse_relative_datetimes(data):
         PREPOSITIONS = ["in", "for", "next", "last"]
 
-        data = self.string
         preposition = ""
 
         for preposition in PREPOSITIONS:
@@ -266,6 +339,7 @@ class Parser:
         else:
             preposition = ""
 
+        # TODO: Add continue for comma with spaces around it
         """
         idea:
         1 Year and 2 months, 3d 5 minutes
@@ -415,7 +489,7 @@ class Parser:
 
         PROCEDURE = [
             self.parse_absolute_date_formats,
-            self.parse_relative_datetimes,
+            lambda: self.parse_relative_datetimes(self.string),
             self.parse_constants,
             self.parse_absolute_prepositions
         ]

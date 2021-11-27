@@ -9,7 +9,10 @@ tests = [
     "1st of august",
     "fifth month of 2021",
     "second day after august",
-    "3 months before the fifth week of august"
+    "3 months before the fifth week of august",
+    "10 days and 2 hours after 3 months before christmas 2020",
+    "a day and 3 minutes after 4 months before christmas 2021",
+    "3 minutes and 4 hours, 2 seconds after new years eve 2000"
 ]
 
 validation = [
