@@ -164,7 +164,7 @@ class Constants:
            INFINITY]
 
 class NumberConstants:
-    # TODO: Add up to 31?
+    # Presented to you by github copilot
     ONE = Constant('one', value=1)
     TWO = Constant('two', value=2)
     THREE = Constant('three', value=3)
@@ -175,23 +175,73 @@ class NumberConstants:
     EIGHT = Constant('eight', value=8)
     NINE = Constant('nine', value=9)
     TEN = Constant('ten', value=10)
+    ELEVEN = Constant('eleven', value=11)
+    TWELVE = Constant('twelve', value=12)
+    THIRTEEN = Constant('thirteen', value=13)
+    FOURTEEN = Constant('fourteen', value=14)
+    FIFTEEN = Constant('fifteen', value=15)
+    SIXTEEN = Constant('sixteen', value=16)
+    SEVENTEEN = Constant('seventeen', value=17)
+    EIGHTEEN = Constant('eighteen', value=18)
+    NINETEEN = Constant('nineteen', value=19)
+    TWENTY = Constant('twenty', value=20)
+    TWENTY_ONE = Constant('twenty one', alias=["twentyone"], value=21)
+    TWENTY_TWO = Constant('twenty two', alias=["twentytwo"], value=22)
+    TWENTY_THREE = Constant('twenty three', alias=["twentythree"], value=23)
+    TWENTY_FOUR = Constant('twenty four', alias=["twentyfour"], value=24)
+    TWENTY_FIVE = Constant('twenty five', alias=["twentyfive"], value=25)
+    TWENTY_SIX = Constant('twenty six', alias=["twentysix"], value=26)
+    TWENTY_SEVEN = Constant('twenty seven', alias=["twentyseven"], value=27)
+    TWENTY_EIGHT = Constant('twenty eight', alias=["twentyeight"], value=28)
+    TWENTY_NINE = Constant('twenty nine', alias=["twentynine"], value=29)
+    THIRTY = Constant('thirty', value=30)
+    THIRTY_ONE = Constant('thirty one', alias=["thirtyone"], value=31)
 
-    ALL = [ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN]
+    # Reversed to avoid conflicts with other constants (one is included in twenty one)
+    ALL = [ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN,
+           ELEVEN, TWELVE, THIRTEEN, FOURTEEN, FIFTEEN, SIXTEEN, SEVENTEEN, EIGHTEEN, NINETEEN, TWENTY,
+           TWENTY_ONE, TWENTY_TWO, TWENTY_THREE, TWENTY_FOUR, TWENTY_FIVE, TWENTY_SIX, TWENTY_SEVEN, TWENTY_EIGHT, TWENTY_NINE,
+           THIRTY, THIRTY_ONE][::-1]
 
 class NumberCountConstants:
-    # TODO: Add up to 31?
-    FIRST = Constant('first', ['1st', '1.'], value=1)
-    SECOND = Constant('second', ['2nd', '2.'], value=2)
-    THIRD = Constant('third', ['3rd', '3.'], value=3)
-    FOURTH = Constant('fourth', ['4th', '4.'], value=4)
-    FIFTH = Constant('fifth', ['5th', '5.'], value=5)
-    SIXTH = Constant('sixth', ['6th', '6.'], value=6)
-    SEVENTH = Constant('seventh', ['7th', '7.'], value=7)
-    EIGHTH = Constant('eighth', ['8th', '8.'], value=8)
-    NINTH = Constant('ninth', ['9th', '9.'], value=9)
-    TENTH = Constant('tenth', ['10th', '10.'], value=10)
+    # Presented to you by github copilot
+    FIRST = Constant('first', alias=['1st', '1.'], value=1)
+    SECOND = Constant('second', alias=['2nd', '2.'], value=2)
+    THIRD = Constant('third', alias=['3rd', '3.'], value=3)
+    FOURTH = Constant('fourth', alias=['4th', '4.'], value=4)
+    FIFTH = Constant('fifth', alias=['5th', '5.'], value=5)
+    SIXTH = Constant('sixth', alias=['6th', '6.'], value=6)
+    SEVENTH = Constant('seventh', alias=['7th', '7.'], value=7)
+    EIGHTH = Constant('eighth', alias=['8th', '8.'], value=8)
+    NINTH = Constant('ninth', alias=['9th', '9.'], value=9)
+    TENTH = Constant('tenth', alias=['10th', '10.'], value=10)
+    ELEVENTH = Constant('eleventh', alias=['11th', '11.'], value=11)
+    TWELFTH = Constant('twelfth', alias=['12th', '12.'], value=12)
+    THIRTEENTH = Constant('thirteenth', alias=['13th', '13.'], value=13)
+    FOURTEENTH = Constant('fourteenth', alias=['14th', '14.'], value=14)
+    FIFTEENTH = Constant('fifteenth', alias=['15th', '15.'], value=15)
+    SIXTEENTH = Constant('sixteenth', alias=['16th', '16.'], value=16)
+    SEVENTEENTH = Constant('seventeenth', alias=['17th', '17.'], value=17)
+    EIGHTEENTH = Constant('eighteenth', alias=['18th', '18.'], value=18)
+    NINETEENTH = Constant('nineteenth', alias=['19th', '19.'], value=19)
+    TWENTIETH = Constant('twentieth', alias=['20th', '20.'], value=20)
+    TWENTY_FIRST = Constant('twenty first', alias=['21st', '21.', 'twentyfirst'], value=21)
+    TWENTY_SECOND = Constant('twenty second', alias=['22nd', '22.', 'twentysecond'], value=22)
+    TWENTY_THIRD = Constant('twenty third', alias=['23rd', '23.', 'twentythird'], value=23)
+    TWENTY_FOURTH = Constant('twenty fourth', alias=['24th', '24.', 'twentyfourth'], value=24)
+    TWENTY_FIFTH = Constant('twenty fifth', alias=['25th', '25.', 'twentyfifth'], value=25)
+    TWENTY_SIXTH = Constant('twenty sixth', alias=['26th', '26.', 'twentysixth'], value=26)
+    TWENTY_SEVENTH = Constant('twenty seventh', alias=['27th', '27.', 'twentyseventh'], value=27)
+    TWENTY_EIGHTH = Constant('twenty eighth', alias=['28th', '28.', 'twentyeighth'], value=28)
+    TWENTY_NINTH = Constant('twenty ninth', alias=['29th', '29.', 'twentyninth'], value=29)
+    THIRTIETH = Constant('thirtieth', alias=['30th', '30.'], value=30)
+    THIRTY_FIRST = Constant('thirty first', alias=['31st', '31.', 'thirthyfirst'], value=31)
 
-    ALL = [FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH, TENTH]
+    # Reversed to avoid conflicts with other constants
+    ALL = [FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH, TENTH,
+           ELEVENTH, TWELFTH, THIRTEENTH, FOURTEENTH, FIFTEENTH, SIXTEENTH, SEVENTEENTH, EIGHTEENTH, NINETEENTH, TWENTIETH,
+           TWENTY_FIRST, TWENTY_SECOND, TWENTY_THIRD, TWENTY_FOURTH, TWENTY_FIFTH, TWENTY_SIXTH, TWENTY_SEVENTH, TWENTY_EIGHTH, TWENTY_NINTH,
+           THIRTIETH, THIRTY_FIRST][::-1]
 
 class DatetimeConstants:
     SECONDS = Keyword('seconds', ['second', 'sec', 'secs'])
