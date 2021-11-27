@@ -78,13 +78,13 @@ class Parser:
 
         """
         kinda the same as parse_relative_datetimes
-        
+
         a day and 3 minutes after 4 months before christmas 2021
         10 days and 2 hours after xmas
         the 5th day after next christmas
-        
+
         we'll parse here:
-        
+
         3 seconds, 2 minutes and 4 hours
         a day and 3 minutes
         10 days and 2 hours
