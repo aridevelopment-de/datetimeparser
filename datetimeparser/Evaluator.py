@@ -135,7 +135,7 @@ class Evaluator:
                     dt = datetime.strptime(f"{self.MONTHS[str(self.parsed_object[1][i].name)](y)}", "%Y-%m-%d %H:%M:%S")
                     i -= 2
                 else:
-                    dt = datetime.strptime(f"{self.YEAR(2021)}", "%Y-%m-%d %H:%M:%S")
+                    dt = datetime.strptime(f"{year(y)}", "%Y-%m-%d %H:%M:%S")
             for p_object in self.parsed_object[1]:
                 if isinstance(p_object, RelativeTime):
                     dt += relativedelta(hours=p_object.hours, minutes=p_object.minutes, seconds=p_object.seconds)
