@@ -7,13 +7,13 @@ from .baseclasses import *
 def eastern_calc(year: int) -> str:
     A = year % 19
     K = year // 100
-    M = 15 + (3*K+3) // 4 - (8*K+13) // 25
-    D = (19*A+M) % 30
-    S = 2 - (3*K+3) // 4
-    R = D // 29 + (D//28-D//29) * (A//11)
+    M = 15 + (3 * K + 3) // 4 - (8 * K + 13) // 25
+    D = (19 * A + M) % 30
+    S = 2 - (3 * K + 3) // 4
+    R = D // 29 + (D // 28 - D// 29) * (A // 11)
     OG = 21 + D + R
-    SZ = 7 - (year+year//4+S) % 7
-    OE = 7 - (OG-SZ) % 7
+    SZ = 7 - (year + year // 4 + S) % 7
+    OE = 7 - (OG - SZ) % 7
     OS = OG + OE
 
     if OS > 32:
@@ -35,11 +35,13 @@ def days_feb(year: int) -> str:
         return "28"
 
 
+def year(year):
+    return f"{year}-01-01 0:00:00"
+
+
 class Evaluator:
     CURENT_DATE = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d"), "%Y-%m-%d")
     CURENT_DATETIME = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
-
-    YEAR = lambda _, year: f"{year}-01-01 0:00:00"
 
     EVENTS = {
         "silvester": lambda year: f"{year}-12-31 0:00:00",
@@ -81,18 +83,18 @@ class Evaluator:
     }
 
     MONTHS = {
-        "january" : lambda year: f"{year}-01-01 0:00:00",
-        "february" : lambda year: f"{year}-02-01 0:00:00",
-        "march" : lambda year: f"{year}-03-01 0:00:00",
-        "april" : lambda year: f"{year}-04-01 0:00:00",
-        "may" : lambda year: f"{year}-05-01 0:00:00",
-        "june" : lambda year: f"{year}-06-01 0:00:00",
-        "july" : lambda year: f"{year}-07-01 0:00:00",
-        "august" : lambda year: f"{year}-08-01 0:00:00",
-        "september" : lambda year: f"{year}-09-01 0:00:00",
-        "october" : lambda year: f"{year}-10-01 0:00:00",
-        "november" : lambda year: f"{year}-11-01 0:00:00",
-        "december" : lambda year: f"{year}-12-01 0:00:00"
+        "january": lambda year: f"{year}-01-01 0:00:00",
+        "february": lambda year: f"{year}-02-01 0:00:00",
+        "march": lambda year: f"{year}-03-01 0:00:00",
+        "april": lambda year: f"{year}-04-01 0:00:00",
+        "may": lambda year: f"{year}-05-01 0:00:00",
+        "june": lambda year: f"{year}-06-01 0:00:00",
+        "july": lambda year: f"{year}-07-01 0:00:00",
+        "august": lambda year: f"{year}-08-01 0:00:00",
+        "september": lambda year: f"{year}-09-01 0:00:00",
+        "october": lambda year: f"{year}-10-01 0:00:00",
+        "november": lambda year: f"{year}-11-01 0:00:00",
+        "december": lambda year: f"{year}-12-01 0:00:00"
     }
 
 
