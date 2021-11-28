@@ -39,6 +39,8 @@ class Evaluator:
     CURENT_DATE = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d"), "%Y-%m-%d")
     CURENT_DATETIME = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
+    YEAR = lambda _, year: f"{year}-01-01 0:00:00"
+
     EVENTS = {
         "silvester": lambda year: f"{year}-12-31 0:00:00",
         "nicholas": lambda year: f"{year}-12-06 0:00:00",
@@ -78,6 +80,21 @@ class Evaluator:
         "sunday": f"{CURENT_DATE + timedelta((6-CURENT_DATE.weekday())%7)}"
     }
 
+    MONTHS = {
+        "january" : lambda year: f"{year}-01-01 0:00:00",
+        "february" : lambda year: f"{year}-02-01 0:00:00",
+        "march" : lambda year: f"{year}-03-01 0:00:00",
+        "april" : lambda year: f"{year}-04-01 0:00:00",
+        "may" : lambda year: f"{year}-05-01 0:00:00",
+        "june" : lambda year: f"{year}-06-01 0:00:00",
+        "july" : lambda year: f"{year}-07-01 0:00:00",
+        "august" : lambda year: f"{year}-08-01 0:00:00",
+        "september" : lambda year: f"{year}-09-01 0:00:00",
+        "october" : lambda year: f"{year}-10-01 0:00:00",
+        "november" : lambda year: f"{year}-11-01 0:00:00",
+        "december" : lambda year: f"{year}-12-01 0:00:00"
+    }
+
 
     def __init__(self, parsed_object: list):
         self.parsed_object = parsed_object
@@ -103,7 +120,42 @@ class Evaluator:
         
 
         if self.parsed_object[0] == Method.ABSOLUTE_PREPOSITIONS:
-            pass
+            i = -1
+            year_given = False
+            if isinstance(self.parsed_object[1][i], AbsoluteDateTime):
+                y = str(self.parsed_object[1][i].year)
+                i -= 1
+                year_given = True
+            else:
+                y = datetime.strftime(datetime.today(), '%Y')
+            if isinstance(self.parsed_object[1][i], Constant):
+                if self.parsed_object[1][i].name in self.EVENTS:
+                    dt = datetime.strptime(f"{self.EVENTS[str(self.parsed_object[1][i].name)](y)}", "%Y-%m-%d %H:%M:%S")
+                    i -= 2
+                elif self.parsed_object[1][i].name in self.MONTHS:
+                    dt = datetime.strptime(f"{self.MONTHS[str(self.parsed_object[1][i].name)](y)}", "%Y-%m-%d %H:%M:%S")
+                    i -= 2
+                else:
+                    dt = datetime.strptime(f"{self.YEAR(2021)}", "%Y-%m-%d %H:%M:%S")
+            for object in self.parsed_object[1]:
+                if isinstance(object, RelativeTime):
+                    dt += relativedelta(hours=object.hours, minutes=object.minutes, seconds=object.seconds)
+                if isinstance(object, RelativeDate):
+                    if object.months == 0:
+                        m = 0
+                    else:
+                        m = 1
+                    if object.days == 0:
+                        d = 0
+                    else:
+                        d = 1
+                    dt += relativedelta(years=object.years, months=object.months-m, weeks=object.weeks, days=object.days-d)
+            
+            if self.CURENT_DATETIME > dt and not year_given:
+                dt += relativedelta(years=1)
+                out += f"{dt}"
+            else:
+                out += f"{dt}"
 
 
         if self.parsed_object[0] == Method.CONSTANTS:
@@ -128,7 +180,7 @@ class Evaluator:
                         out += f"{dt}"
                     else:
                         out += f"{dt}"
-                else:
+                elif self.parsed_object[1][0].name in self.DAYS:
                     out += f"{self.DAYS[str(self.parsed_object[1][0].name)]}"
 
 
