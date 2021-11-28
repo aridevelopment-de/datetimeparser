@@ -339,7 +339,6 @@ class Parser:
         else:
             preposition = ""
 
-        # TODO: Add continue for comma with spaces around it
         """
         idea:
         1 Year and 2 months, 3d 5 minutes
@@ -373,9 +372,10 @@ class Parser:
 
         for part in data:
             not_possible = True
+            part = part.strip()
 
             # We Skip these 3 "prepositions"
-            if part.lower() in ["and", "in", "for"]:
+            if part.lower() in ["and", "in", "for", ","]:
                 continue
 
             elif part.lower() == "a":
