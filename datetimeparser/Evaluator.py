@@ -10,7 +10,7 @@ def eastern_calc(year: int) -> str:
     M = 15 + (3 * K + 3) // 4 - (8 * K + 13) // 25
     D = (19 * A + M) % 30
     S = 2 - (3 * K + 3) // 4
-    R = D // 29 + (D // 28 - D// 29) * (A // 11)
+    R = D // 29 + (D // 28 - D // 29) * (A // 11)
     OG = 21 + D + R
     SZ = 7 - (year + year // 4 + S) % 7
     OE = 7 - (OG - SZ) % 7
@@ -97,10 +97,8 @@ class Evaluator:
         "december": lambda year: f"{year}-12-01 0:00:00"
     }
 
-
     def __init__(self, parsed_object: list):
         self.parsed_object = parsed_object
-
 
     def evaluate(self) -> datetime:
         out = ""
@@ -119,7 +117,6 @@ class Evaluator:
                     out += f"{self.parsed_object[1][0].year}-{self.parsed_object[1][0].month}-{self.parsed_object[1][0].day} 0:00:00"
                 if isinstance(self.parsed_object[1][0], AbsoluteClockTime):
                     out += f"{datetime.strftime(self.CURENT_DATE, '%Y-%m-%d')} {self.parsed_object[1][0].hour}:{self.parsed_object[1][0].minute}:{self.parsed_object[1][0].second}"
-        
 
         if self.parsed_object[0] == Method.ABSOLUTE_PREPOSITIONS:
             i = -1
@@ -139,26 +136,25 @@ class Evaluator:
                     i -= 2
                 else:
                     dt = datetime.strptime(f"{self.YEAR(2021)}", "%Y-%m-%d %H:%M:%S")
-            for object in self.parsed_object[1]:
-                if isinstance(object, RelativeTime):
-                    dt += relativedelta(hours=object.hours, minutes=object.minutes, seconds=object.seconds)
-                if isinstance(object, RelativeDate):
-                    if object.months == 0:
+            for p_object in self.parsed_object[1]:
+                if isinstance(p_object, RelativeTime):
+                    dt += relativedelta(hours=p_object.hours, minutes=p_object.minutes, seconds=p_object.seconds)
+                if isinstance(p_object, RelativeDate):
+                    if p_object.months == 0:
                         m = 0
                     else:
                         m = 1
-                    if object.days == 0:
+                    if p_object.days == 0:
                         d = 0
                     else:
                         d = 1
-                    dt += relativedelta(years=object.years, months=object.months-m, weeks=object.weeks, days=object.days-d)
-            
+                    dt += relativedelta(years=p_object.years, months=p_object.months - m, weeks=p_object.weeks, days=p_object.days - d)
+
             if self.CURENT_DATETIME > dt and not year_given:
                 dt += relativedelta(years=1)
                 out += f"{dt}"
             else:
                 out += f"{dt}"
-
 
         if self.parsed_object[0] == Method.CONSTANTS:
 
@@ -175,7 +171,7 @@ class Evaluator:
             else:
                 if self.parsed_object[1][0].name in self.EVENTS:
                     if self.parsed_object[1][0].name == "infinity":
-                            return self.EVENTS["infinity"]
+                        return self.EVENTS["infinity"]
                     dt = datetime.strptime(f"{self.EVENTS[str(self.parsed_object[1][0].name)](datetime.strftime(datetime.today(), '%Y'))}", "%Y-%m-%d %H:%M:%S")
                     if self.CURENT_DATETIME > dt:
                         dt += relativedelta(years=1)
@@ -184,7 +180,6 @@ class Evaluator:
                         out += f"{dt}"
                 elif self.parsed_object[1][0].name in self.DAYS:
                     out += f"{self.DAYS[str(self.parsed_object[1][0].name)]}"
-
 
         if self.parsed_object[0] == Method.RELATIVE_DATETIMES:
 
@@ -198,10 +193,9 @@ class Evaluator:
                 hours=self.parsed_object[1][1].hours,
                 minutes=self.parsed_object[1][1].minutes,
                 seconds=self.parsed_object[1][1].seconds
-                )
-            
-            out += f"{datetime.strftime(new, '%Y-%m-%d %H:%M:%S')}"
+            )
 
+            out += f"{datetime.strftime(new, '%Y-%m-%d %H:%M:%S')}"
 
         if out:
             try:
