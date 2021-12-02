@@ -140,11 +140,11 @@ class Evaluator:
                 if isinstance(p_object, RelativeTime):
                     dt += relativedelta(hours=p_object.hours, minutes=p_object.minutes, seconds=p_object.seconds)
                 if isinstance(p_object, RelativeDate):
-                    if p_object.months == 0:
+                    if p_object.months <= 0:
                         m = 0
                     else:
                         m = 1
-                    if p_object.days == 0:
+                    if p_object.days <= 0:
                         d = 0
                     else:
                         d = 1
