@@ -7,6 +7,7 @@ class Printable:
     def __repr__(self):
         return f'<{str(self.__class__)} {" ".join("{%s=%s}" % (field, getattr(self, field)) for field in self.FIELDS if getattr(self, field) is not None)}>'
 
+
 class AbsoluteDateTime(Printable):
     FIELDS = ["year", "month", "day"]
 
@@ -15,6 +16,7 @@ class AbsoluteDateTime(Printable):
         self.month = month
         self.day = day
 
+
 class AbsoluteClockTime(Printable):
     FIELDS = ["hour", "minute", "second"]
 
@@ -22,6 +24,7 @@ class AbsoluteClockTime(Printable):
         self.hour = hour
         self.minute = minute
         self.second = second
+
 
 class RelativeDate(Printable):
     FIELDS = ["years", "months", "weeks", "days"]
@@ -64,6 +67,7 @@ class RelativeDate(Printable):
         elif keyword == DatetimeConstants.YEARS:
             return RelativeDate(years=delta)
 
+
 class RelativeTime(Printable):
     FIELDS = ["hours", "minutes", "seconds"]
 
@@ -102,6 +106,7 @@ class RelativeTime(Printable):
         elif keyword == DatetimeConstants.HOURS:
             return RelativeTime(hours=delta)
 
+
 class Constant(Printable):
     FIELDS = ["name", "alias", "value"]
 
@@ -118,8 +123,10 @@ class Constant(Printable):
     def get_all(self):
         return [self.name, *self.alias]
 
+
 class Keyword(Constant):
     pass
+
 
 class Constants:
     CHRISTMAS = Constant('christmas', ['next christmas', 'xmas', 'next xmas'])
@@ -147,6 +154,10 @@ class Constants:
     SPRING_END = Constant('spring end', ['end of spring', 'end of the spring'])
     FALL_END = Constant('fall end', ['end of fall', 'end of the fall', 'autumn end', 'end of autumn', 'end of the autumn'])
 
+    MORNING = Constant('morning', ['at morning', 'in the next morning', 'next morning', 'in the morning'])
+    EVENING = Constant('evening', ['at evening', 'in the next evening', 'next evening', 'in the evening'])
+    LUNCHTIME = Constant('lunchtime', ['at lunch', 'at lunchtime', 'next lunch', 'at the next lunchtime', 'next lunchtime', 'at the lunchtime'])
+
     BEGIN_AOC = Constant('aoc begin', ['aoc', 'next aoc', 'begin of aoc', 'begin of the aoc', 'advent of code begin',
                                        'advent of code', 'next advent of code', 'begin of advent of code',
                                        'begin of the advent of code'])
@@ -159,9 +170,11 @@ class Constants:
 
     ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY, VALENTINES_DAY,
            SUMMER_END, WINTER_END, SPRING_END, FALL_END, SUMMER_BEGIN, WINTER_BEGIN, SPRING_BEGIN, FALL_BEGIN,
+           MORNING, EVENING, LUNCHTIME, 
            BEGIN_AOC, END_AOC,
            END_OF_YEAR,
            INFINITY]
+
 
 class NumberConstants:
     # Presented to you by github copilot
@@ -203,6 +216,7 @@ class NumberConstants:
            TWENTY_ONE, TWENTY_TWO, TWENTY_THREE, TWENTY_FOUR, TWENTY_FIVE, TWENTY_SIX, TWENTY_SEVEN, TWENTY_EIGHT, TWENTY_NINE,
            THIRTY, THIRTY_ONE][::-1]
 
+
 class NumberCountConstants:
     # Presented to you by github copilot
     FIRST = Constant('first', alias=['1st', '1.'], value=1)
@@ -243,6 +257,7 @@ class NumberCountConstants:
            TWENTY_FIRST, TWENTY_SECOND, TWENTY_THIRD, TWENTY_FOURTH, TWENTY_FIFTH, TWENTY_SIXTH, TWENTY_SEVENTH, TWENTY_EIGHTH, TWENTY_NINTH,
            THIRTIETH, THIRTY_FIRST][::-1]
 
+
 class DatetimeConstants:
     SECONDS = Keyword('seconds', ['second', 'sec', 'secs'])
     MINUTES = Keyword('minutes', ['minute', 'min', 'mins'])
@@ -273,6 +288,7 @@ class DatetimeConstants:
         elif md.lower() == "y":
             return cls.YEARS
 
+
 class WeekdayConstants:
     MONDAY = Constant('monday')
     TUESDAY = Constant('tuesday')
@@ -283,6 +299,7 @@ class WeekdayConstants:
     SUNDAY = Constant('sunday')
 
     ALL = [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]
+
 
 class MonthConstants:
     JANUARY = Constant('january', ['jan'])
@@ -300,6 +317,7 @@ class MonthConstants:
 
     ALL = [JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER]
 
+
 class Keywords:
     OF = Keyword('of')
     AFTER = Keyword('after')
@@ -307,6 +325,7 @@ class Keywords:
     NEXT = Keyword('next')
     IN = Keyword('in')
     FOR = Keyword('for')
+
 
 class MethodEnum:
     def __init__(self, name):
@@ -317,6 +336,7 @@ class MethodEnum:
 
     def __repr__(self):
         return f"<Method: {self.name}>"
+
 
 class Method:
     ABSOLUTE_PREPOSITIONS = MethodEnum('absolute_prepositions')
