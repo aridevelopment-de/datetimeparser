@@ -176,13 +176,22 @@ class Parser:
             Constants <year>
             """
 
-            data = data.lower()
+            data = data.lower().strip()
             keywords = [*Constants.ALL, *MonthConstants.ALL]
 
             for keyword in keywords:
+                # Check all keywords
                 if data in [kw for kw in keyword.get_all()]:
                     return (keyword,)
+                
+                if data.startswith("the"):
+                    data = data[len("the "):]
+
+                if data in [kw for kw in keyword.get_all()]:
+                    return (keyword,)
+
                 else:
+                    # Check <constants> <year>
                     for kw in keyword.get_all():
                         d = data.split()
 
@@ -192,6 +201,7 @@ class Parser:
                             if 1970 < year < 9999:
                                 return keyword, AbsoluteDateTime(year=year)
                     else:
+                        # Check just numbers?
                         if data.isnumeric():
                             data = int(data)
 
