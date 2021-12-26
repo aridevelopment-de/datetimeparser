@@ -16,11 +16,10 @@ tests = [
 ]
 
 validation = [
-    datetime.datetime(year=today.year, month=12, day=25),
-    datetime.datetime(year=today.year, month=8, day=21),
-    datetime.datetime(year=today.year, month=8, day=28),
-    datetime.datetime(year=today.year, month=8, day=1),
+    datetime.datetime(year=today.year, month=12, day=27),
+    datetime.datetime(year=2022, month=8, day=22),
+    datetime.datetime(year=2022, month=8, day=29),
+    datetime.datetime(year=2022, month=8, day=1),
     datetime.datetime(year=2021, month=5, day=1),
-    datetime.datetime(year=today.year, month=8, day=2),
-    datetime.datetime(year=today.year, month=5, day=21)
+    datetime.datetime(year=2022, month=8, day=2),
 ]

@@ -119,42 +119,7 @@ class Evaluator:
                     out += f"{datetime.strftime(self.CURENT_DATE, '%Y-%m-%d')} {self.parsed_object[1][0].hour}:{self.parsed_object[1][0].minute}:{self.parsed_object[1][0].second}"
 
         if self.parsed_object[0] == Method.ABSOLUTE_PREPOSITIONS:
-            i = -1
-            year_given = False
-            if isinstance(self.parsed_object[1][i], AbsoluteDateTime):
-                y = str(self.parsed_object[1][i].year)
-                i -= 1
-                year_given = True
-            else:
-                y = datetime.strftime(datetime.today(), '%Y')
-            if isinstance(self.parsed_object[1][i], Constant):
-                if self.parsed_object[1][i].name in self.EVENTS:
-                    dt = datetime.strptime(f"{self.EVENTS[str(self.parsed_object[1][i].name)](y)}", "%Y-%m-%d %H:%M:%S")
-                    i -= 2
-                elif self.parsed_object[1][i].name in self.MONTHS:
-                    dt = datetime.strptime(f"{self.MONTHS[str(self.parsed_object[1][i].name)](y)}", "%Y-%m-%d %H:%M:%S")
-                    i -= 2
-                else:
-                    dt = datetime.strptime(f"{year(y)}", "%Y-%m-%d %H:%M:%S")
-            for p_object in self.parsed_object[1]:
-                if isinstance(p_object, RelativeTime):
-                    dt += relativedelta(hours=p_object.hours, minutes=p_object.minutes, seconds=p_object.seconds)
-                if isinstance(p_object, RelativeDate):
-                    if p_object.months <= 0:
-                        m = 0
-                    else:
-                        m = 1
-                    if p_object.days <= 0:
-                        d = 0
-                    else:
-                        d = 1
-                    dt += relativedelta(years=p_object.years, months=p_object.months - m, weeks=p_object.weeks, days=p_object.days - d)
-
-            if self.CURENT_DATETIME > dt and not year_given:
-                dt += relativedelta(years=1)
-                out += f"{dt}"
-            else:
-                out += f"{dt}"
+            pass
 
         if self.parsed_object[0] == Method.CONSTANTS:
 
