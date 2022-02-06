@@ -50,6 +50,7 @@ def run_testcase(testcase, disable_colored_output=False):
     else:
         print(f"{testcase} (✅): {evaluator_result}")
 
+
 def main(sort=False, disable_colored_output=False, disable_no_validation=False, disable_indent=False):
     testcase_results = {}
     max_indentation = 0
