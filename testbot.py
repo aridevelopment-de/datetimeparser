@@ -66,8 +66,11 @@ async def parse(ctx: Context, *, datetime_string: str):
         result = get_latest_stacktrace()
         color = 0xFF0000
     finally:
-        embed = Embed(title="Parsed datetime object", color=color, description=f"{result}")
-        embed.set_footer(text="https://github.com/aridevelopment-de/datetimeparser")
+        embed = Embed(
+            title="Parsed datetime object",
+            color=color,
+            description=f"[datetimeparser](https://github.com/aridevelopment-de/datetimeparser) made with ❤️ by [AriDevelopment](https://github.com/aridevelopment-de)\n{result}"
+        )
 
         await ctx.reply(embed=embed)
 
