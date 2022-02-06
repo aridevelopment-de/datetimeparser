@@ -6,7 +6,7 @@ from discord import Embed, Intents
 from discord.ext.commands import Bot, when_mentioned_or
 from discord.ext.commands.context import Context
 from dotenv import load_dotenv
-from datetimeparser import parse as p
+from datetimeparser import Evaluator, Parser
 
 load_dotenv()
 
@@ -15,7 +15,6 @@ client = Bot(
     case_insensitive=True,
     intents=Intents.all()
 )
-
 
 # https://discord.com/oauth2/authorize?client_id=939862584935477298&scope=bot&permissions=0
 
@@ -48,13 +47,21 @@ async def on_ready():
     brief="Translate a string into a datetime-object"
 )
 async def parse(ctx: Context, *, datetime_string: str):
-
     color = 0x00FF00
     result = None
 
     try:
-        res = p(datetime_string)
-        result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n# {res}```"
+        res = Parser(datetime_string).parse()
+
+        if res is None:
+            result = f"```mkd\nNone (Parser Error)```"
+        else:
+            res = Evaluator(res).evaluate()
+
+            if res is None:
+                result = f"```mkd\nNone (Evaluator Error)```"
+            else:
+                result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n# {res}```"
     except:  # noqa
         result = get_latest_stacktrace()
         color = 0xFF0000

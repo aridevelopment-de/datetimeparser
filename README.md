@@ -7,7 +7,7 @@
     <br />
     <br />
     <a href="https://github.com/aridevelopment-de/datetimeparser/issues">Report an issue</a>
-    Â·
+    ·
     <a href="https://github.com/aridevelopment-de/datetimeparser/issues">Request a new feature</a>
   </p>
 </div>
