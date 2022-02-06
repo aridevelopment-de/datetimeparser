@@ -6,7 +6,7 @@ from discord import Embed, Intents
 from discord.ext.commands import Bot, when_mentioned_or
 from discord.ext.commands.context import Context
 from dotenv import load_dotenv
-from datetimeparser import Evaluator, Parser
+from datetimeparser import Evaluator, Parser, parse as parse_date
 
 load_dotenv()
 
@@ -61,7 +61,7 @@ async def parse(ctx: Context, *, datetime_string: str):
             if res is None:
                 result = f"```mkd\nNone (Evaluator Error)```"
             else:
-                result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n\n# {res}```"
+                result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n\n# {parse_date(datetime_string)}```"
     except:  # noqa
         result = get_latest_stacktrace()
         color = 0xFF0000

@@ -284,16 +284,14 @@ class DatetimeConstants:
     def convert_from_mini_date(cls, md):
         if md.lower() == "s":
             return cls.SECONDS
-        elif md == "M":
+        elif md.lower() == "m":
             return cls.MINUTES
         elif md.lower() == "h":
             return cls.HOURS
         elif md.lower() == "w":
             return cls.WEEKS
-        elif md == "d":
+        elif md.lower() == "d":
             return cls.DAYS
-        elif md == "m":
-            return cls.MONTHS
         elif md.lower() == "y":
             return cls.YEARS
 
