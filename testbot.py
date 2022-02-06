@@ -61,7 +61,7 @@ async def parse(ctx: Context, *, datetime_string: str):
             if res is None:
                 result = f"```mkd\nNone (Evaluator Error)```"
             else:
-                result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n# {res}```"
+                result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n\n# {res}```"
     except:  # noqa
         result = get_latest_stacktrace()
         color = 0xFF0000
