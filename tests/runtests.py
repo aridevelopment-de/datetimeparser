@@ -1,76 +1,132 @@
+import argparse
 import time
-import sys
 
 try:
-    import absolute_datetimeformats
-    import absolute_prepositions
-    import relative_events
-    import relative_datetimes
-    import general_tests
-
-    from TestValidator import TestValidator
+    from testcases import testcases
     from Colors import Colors
+
+    from datetimeparser.Parser import Parser
+    from datetimeparser.Evaluator import Evaluator
 except (ImportError, ModuleNotFoundError):
     import sys
 
     sys.path.insert(0, "..")
 
-    import absolute_datetimeformats
-    import absolute_prepositions
-    import relative_events
-    import relative_datetimes
-    import general_tests
-
-    from TestValidator import TestValidator
+    from testcases import testcases
     from Colors import Colors
 
-TESTS = [
-    absolute_datetimeformats,
-    absolute_prepositions,
-    relative_events,
-    relative_datetimes,
-    general_tests
-]
+    from datetimeparser.Parser import Parser
+    from datetimeparser.Evaluator import Evaluator
 
-results = {}
 
-for test in TESTS:
-    print("\u001B[0;1m" + "=" * 6, f"TEST: {test}", end=" " + ("=" * 6) + "\u001b[0m\n")
-    print()
+class StatusType:
+    SUCCESS = 0
+    PARSER_ERROR = 1
+    EVALUATOR_ERROR = 2
+    WRONG_RESULT = 3
+    NO_VALIDATION = 4
 
-    time.sleep(.1)
 
-    validator = TestValidator(getattr(test, "tests"), getattr(test, "validation"))
-    results[str(test)] = validator.validate()
+def run_testcase(testcase, disable_colored_output=False):
+    p = Parser(testcase)
+    parser_result = p.parse()
 
-    print()
+    if parser_result is None:
+        if not disable_colored_output:
+            return print(f"{Colors.ANSI_RED}{testcase} (❌): {Colors.ANSI_CYAN}Parser {Colors.ANSI_BOLD_WHITE}returned {Colors.ANSI_LIGHT_RED}None")
+        else:
+            return print(f"{testcase} (❌): Parser returned None")
 
-time.sleep(.1)
+    e = Evaluator(parser_result)
+    evaluator_result = e.evaluate()
 
-print(Colors.ANSI_BOLD_WHITE + ("=" * 30), "RESULTS", ("=" * 30) + Colors.ANSI_RESET)
-print()
+    if evaluator_result is None:
+        if not disable_colored_output:
+            return print(f"{Colors.ANSI_RED}{testcase} (❌): {Colors.ANSI_CYAN}Evaluator {Colors.ANSI_BOLD_WHITE}returned {Colors.ANSI_LIGHT_RED}None")
+        else:
+            return print(f"{testcase} (❌): Evaluator returned None")
 
-print(Colors.ANSI_PURPLE + "Total modules:", Colors.ANSI_CYAN + str(len(TESTS)) + Colors.ANSI_RESET)
-print(Colors.ANSI_PURPLE + "Total tests:", Colors.ANSI_CYAN + str(sum(map(lambda e: e[1], list(results.values())))) + Colors.ANSI_RESET)
-print(Colors.ANSI_PURPLE + "Total passed:", Colors.ANSI_GREEN + str(sum(map(lambda e: e[1] - len(e[0]), list(results.values())))) + Colors.ANSI_RESET)
-print(Colors.ANSI_PURPLE + "Total failed:", Colors.ANSI_RED + str(sum(map(lambda e: len(e[0]), list(results.values())))) + Colors.ANSI_RESET)
-print()
+    if not disable_colored_output:
+        print(f"{Colors.ANSI_GREEN}{testcase} (✅): {Colors.ANSI_BOLD_WHITE}{evaluator_result}{Colors.ANSI_RESET}")
+    else:
+        print(f"{testcase} (✅): {evaluator_result}")
 
-for module in results:
-    failed, whole = results[module]
+def main(sort=False, disable_colored_output=False, disable_no_validation=False, disable_indent=False):
+    testcase_results = {}
+    max_indentation = 0
 
-    if failed:
-        print(Colors.ANSI_PURPLE + "In Module " + Colors.ANSI_YELLOW + module + Colors.ANSI_BOLD_WHITE + ":")
-        print(f"\t{Colors.ANSI_BOLD_WHITE}- {Colors.ANSI_PURPLE}Test cases: {Colors.ANSI_CYAN}{whole}")
-        print(f"\t{Colors.ANSI_BOLD_WHITE}- {Colors.ANSI_PURPLE}Passed: {Colors.ANSI_GREEN}{whole - len(failed)}")
-        print(f"\t{Colors.ANSI_BOLD_WHITE}- {Colors.ANSI_PURPLE}Failed: {Colors.ANSI_RED}{len(failed)}")
+    for testcase in testcases:
+        expected_value = testcases[testcase]
+        max_indentation = max(max_indentation, len(testcase))
 
-        for test in failed:
-            print(f"\t\t{Colors.ANSI_RED}- Failed testcase: {Colors.ANSI_CYAN}{test}")
+        p = Parser(testcase)
+        parser_result = p.parse()
 
-        print()
+        if parser_result is None:
+            if not disable_colored_output:
+                testcase_results[testcase] = StatusType.PARSER_ERROR, f"{Colors.ANSI_CYAN}Parser {Colors.ANSI_BOLD_WHITE}returned {Colors.ANSI_LIGHT_RED}None", None
+            else:
+                testcase_results[testcase] = StatusType.PARSER_ERROR, "Parser returned None", None
 
-if sum(map(lambda e: len(e[0]), list(results.values()))) > 0:
-    sys.exit(1)
-else:
-    sys.exit(0)
+            continue
+
+        e = Evaluator(parser_result)
+        evaluator_result = e.evaluate()
+
+        if evaluator_result is None:
+            if not disable_colored_output:
+                testcase_results[testcase] = StatusType.EVALUATOR_ERROR, f"{Colors.ANSI_CYAN}Evaluator {Colors.ANSI_BOLD_WHITE}returned {Colors.ANSI_LIGHT_RED}None", None
+            else:
+                testcase_results[testcase] = StatusType.EVALUATOR_ERROR, "Evaluator returned None", None
+
+            continue
+
+        if expected_value is None:
+            if not disable_no_validation:
+                testcase_results[testcase] = StatusType.NO_VALIDATION, "No validation and no errors", None
+            continue
+
+        if evaluator_result != expected_value:
+            testcase_results[testcase] = StatusType.WRONG_RESULT, f"Expected: '{expected_value}', got: '{evaluator_result}'", None
+            continue
+
+        testcase_results[testcase] = StatusType.SUCCESS, "", evaluator_result
+
+    testcase_results_keys = list(testcase_results.keys())
+
+    if sort:
+        testcase_results_keys.sort(key=lambda v: testcase_results[v][0])
+
+    for testcase in testcase_results_keys:
+        status_type, message, result = testcase_results[testcase]
+        spaces = " " * (max_indentation - len(testcase) + 2) if not disable_indent else " "
+
+        if not disable_colored_output:
+            if status_type == StatusType.SUCCESS:
+                print(f"{Colors.ANSI_GREEN}{testcase} (✅):{spaces}{Colors.ANSI_WHITE}{result}{Colors.ANSI_RESET}")
+            elif status_type == StatusType.NO_VALIDATION:
+                print(f"{Colors.ANSI_YELLOW}{testcase} (⚠️):{spaces}{Colors.ANSI_WHITE}{message}{Colors.ANSI_RESET}")
+            else:
+                print(f"{Colors.ANSI_RED}{testcase} (❌):{spaces}{Colors.ANSI_BOLD_WHITE}{message}{Colors.ANSI_RESET}")
+        else:
+            if status_type == StatusType.SUCCESS:
+                print(f"{testcase} (✅):{spaces}{result}")
+            elif status_type == StatusType.NO_VALIDATION:
+                print(f"{testcase} (⚠️):{spaces}{message}")
+            else:
+                print(f"{testcase} (❌):{spaces}{message}")
+
+
+if __name__ == '__main__':
+    argument_parser = argparse.ArgumentParser(description="Runs the testcases.")
+    argument_parser.add_argument("-t", "--test", help="Runs a specific testcase.", type=str)
+    argument_parser.add_argument("-s", "--sort", help="Sorts the testcases by their status.", action="store_true")
+    argument_parser.add_argument("-nc", "--no-colors", help="Disables colored output.", action="store_true")
+    argument_parser.add_argument("-nn", "--disable-no-validation", help="Disables the no validation testcase.", action="store_true")
+    argument_parser.add_argument("-ni", "--disable-indent", help="Disables the overall indentation.", action="store_true")
+    args = argument_parser.parse_args()
+
+    if args.test is None:
+        main(sort=args.sort, disable_colored_output=args.no_colors, disable_no_validation=args.disable_no_validation, disable_indent=args.disable_indent)
+    else:
+        run_testcase(args.test, disable_colored_output=args.no_colors)
