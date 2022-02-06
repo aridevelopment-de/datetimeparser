@@ -7,7 +7,7 @@
     <br />
     <br />
     <a href="https://github.com/aridevelopment-de/datetimeparser/issues">Report an issue</a>
-    ·
+    Â·
     <a href="https://github.com/aridevelopment-de/datetimeparser/issues">Request a new feature</a>
   </p>
 </div>
@@ -241,10 +241,38 @@ $ pip install datetimeparser
 <li>end of the year</li>
 </ul>
 </details><details>
+<summary><code>begin of year</code></summary>
+<ul>
+<li>the begin of year</li>
+<li>the begin of the year</li>
+<li>begin of the year</li>
+</ul>
+</details><details>
 <summary><code>infinity</code></summary>
 <ul>
 <li>inf</li>
-<li>NekoFanatic</li>
+</ul>
+</details><details>
+<summary><code>today</code></summary>
+<ul>
+
+</ul>
+</details><details>
+<summary><code>tomorrow</code></summary>
+<ul>
+
+</ul>
+</details><details>
+<summary><code>yesterday</code></summary>
+<ul>
+
+</ul>
+</details><details>
+<summary><code>now</code></summary>
+<ul>
+<li>at the moment</li>
+<li>current time</li>
+<li>current time now</li>
 </ul>
 </details>
 </details>
