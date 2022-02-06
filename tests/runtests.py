@@ -96,9 +96,19 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
     if sort:
         testcase_results_keys.sort(key=lambda v: testcase_results[v][0])
 
+    overall_results = {
+        StatusType.SUCCESS: 0,
+        StatusType.PARSER_ERROR: 0,
+        StatusType.EVALUATOR_ERROR: 0,
+        StatusType.WRONG_RESULT: 0,
+        StatusType.NO_VALIDATION: 0
+    }
+
     for testcase in testcase_results_keys:
         status_type, message, result = testcase_results[testcase]
         spaces = " " * (max_indentation - len(testcase) + 2) if not disable_indent else " "
+
+        overall_results[status_type] += 1
 
         if not disable_colored_output:
             if status_type == StatusType.SUCCESS:
@@ -114,6 +124,21 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
                 print(f"{testcase} (⚠️):{spaces}{message}")
             else:
                 print(f"{testcase} (❌):{spaces}{message}")
+
+    if not disable_colored_output:
+        print("\n")
+        print(f"{Colors.ANSI_GREEN}Successfully tests:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.SUCCESS]}/{len(testcase_results)}")
+        print(f"{Colors.ANSI_YELLOW}No validation tests:      {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.NO_VALIDATION]}/{len(testcase_results)}")
+        print(f"{Colors.ANSI_RED}Parser error tests:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_ERROR]}/{len(testcase_results)}")
+        print(f"{Colors.ANSI_RED}Evaluator error tests:    {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.EVALUATOR_ERROR]}/{len(testcase_results)}")
+        print(f"{Colors.ANSI_RED}Wrong result tests:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.WRONG_RESULT]}/{len(testcase_results)}")
+    else:
+        print("\n")
+        print(f"Successfully tests:       {overall_results[StatusType.SUCCESS]}/{len(testcase_results)}")
+        print(f"No validation tests:      {overall_results[StatusType.NO_VALIDATION]}/{len(testcase_results)}")
+        print(f"Parser error tests:       {overall_results[StatusType.PARSER_ERROR]}/{len(testcase_results)}")
+        print(f"Evaluator error tests:    {overall_results[StatusType.EVALUATOR_ERROR]}/{len(testcase_results)}")
+        print(f"Wrong result tests:       {overall_results[StatusType.WRONG_RESULT]}/{len(testcase_results)}")
 
 
 if __name__ == '__main__':
