@@ -67,10 +67,8 @@ async def parse(ctx: Context, *, datetime_string: str):
         color = 0xFF0000
     finally:
         embed = Embed(title="Parsed datetime object", color=color, description=f"{result}")
-        embed.add_field(
-            name="GitHub Repository",
-            value="https://github.com/aridevelopment-de/datetimeparser"
-        )
+        embed.set_footer(text="https://github.com/aridevelopment-de/datetimeparser")
+
         await ctx.reply(embed=embed)
 
 
