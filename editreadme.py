@@ -2,7 +2,7 @@ from datetimeparser.baseclasses import Constants
 
 HEADER = "## List of Constants"
 
-with open("README.md", "r") as f:
+with open("README.md", "r", encoding="utf-8") as f:
     readme = f.read()
 
 i = 0
