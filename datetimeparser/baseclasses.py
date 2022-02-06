@@ -165,15 +165,24 @@ class Constants:
                                    'end of the advent of code'])
 
     END_OF_YEAR = Constant('end of year', ['the end of year', 'the end of the year', 'end of the year'])
+    BEGIN_OF_YEAR = Constant('begin of year', ['the begin of year', 'the begin of the year', 'begin of the year'])
 
-    INFINITY = Constant('infinity', ['inf', 'NekoFanatic'])
+    INFINITY = Constant('infinity', ['inf'])  # Removed NekoFanatic from this list
 
-    ALL = [CHRISTMAS, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY, VALENTINES_DAY,
-           SUMMER_END, WINTER_END, SPRING_END, FALL_END, SUMMER_BEGIN, WINTER_BEGIN, SPRING_BEGIN, FALL_BEGIN,
-           MORNING, EVENING, LUNCHTIME, 
-           BEGIN_AOC, END_AOC,
-           END_OF_YEAR,
-           INFINITY]
+    TODAY = Constant('today')
+    TOMORROW = Constant('tomorrow')
+    YESTERDAY = Constant('yesterday')
+    NOW = Constant('now', ['at the moment', 'current time', 'current time now'])
+
+    ALL = [
+        CHRISTMAS, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY, VALENTINES_DAY,
+        SUMMER_END, WINTER_END, SPRING_END, FALL_END, SUMMER_BEGIN, WINTER_BEGIN, SPRING_BEGIN, FALL_BEGIN,
+        MORNING, EVENING, LUNCHTIME,
+        BEGIN_AOC, END_AOC,
+        END_OF_YEAR, BEGIN_OF_YEAR,
+        INFINITY,
+        TODAY, TOMORROW, YESTERDAY, NOW
+    ]
 
 
 class NumberConstants:
