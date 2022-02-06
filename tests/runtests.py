@@ -1,5 +1,4 @@
 import argparse
-import time
 
 try:
     from testcases import testcases
