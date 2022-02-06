@@ -140,6 +140,8 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
         print(f"Evaluator error tests:    {overall_results[StatusType.EVALUATOR_ERROR]}/{len(testcase_results)}")
         print(f"Wrong result tests:       {overall_results[StatusType.WRONG_RESULT]}/{len(testcase_results)}")
 
+    exit(int(overall_results[StatusType.SUCCESS] != len(testcase_results)))
+
 
 if __name__ == '__main__':
     argument_parser = argparse.ArgumentParser(description="Runs the testcases.")
