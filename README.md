@@ -7,7 +7,7 @@
     <br />
     <br />
     <a href="https://github.com/aridevelopment-de/datetimeparser/issues">Report an issue</a>
-    ·
+    Â·
     <a href="https://github.com/aridevelopment-de/datetimeparser/issues">Request a new feature</a>
   </p>
 </div>
@@ -19,6 +19,28 @@ Datetimeparser is a python library capable of parsing the english language into 
 It was created due to the lack of such library and need for it. We knew that there was [dateutil](https://github.com/dateutil/dateutil/) but we wanted a more powerful parsing library.  
 Datetimeparser can even parse complex grammar and sentence structure.
 
+## Examples
+
+Below you can find some examples of how datetimeparser can be used.  
+The resulting value from the parser is a datetime object, integer or None, depending on the outcome:
+- "Infinity" leads to -1
+- A wrong input date leads to None
+
+```python
+from datetimeparser import parse
+
+print(parse("next 3 years and 2 months"))
+# 2025-04-06 11:43:28
+
+print(parse("begin of advent of code 2022"))
+# 2022-12-01 06:00:00
+
+print(parse("in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds"))
+# 2023-05-01 17:59:52
+
+print(parse("10 days and 2 hours after 3 months before christmas 2020"))
+# 
+```
 
 ## Installation
 
