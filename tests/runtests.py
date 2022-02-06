@@ -4,8 +4,8 @@ try:
     from testcases import testcases
     from Colors import Colors
 
-    from datetimeparser.Parser import Parser
-    from datetimeparser.Evaluator import Evaluator
+    from datetimeparser.parser import Parser
+    from datetimeparser.evaluator import Evaluator
 except (ImportError, ModuleNotFoundError):
     import sys
 
@@ -14,8 +14,8 @@ except (ImportError, ModuleNotFoundError):
     from testcases import testcases
     from Colors import Colors
 
-    from datetimeparser.Parser import Parser
-    from datetimeparser.Evaluator import Evaluator
+    from datetimeparser.parser import Parser
+    from datetimeparser.evaluator import Evaluator
 
 
 class StatusType:
