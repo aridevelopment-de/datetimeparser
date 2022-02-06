@@ -5,9 +5,11 @@
   <p align="center">
     A python parser library made for parsing english language into datetime objects
     <br />
+    <i> made with ❤️ by <a href="https://aridevelopment.de/">aridevelopment.de</a></i>
+    <br />
     <br />
     <a href="https://github.com/aridevelopment-de/datetimeparser/issues">Report an issue</a>
-    Â·
+    ·
     <a href="https://github.com/aridevelopment-de/datetimeparser/issues">Request a new feature</a>
   </p>
 </div>

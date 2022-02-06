@@ -1,4 +1,5 @@
 import datetime
+import string as string_utils
 
 from .baseclasses import *
 
@@ -27,7 +28,11 @@ class Parser:
     ]
 
     def __init__(self, string):
-        self.string = string
+        self.string = self.remove_non_ascii(string.strip())
+
+    @staticmethod
+    def remove_non_ascii(string):
+        return ''.join(c for c in string if c in string_utils.printable)
 
     def parse_absolute_date_formats(self):
         for format_ in self.DATETIME_FORMATS:
