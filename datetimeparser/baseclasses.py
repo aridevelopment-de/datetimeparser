@@ -173,7 +173,7 @@ class Constants:
            MORNING, EVENING, LUNCHTIME, 
            BEGIN_AOC, END_AOC,
            END_OF_YEAR,
-           INFINITY]
+           ]
 
 
 class NumberConstants:
