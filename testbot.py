@@ -2,14 +2,19 @@ import os
 import sys
 import traceback
 
-import discord
+from discord import Embed, Intents
+from discord.ext.commands import Bot, when_mentioned_or
+from discord.ext.commands.context import Context
 from dotenv import load_dotenv
-from datetimeparser import parse
+from datetimeparser import parse as p
 
 load_dotenv()
 
-intents = discord.Intents.all()
-client = discord.Client(intents=intents)
+client = Bot(
+    command_prefix=when_mentioned_or("+"),
+    case_insensitive=True,
+    intents=Intents.all()
+)
 
 
 # https://discord.com/oauth2/authorize?client_id=939862584935477298&scope=bot&permissions=0
@@ -36,23 +41,30 @@ async def on_ready():
     print("Ready")
 
 
-@client.event
-async def on_message(message):
-    if message.content.startswith("!parse "):
-        datetime_string = message.content.split("!parse ")[1]
+@client.command(
+    name="parse",
+    aliases=["p"],
+    description="This command can be used to translate a string into a datetime-object",
+    brief="Translate a string into a datetime-object"
+)
+async def parse(ctx: Context, *, datetime_string: str):
 
-        color = 0x00FF00
-        result = None
+    color = 0x00FF00
+    result = None
 
-        try:
-            result = parse(datetime_string)
-            result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n# {result}```"
-        except:  # noqa
-            result = get_latest_stacktrace()
-            color = 0xFF0000
-        finally:
-            embed = discord.Embed(title="Parsed datetime object", color=color, description=f"{result}")
-            await message.channel.send(embed=embed)
+    try:
+        res = p(datetime_string)
+        result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n# {res}```"
+    except:  # noqa
+        result = get_latest_stacktrace()
+        color = 0xFF0000
+    finally:
+        embed = Embed(title="Parsed datetime object", color=color, description=f"{result}")
+        embed.add_field(
+            name="GitHub Repository",
+            value="https://github.com/aridevelopment-de/datetimeparser"
+        )
+        await ctx.reply(embed=embed)
 
 
 client.run(os.environ["TOKEN"])
