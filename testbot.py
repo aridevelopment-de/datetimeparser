@@ -11,7 +11,7 @@ from datetimeparser import parse as p
 load_dotenv()
 
 client = Bot(
-    command_prefix=when_mentioned_or("!"),
+    command_prefix=when_mentioned_or("+"),
     case_insensitive=True,
     intents=Intents.all()
 )
