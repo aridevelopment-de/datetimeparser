@@ -134,7 +134,7 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
         print(f"{Colors.ANSI_RED}Wrong result tests:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.WRONG_RESULT]}/{len(testcase_results)}")
     else:
         print("\n")
-        print(f"Successfully tests:       {overall_results[StatusType.SUCCESS]}/{len(testcase_results)}")
+        print(f"Successful tests:       {overall_results[StatusType.SUCCESS]}/{len(testcase_results)}")
         print(f"No validation tests:      {overall_results[StatusType.NO_VALIDATION]}/{len(testcase_results)}")
         print(f"Parser error tests:       {overall_results[StatusType.PARSER_ERROR]}/{len(testcase_results)}")
         print(f"Evaluator error tests:    {overall_results[StatusType.EVALUATOR_ERROR]}/{len(testcase_results)}")
