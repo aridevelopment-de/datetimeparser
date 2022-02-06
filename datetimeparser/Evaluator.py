@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from typing import Union
+from pytz import timezone
 
 from .baseclasses import *
 
@@ -41,8 +42,8 @@ def year(year_time: int) -> str:
 
 
 class Evaluator:
-    CURRENT_DATE = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d"), "%Y-%m-%d")
-    CURRENT_DATETIME = datetime.strptime(datetime.strftime(datetime.today(), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+    CURRENT_DATE = datetime.strptime(datetime.strftime(datetime.now(tz=timezone("Europe/Berlin")), "%Y-%m-%d"), "%Y-%m-%d")
+    CURRENT_DATETIME = datetime.strptime(datetime.strftime(datetime.now(tz=timezone("Europe/Berlin")), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
     EVENTS = {
         "silvester": lambda year_time: f"{year_time}-12-31 0:00:00",
