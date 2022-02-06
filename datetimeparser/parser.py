@@ -28,7 +28,7 @@ class Parser:
     ]
 
     def __init__(self, string):
-        self.string = self.remove_non_ascii(string.strip())
+        self.string = self.remove_non_ascii(" ".join(string.split()))
 
     @staticmethod
     def remove_non_ascii(string):
