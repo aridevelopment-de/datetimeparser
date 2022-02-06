@@ -1,8 +1,8 @@
 import datetime
 from typing import Union
 
-from datetimeparser.Parser import Parser
-from datetimeparser.Evaluator import Evaluator
+from datetimeparser.parser import Parser
+from datetimeparser.evaluator import Evaluator
 
 
 def parse(datetime_string) -> Union[datetime.datetime, int, None]:
