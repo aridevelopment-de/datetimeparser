@@ -37,5 +37,5 @@ jobs:
       shell: bash
       working-directory: tests
       run: |
-        python runtests.py
+        python runtests.py -s
         
