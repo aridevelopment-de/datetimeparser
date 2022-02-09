@@ -1,6 +1,7 @@
 class Colors:
     ANSI_BOLD_WHITE = "\u001B[0;1m"
     ANSI_RESET = "\u001B[0m"
+    ANSI_UNDERLINE = "\u001B[24m"
     ANSI_BLACK = "\u001B[30m"
     ANSI_RED = "\u001B[31m"
     ANSI_LIGHT_RED = "\u001B[91m"

@@ -21,7 +21,9 @@ except (ImportError, ModuleNotFoundError):
 class StatusType:
     SUCCESS = 0
     PARSER_ERROR = 1
+    PARSER_EXCEPTION = 1.5
     EVALUATOR_ERROR = 2
+    EVALUATOR_EXCEPTION = 2.5
     WRONG_RESULT = 3
     NO_VALIDATION = 4
 
@@ -60,7 +62,16 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
         max_indentation = max(max_indentation, len(testcase))
 
         p = Parser(testcase)
-        parser_result = p.parse()
+
+        try:
+            parser_result = p.parse()
+        except BaseException as e:
+            if not disable_colored_output:
+                testcase_results[testcase] = StatusType.PARSER_EXCEPTION, f"{Colors.ANSI_CYAN}Parser {Colors.ANSI_BOLD_WHITE}raised an {Colors.ANSI_LIGHT_RED}exception: {Colors.ANSI_WHITE}{e}"
+            else:
+                testcase_results[testcase] = StatusType.PARSER_EXCEPTION, f"Parser raised an exception: {e}"
+
+            continue
 
         if parser_result is None:
             if not disable_colored_output:
@@ -71,7 +82,16 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
             continue
 
         e = Evaluator(parser_result)
-        evaluator_result = e.evaluate()
+
+        try:
+            evaluator_result = e.evaluate()
+        except BaseException as e:
+            if not disable_colored_output:
+                testcase_results[testcase] = StatusType.EVALUATOR_EXCEPTION, f"{Colors.ANSI_CYAN}Evaluator {Colors.ANSI_BOLD_WHITE}raised an {Colors.ANSI_LIGHT_RED}exception: {Colors.ANSI_WHITE}{e}"
+            else:
+                testcase_results[testcase] = StatusType.EVALUATOR_EXCEPTION, f"Evaluator raised an exception: {e}"
+
+            continue
 
         if evaluator_result is None:
             if not disable_colored_output:
@@ -100,7 +120,9 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
     overall_results = {
         StatusType.SUCCESS: 0,
         StatusType.PARSER_ERROR: 0,
+        StatusType.PARSER_EXCEPTION: 0,
         StatusType.EVALUATOR_ERROR: 0,
+        StatusType.EVALUATOR_EXCEPTION: 0,
         StatusType.WRONG_RESULT: 0,
         StatusType.NO_VALIDATION: 0
     }
@@ -128,18 +150,23 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
 
     if not disable_colored_output:
         print("\n")
-        print(f"{Colors.ANSI_GREEN}Successfully tests:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.SUCCESS]}/{len(testcase_results)}")
-        print(f"{Colors.ANSI_YELLOW}No validation tests:      {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.NO_VALIDATION]}/{len(testcase_results)}")
-        print(f"{Colors.ANSI_RED}Parser error tests:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_ERROR]}/{len(testcase_results)}")
-        print(f"{Colors.ANSI_RED}Evaluator error tests:    {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.EVALUATOR_ERROR]}/{len(testcase_results)}")
-        print(f"{Colors.ANSI_RED}Wrong result tests:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.WRONG_RESULT]}/{len(testcase_results)}")
+        print(f"{Colors.ANSI_GREEN}Successfully tests:         {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.SUCCESS]}/{len(testcase_results)}")
+        print(f"{Colors.ANSI_YELLOW}No validation tests:        {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.NO_VALIDATION]}/{len(testcase_results)}")
+        print(f"{Colors.ANSI_RED}Wrong result tests:         {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.WRONG_RESULT]}/{len(testcase_results)}")
+        print()
+        print(f"{Colors.ANSI_RED}Parser returned None:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_EXCEPTION]}/{len(testcase_results)}")
+        print(f"{Colors.ANSI_LIGHT_RED}{Colors.ANSI_UNDERLINE}Parser exceptions:          {Colors.ANSI_RESET}{Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_ERROR]}/{len(testcase_results)}")
+        print(f"{Colors.ANSI_RED}Evaluator returned None:    {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.EVALUATOR_ERROR]}/{len(testcase_results)}")
+        print(f"{Colors.ANSI_LIGHT_RED}{Colors.ANSI_UNDERLINE}Evaluator exceptions:       {Colors.ANSI_RESET}{Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.EVALUATOR_EXCEPTION]}/{len(testcase_results)}")
     else:
         print("\n")
-        print(f"Successful tests:       {overall_results[StatusType.SUCCESS]}/{len(testcase_results)}")
-        print(f"No validation tests:      {overall_results[StatusType.NO_VALIDATION]}/{len(testcase_results)}")
-        print(f"Parser error tests:       {overall_results[StatusType.PARSER_ERROR]}/{len(testcase_results)}")
-        print(f"Evaluator error tests:    {overall_results[StatusType.EVALUATOR_ERROR]}/{len(testcase_results)}")
-        print(f"Wrong result tests:       {overall_results[StatusType.WRONG_RESULT]}/{len(testcase_results)}")
+        print(f"Successful tests:           {overall_results[StatusType.SUCCESS]}/{len(testcase_results)}")
+        print(f"No validation tests:        {overall_results[StatusType.NO_VALIDATION]}/{len(testcase_results)}")
+        print(f"Wrong result tests:         {overall_results[StatusType.WRONG_RESULT]}/{len(testcase_results)}")
+        print(f"Parser returned None:       {overall_results[StatusType.PARSER_ERROR]}/{len(testcase_results)}")
+        print(f"Parser exceptions:          {overall_results[StatusType.PARSER_EXCEPTION]}/{len(testcase_results)}")
+        print(f"Evaluator returned None:    {overall_results[StatusType.EVALUATOR_ERROR]}/{len(testcase_results)}")
+        print(f"Evaluator exceptions:       {overall_results[StatusType.EVALUATOR_EXCEPTION]}/{len(testcase_results)}")
 
     exit(int(overall_results[StatusType.SUCCESS] != len(testcase_results)))
 
