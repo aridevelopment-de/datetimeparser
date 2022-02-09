@@ -8,6 +8,18 @@ class Printable:
         return f'<{str(self.__class__)} {" ".join("{%s=%s}" % (field, getattr(self, field)) for field in self.FIELDS if getattr(self, field) is not None)}>'
 
 
+class EvaluatorOutput(Printable):
+    FIELDS = ["year", "month", "day", "hour", "minute", "second"]
+
+    def __init__(self, year=0, month=0, day=0, hour=0, minute=0, second=0):
+        self.year = year
+        self.month = month
+        self.day = day
+        self.hour = hour
+        self.minute = minute
+        self.second = second
+
+
 class AbsoluteDateTime(Printable):
     FIELDS = ["year", "month", "day"]
 

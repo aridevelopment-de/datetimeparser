@@ -3,7 +3,6 @@ from dateutil.relativedelta import relativedelta
 from typing import Union
 from pytz import timezone
 
-import datetimeparser
 from .baseclasses import *
 
 
@@ -43,8 +42,8 @@ def year(year_time: int) -> str:
 
 
 class Evaluator:
-    CURRENT_DATE = datetime.strptime(datetime.strftime(datetime.now(tz=timezone("Europe/Berlin")), "%Y-%m-%d"), "%Y-%m-%d")
-    CURRENT_DATETIME = datetime.strptime(datetime.strftime(datetime.now(tz=timezone("Europe/Berlin")), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+    CURRENT_DATE: datetime = datetime.strptime(datetime.strftime(datetime.now(tz=timezone("Europe/Berlin")), "%Y-%m-%d"), "%Y-%m-%d")
+    CURRENT_DATETIME: datetime = datetime.strptime(datetime.strftime(datetime.now(tz=timezone("Europe/Berlin")), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
     EVENTS = {
         "silvester": lambda year_time: f"{year_time}-12-31 0:00:00",
@@ -101,79 +100,95 @@ class Evaluator:
     }
 
     def __init__(self, parsed_object: list):
-        self.parsed_object = parsed_object
+        self.parsed_object_type = parsed_object[0]
+        self.parsed_object_content: list = parsed_object[1]
 
-    def evaluate(self) -> Union[datetime, None]:
-        out = ""
+    def evaluate(self) -> Union[datetime, int, None]:
+        ev_out = EvaluatorOutput()
 
-        if self.parsed_object[0] == Method.ABSOLUTE_DATE_FORMATS:
+        if self.parsed_object_type == Method.ABSOLUTE_DATE_FORMATS:
 
-            if len(self.parsed_object[1]) == 2:
-                for object_type in self.parsed_object[1]:
+            if len(self.parsed_object_content) == 2:
+                for object_type in self.parsed_object_content:
                     if isinstance(object_type, AbsoluteDateTime):
-                        out += f"{object_type.year}-{object_type.month}-{object_type.day} "
+                        object_type: AbsoluteDateTime
+                        ev_out.year, ev_out.month, ev_out.day = object_type.year, object_type.month, object_type.day
 
                     if isinstance(object_type, AbsoluteClockTime):
-                        out += f"{object_type.hour}:{object_type.minute}:{object_type.second}"
+                        object_type: AbsoluteClockTime
+                        ev_out.hour, ev_out.minute, ev_out.second = object_type.hour, object_type.minute, object_type.second
             else:
-                if isinstance(self.parsed_object[1][0], AbsoluteDateTime):
-                    out += f"{self.parsed_object[1][0].year}-{self.parsed_object[1][0].month}-{self.parsed_object[1][0].day} 0:00:00"
-                if isinstance(self.parsed_object[1][0], AbsoluteClockTime):
-                    out += f"{datetime.strftime(self.CURRENT_DATE, '%Y-%m-%d')} {self.parsed_object[1][0].hour}:{self.parsed_object[1][0].minute}:{self.parsed_object[1][0].second}"
+                if isinstance(self.parsed_object_content[0], AbsoluteDateTime):
+                    parsed_date: AbsoluteDateTime = self.parsed_object_content[0]
+                    ev_out.year, ev_out.month, ev_out.day = parsed_date.year, parsed_date.month, parsed_date.day
 
-        if self.parsed_object[0] == Method.ABSOLUTE_PREPOSITIONS:
+                if isinstance(self.parsed_object_content[0], AbsoluteClockTime):
+                    parsed_time: AbsoluteClockTime = self.parsed_object_content[0]
+                    ev_out.year, ev_out.month, ev_out.day = self.CURRENT_DATE.year, self.CURRENT_DATE.month, self.CURRENT_DATE.day
+                    ev_out.hour, ev_out.minute, ev_out.second = parsed_time.hour, parsed_time.minute, parsed_time.second
+
+        if self.parsed_object_type == Method.ABSOLUTE_PREPOSITIONS:
             pass
 
-        if self.parsed_object[0] == Method.CONSTANTS:
+        if self.parsed_object_type == Method.CONSTANTS:
 
-            if len(self.parsed_object[1]) == 2:
-                for object_type in self.parsed_object[1]:
-                    if isinstance(object_type, Constant):
-                        dt = datetime.strptime(f"{self.EVENTS[str(object_type.name)](self.parsed_object[1][1].year)}", "%Y-%m-%d %H:%M:%S")
-                        if self.CURRENT_DATETIME > dt and self.parsed_object[1][1].year == 0:
-                            dt += relativedelta(years=1)
-                            out += f"{dt}"
-                        else:
-                            out += f"{dt}"
+            dt: datetime = self.CURRENT_DATETIME
+
+            if len(self.parsed_object_content) == 2:
+
+                if isinstance(self.parsed_object_content[0], Constant):
+                    object_type: Constant = self.parsed_object_content[0]
+                    object_year: AbsoluteDateTime = self.parsed_object_content[1].year
+                    dt = datetime.strptime(f"{self.EVENTS[str(object_type.name)](object_year)}", "%Y-%m-%d %H:%M:%S")
+                    if self.CURRENT_DATETIME > dt and object_year == 0:
+                        dt += relativedelta(years=1)
 
             else:
-                if self.parsed_object[1][0].name in self.EVENTS:
-                    if self.parsed_object[1][0].name == "infinity":
+                if self.parsed_object_content[0].name in self.EVENTS:
+                    if self.parsed_object_content[0].name == "infinity":
                         return self.EVENTS["infinity"]
-                    dt = datetime.strptime(f"{self.EVENTS[str(self.parsed_object[1][0].name)](datetime.strftime(datetime.today(), '%Y'))}", "%Y-%m-%d %H:%M:%S")
+                    dt = datetime.strptime(f"{self.EVENTS[str(self.parsed_object_content[0].name)](datetime.strftime(datetime.today(), '%Y'))}", "%Y-%m-%d %H:%M:%S")
                     if self.CURRENT_DATETIME > dt:
                         dt += relativedelta(years=1)
-                        out += f"{dt}"
-                    else:
-                        out += f"{dt}"
-                elif self.parsed_object[1][0].name in self.DAYS:
-                    out += f"{self.DAYS[str(self.parsed_object[1][0].name)]}"
+                elif self.parsed_object_content[0].name in self.DAYS:
+                    dt = datetime.strptime(f"{self.DAYS[str(self.parsed_object_content[0].name)].format(datetime.strftime(datetime.today(), '%Y'))}", "%Y-%m-%d %H:%M:%S")
+            ev_out.year, ev_out.month, ev_out.day = dt.year, dt.month, dt.day
+            ev_out.hour, ev_out.minute, ev_out.second = dt.hour, dt.minute, dt.second
 
-        if self.parsed_object[0] == Method.RELATIVE_DATETIMES:
+        if self.parsed_object_type == Method.RELATIVE_DATETIMES:
 
             new = self.CURRENT_DATETIME
 
             new += relativedelta(
-                years=self.parsed_object[1][0].years,
-                months=self.parsed_object[1][0].months,
-                weeks=self.parsed_object[1][0].weeks,
-                days=self.parsed_object[1][0].days,
-                hours=self.parsed_object[1][1].hours,
-                minutes=self.parsed_object[1][1].minutes,
-                seconds=self.parsed_object[1][1].seconds
+                years=self.parsed_object_content[0].years,
+                months=self.parsed_object_content[0].months,
+                weeks=self.parsed_object_content[0].weeks,
+                days=self.parsed_object_content[0].days,
+                hours=self.parsed_object_content[1].hours,
+                minutes=self.parsed_object_content[1].minutes,
+                seconds=self.parsed_object_content[1].seconds
             )
 
-            out += f"{datetime.strftime(new, '%Y-%m-%d %H:%M:%S')}"
+            ev_out.year, ev_out.month, ev_out.day = new.year, new.month, new.day
+            ev_out.hour, ev_out.minute, ev_out.second = new.hour, new.minute, new.second
 
-        if self.parsed_object[0] == Method.DATETIME_DELTA_CONSTANTS:
+        if self.parsed_object_type == Method.DATETIME_DELTA_CONSTANTS:
 
-            relative_time: datetimeparser.RelativeTime = self.parsed_object[1][0]
+            relative_time: RelativeTime = self.parsed_object_content[0]
+            now: datetime = self.CURRENT_DATE
 
-            out += f"{str(self.CURRENT_DATE)[:10]} {relative_time.hours}:{relative_time.minutes}:{relative_time.seconds}"
+            ev_out.year, ev_out.month, ev_out.day = now.year, now.month, now.day
+            ev_out.hour, ev_out.minute, ev_out.second = relative_time.hours, relative_time.minutes, relative_time.seconds
 
-        if out:
-            try:
-                dt_object = datetime.strptime(out, "%Y-%m-%d %H:%M:%S")
-                return dt_object
-            except ValueError:
-                return None
+        try:
+            dt_object = datetime(
+                ev_out.year,
+                ev_out.month,
+                ev_out.day,
+                ev_out.hour,
+                ev_out.minute,
+                ev_out.second
+            )
+            return dt_object
+        except ValueError:
+            return None
