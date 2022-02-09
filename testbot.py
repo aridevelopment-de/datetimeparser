@@ -63,7 +63,7 @@ async def parse(ctx: Context, *, datetime_string: str):
             else:
                 result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n\n# {parse_date(datetime_string)}```"
     except:  # noqa
-        result = get_latest_stacktrace()
+        result = f"```mkd\n{get_latest_stacktrace()}```"
         color = 0xFF0000
     finally:
         embed = Embed(
