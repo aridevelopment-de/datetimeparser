@@ -3,6 +3,7 @@ from dateutil.relativedelta import relativedelta
 from typing import Union
 from pytz import timezone
 
+import datetimeparser
 from .baseclasses import *
 
 
@@ -163,6 +164,12 @@ class Evaluator:
             )
 
             out += f"{datetime.strftime(new, '%Y-%m-%d %H:%M:%S')}"
+
+        if self.parsed_object[0] == Method.DATETIME_DELTA_CONSTANTS:
+
+            relative_time: datetimeparser.RelativeTime = self.parsed_object[1][0]
+
+            out += f"{str(self.CURRENT_DATE)[:10]} {relative_time.hours}:{relative_time.minutes}:{relative_time.seconds}"
 
         if out:
             try:
