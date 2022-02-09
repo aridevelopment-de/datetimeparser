@@ -2,6 +2,8 @@ import re
 import datetime
 import string as string_utils
 
+from typing import List
+
 from .baseclasses import *
 
 
@@ -191,15 +193,16 @@ class Parser:
                 # Check all keywords
                 if data in [kw for kw in keyword.get_all()]:
                     return (keyword,)
-                
+
+                # Remove `the`
                 if data.startswith("the"):
                     data = data[len("the "):]
 
+                # Check all keywords again
                 if data in [kw for kw in keyword.get_all()]:
                     return (keyword,)
-
                 else:
-                    # Check <constants> <year>
+                    # Check <constants> <year> pattern, e.g. christmas 2021
                     for kw in keyword.get_all():
                         d = data.split()
 
@@ -209,7 +212,7 @@ class Parser:
                             if 1970 < year < 9999:
                                 return keyword, AbsoluteDateTime(year=year)
                     else:
-                        # Check just numbers?
+                        # Check just numbers e.g. 2021
                         if data.isnumeric():
                             data = int(data)
 
@@ -223,6 +226,7 @@ class Parser:
     def __convert_absolute_preposition_tokens(self, data):
         new_data = []
 
+        # Decide what function to parse the sections of the data
         for i, part in enumerate(data):
             if part['type'] == 'relative':
                 relative_data = []
@@ -244,7 +248,7 @@ class Parser:
         return new_data
 
     @staticmethod
-    def __convert_absolute_prepositions_better_relative(tokens, preposition):
+    def __convert_absolute_prepositions_better_relative(tokens: List, preposition: List) -> List:
         # We currently support every preposition ('after', 'before', 'in')
         if len(tokens) == 1 or len(tokens) % 2 != 0:
             return tokens
@@ -277,6 +281,10 @@ class Parser:
         return new_tokens
 
     def parse_absolute_prepositions(self):
+        """
+        Parses absolute prepositions
+        e.g. three days after christmas 2021
+        """
         splitted = self.__get_absolute_preposition_parts(self.string)
 
         if splitted is None:
@@ -288,31 +296,8 @@ class Parser:
 
     def parse_datetime_delta_constants(self):
         """
-        New syntax:
-        (at) <keyword>
-        (at) 3pm monday (absolute_time_constants)
-        (at) 3am
-
-        #### TODO ####
-        3 hours in the morning
-        3 hours in the future
-        3 hours in the past
-        3 hours before now
-        3 hours after now
-        3 hours before tomorrow
-        3 hours after tomorrow
-        3 hours before yesterday
-        3 hours after yesterday
-        3 hours before tomorrow at 3pm
-        3 hours after tomorrow at 3pm
-        ########
-
-        (at) 10:30 in the morning
-        (at) 10:30 in the afternoon
-        (at) 10:30 in the evening
-        (at) 10:30 in the night
-
-        (([0-9]{1,2}:[0-9]{1,2})|([0-9]{1,2}))(am|pm|) matches 10:30pm, 10:30am, 10:30, 3am, 3pm
+        Parses datetime constants
+        e.g. at 3pm tomorrow
         """
 
         data = self.string.split()
