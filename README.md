@@ -21,6 +21,11 @@ Datetimeparser is a python library capable of parsing the english language into 
 It was created due to the lack of such library and need for it. We knew that there was [dateutil](https://github.com/dateutil/dateutil/) but we wanted a more powerful parsing library.  
 Datetimeparser can even parse complex grammar and sentence structure.
 
+## Latest Change
+
+<!-- LATESTCOMMIT:START -->
+<!-- LATESTCOMMIT:END -->
+
 ## Examples
 
 Below you can find some examples of how datetimeparser can be used.  
