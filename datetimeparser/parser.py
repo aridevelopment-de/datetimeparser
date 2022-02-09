@@ -1,3 +1,4 @@
+import re
 import datetime
 import string as string_utils
 
@@ -26,6 +27,8 @@ class Parser:
         Keywords.AFTER,
         Keywords.BEFORE
     ]
+
+    DATETIME_DELTA_CONSTANTS_PATTERN = re.compile("(([0-9]{1,2}:[0-9]{1,2})|([0-9]{1,2}))(am|pm|)")
 
     def __init__(self, string):
         self.string = self.remove_non_ascii(" ".join(string.split()))
@@ -283,6 +286,112 @@ class Parser:
 
         return Method.ABSOLUTE_PREPOSITIONS, tokens
 
+    def parse_datetime_delta_constants(self):
+        """
+        New syntax:
+        (at) <keyword>
+        (at) 3pm monday (absolute_time_constants)
+        (at) 3am
+
+        #### TODO ####
+        3 hours in the morning
+        3 hours in the future
+        3 hours in the past
+        3 hours before now
+        3 hours after now
+        3 hours before tomorrow
+        3 hours after tomorrow
+        3 hours before yesterday
+        3 hours after yesterday
+        3 hours before tomorrow at 3pm
+        3 hours after tomorrow at 3pm
+        ########
+
+        (at) 10:30 in the morning
+        (at) 10:30 in the afternoon
+        (at) 10:30 in the evening
+        (at) 10:30 in the night
+
+        (([0-9]{1,2}:[0-9]{1,2})|([0-9]{1,2}))(am|pm|) matches 10:30pm, 10:30am, 10:30, 3am, 3pm
+        """
+
+        data = self.string.split()
+
+        if data:
+            if data[0] == 'at':
+                data.pop(0)
+
+        if not data:
+            return None
+
+        if self.DATETIME_DELTA_CONSTANTS_PATTERN.match(data[0]):
+            # at 3pm
+            # at 3am
+            # at 10:30pm
+            # at 10:30am
+            # at 10:30
+
+            time = data.pop(0)
+            after_lunch = time.endswith("pm") if time.endswith(("pm", "am")) else None
+            time = time.replace("pm", "").replace("am", "")
+            parsed_time = None
+
+            for format_ in self.CLOCKTIME_FORMATS:
+                try:
+                    parsed_time = datetime.datetime.strptime(time, format_)
+                except ValueError:
+                    continue
+
+            if not parsed_time and time.count(":") == 0:
+                if after_lunch is not None:
+                    parsed_time = RelativeTime(hours=(12 if after_lunch else 0) + int(time))
+                else:
+                    parsed_time = RelativeTime(hours=int(time))
+            elif parsed_time:
+                if after_lunch is not None:
+                    parsed_time = RelativeTime(hours=(12 if after_lunch else 0) + parsed_time.hour, minutes=parsed_time.minute, seconds=parsed_time.second)
+                else:
+                    parsed_time = RelativeTime(hours=parsed_time.hour, minutes=parsed_time.minute, seconds=parsed_time.second)
+            else:
+                return None
+
+            if parsed_time.hours > 24:
+                return None
+
+            prepared_data = [parsed_time]
+
+            if not data:
+                return Method.DATETIME_DELTA_CONSTANTS, prepared_data
+            else:
+                """
+                at 3 in the morning
+                at 3 in the afternoon
+                """
+
+                rest = " ".join(data)
+
+                for kw in DatetimeDeltaConstants.ALL:
+                    for alias in kw.get_all():
+                        if rest in ("in the " + alias, alias):
+                            value = kw.value
+                            break
+                    else:
+                        continue
+
+                    break
+                else:
+                    return None
+
+                if after_lunch is not None:
+                    # FIXME: at 3pm in the morning
+                    return None
+
+                prepared_data[0].hours += value
+
+                return Method.DATETIME_DELTA_CONSTANTS, prepared_data
+
+        return None
+
     def parse_constants(self):
         # It's important that WeekdayConstant goes before DatetimeConstants because `friday` contains the word `day`
         keywords = [*Constants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL, *DatetimeConstants.ALL]
@@ -303,7 +412,7 @@ class Parser:
                         """
                         data = self.string.split()
 
-                        if data[0].strip().lower() in ('last', 'next') and " ".join(data[1:]).lower() == kw:
+                        if data[0].strip().lower() in ('last', 'next', 'at') and " ".join(data[1:]).lower() == kw:
                             # preposition
                             # next [friday]
                             """
@@ -506,7 +615,8 @@ class Parser:
             self.parse_absolute_date_formats,
             lambda: self.parse_relative_datetimes(self.string),
             self.parse_constants,
-            self.parse_absolute_prepositions
+            self.parse_absolute_prepositions,
+            self.parse_datetime_delta_constants,
         ]
 
         result = None

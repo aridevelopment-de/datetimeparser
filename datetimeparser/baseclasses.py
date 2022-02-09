@@ -185,6 +185,29 @@ class Constants:
     ]
 
 
+class DatetimeDeltaConstants:
+    MIDNIGHT = Constant('midnight', value=0)
+    NIGHT = Constant('night', value=0)
+    MORNING_NIGHT = Constant('morning night', value=0)
+    SUNRISE = Constant('sunrise', value=0)
+    MORNING = Constant('morning', value=0)
+    BREAKFAST = Constant('breakfast', value=0)
+
+    MIDDAY = Constant('midday', value=12)
+    LUNCH = Constant('lunch', ['lunchtime'], value=12)
+    AFTERNOON = Constant('afternoon', value=12)
+    EVENING = Constant('evening', value=12)
+    DINNER = Constant('dinner', ['dinnertime'], value=12)
+    DAWN = Constant('dawn', value=12)
+    DUSK = Constant('dusk', value=12)
+    SUNSET = Constant('sunset', value=12)
+
+    ALL = [
+        MORNING, AFTERNOON, EVENING, NIGHT, MORNING_NIGHT, MIDNIGHT, MIDDAY, DAWN, DUSK,
+        SUNRISE, SUNSET, LUNCH, DINNER, BREAKFAST
+    ]
+
+
 class NumberConstants:
     # Presented to you by github copilot
     ONE = Constant('one', value=1)
@@ -349,4 +372,5 @@ class Method:
     ABSOLUTE_PREPOSITIONS = MethodEnum('absolute_prepositions')
     ABSOLUTE_DATE_FORMATS = MethodEnum('absolute_date_formats')
     CONSTANTS = MethodEnum('constants')
+    DATETIME_DELTA_CONSTANTS = MethodEnum('datetime_delta_constants')
     RELATIVE_DATETIMES = MethodEnum('relative_datetimes')
