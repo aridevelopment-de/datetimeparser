@@ -61,5 +61,9 @@ testcases = {
     "end of autumn 2020": datetime.datetime(2020, 11, 30, 23, 59, 59),
     "begin of advent of code 2022": datetime.datetime(2022, 12, 1, 6),
     "end of aoc 2022": datetime.datetime(2022, 12, 26, 6),
-    "end of the year": datetime.datetime(today.year, 12, 31, 23, 59, 59)
+    "end of the year": datetime.datetime(today.year, 12, 31, 23, 59, 59),
+    "at 9pm": datetime.datetime(today.year, today.month, today.day, 21),
+    "at 9:00pm": datetime.datetime(today.year, today.month, today.day, 21),
+    "at 10 in the evening": datetime.datetime(today.year, today.month, today.day, 22),
+    "5 in the morning": datetime.datetime(today.year, today.month, today.day, 5),
 }
