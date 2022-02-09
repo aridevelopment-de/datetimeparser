@@ -342,7 +342,7 @@ class Parser:
                 except ValueError:
                     continue
 
-            if not parsed_time and time.count(":") == 0:
+            if not parsed_time and time.count(":") == 0 and time.isdigit():
                 if after_lunch is not None:
                     parsed_time = RelativeTime(hours=(12 if after_lunch else 0) + int(time))
                 else:
@@ -615,8 +615,8 @@ class Parser:
             self.parse_absolute_date_formats,
             lambda: self.parse_relative_datetimes(self.string),
             self.parse_constants,
-            self.parse_absolute_prepositions,
             self.parse_datetime_delta_constants,
+            self.parse_absolute_prepositions,
         ]
 
         result = None
