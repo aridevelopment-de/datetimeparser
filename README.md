@@ -60,6 +60,11 @@ Use pip to install the library:
 $ pip install datetimeparser
 ```
 
+## Contributing
+
+If you want to contribute to datetimeparser, please use feature branches. If possible, name them after an already opened issue (e.g. feature/131).  
+We highly appreciate everyone who wants to help our project!
+
 ## List of Constants
 
 <details>
