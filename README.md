@@ -25,9 +25,9 @@ Datetimeparser can even parse complex grammar and sentence structure.
 
 <!-- LATESTCOMMIT:START -->
 
-[<img width="380px" height="200px" src="https://opengraph.githubassets.com/23b94f866826844be9f0991bc70f39e37c3098b591c43d54007db8ae7bd8582e/aridevelopment-de/datetimeparser/commit/58c130b2adc40a49a38d6000f8d8cb954161e9ee" />][commitUrl]
+[<img width="380px" height="200px" src="https://opengraph.githubassets.com/fb5bfdf54a53ab3d5b885587ab0196ab416e1c6b4554ca2d75fc6a13f892b01d/aridevelopment-de/datetimeparser/commit/1659b4945a9be7f04a1eb26ffdbf1ecbed2d9fc3" />][commitUrl]
 
-[commitUrl]: https://github.com/aridevelopment-de/datetimeparser/commit/58c130b2adc40a49a38d6000f8d8cb954161e9ee
+[commitUrl]: https://github.com/aridevelopment-de/datetimeparser/commit/1659b4945a9be7f04a1eb26ffdbf1ecbed2d9fc3
 <!-- LATESTCOMMIT:END -->
 
 ## Examples
