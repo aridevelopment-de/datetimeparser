@@ -129,4 +129,3 @@ class MethodEnum:
 
     def __repr__(self):
         return f"<Method: {self.name}>"
-

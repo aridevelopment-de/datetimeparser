@@ -16,7 +16,6 @@ client = Bot(
     intents=Intents.all()
 )
 
-# https://discord.com/oauth2/authorize?client_id=939862584935477298&scope=bot&permissions=0
 
 def get_latest_stacktrace():
     # Helper function for retrieving the latest stacktrace
@@ -54,12 +53,12 @@ async def parse(ctx: Context, *, datetime_string: str):
         res = Parser(datetime_string).parse()
 
         if res is None:
-            result = f"```mkd\nNone (Parser Error)```"
+            result = "```mkd\nNone (Parser returned None)```"
         else:
             res = Evaluator(res).evaluate()
 
             if res is None:
-                result = f"```mkd\nNone (Evaluator Error)```"
+                result = "```mkd\nNone (Evaluator returned None)```"
             else:
                 result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n\n# {parse_date(datetime_string)}```"
     except:  # noqa

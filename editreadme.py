@@ -5,7 +5,7 @@ from datetimeparser.enums import (
     DatetimeConstants,
     NumberCountConstants,
     NumberConstants,
-    DatetimeDeltaConstants,
+    DatetimeDeltaConstants
 )
 
 
@@ -36,7 +36,7 @@ def get_constant_list(headline, constant_list):
 </ul>
 </details>"""
 
-    return f"""    
+    return f"""
 <details>
 <summary>{headline}</summary>
 {constants_string}
