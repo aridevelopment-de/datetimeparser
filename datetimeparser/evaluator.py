@@ -3,6 +3,7 @@ from dateutil.relativedelta import relativedelta
 from typing import Union
 from pytz import timezone
 
+from .enums import *
 from .baseclasses import *
 
 
@@ -110,20 +111,20 @@ class Evaluator:
 
             if len(self.parsed_object_content) == 2:
                 for object_type in self.parsed_object_content:
-                    if isinstance(object_type, AbsoluteDateTime):
-                        object_type: AbsoluteDateTime
+                    if isinstance(object_type, AbsoluteDate):
+                        object_type: AbsoluteDate
                         ev_out.year, ev_out.month, ev_out.day = object_type.year, object_type.month, object_type.day
 
-                    if isinstance(object_type, AbsoluteClockTime):
-                        object_type: AbsoluteClockTime
+                    if isinstance(object_type, AbsoluteTime):
+                        object_type: AbsoluteTime
                         ev_out.hour, ev_out.minute, ev_out.second = object_type.hour, object_type.minute, object_type.second
             else:
-                if isinstance(self.parsed_object_content[0], AbsoluteDateTime):
-                    parsed_date: AbsoluteDateTime = self.parsed_object_content[0]
+                if isinstance(self.parsed_object_content[0], AbsoluteDate):
+                    parsed_date: AbsoluteDate = self.parsed_object_content[0]
                     ev_out.year, ev_out.month, ev_out.day = parsed_date.year, parsed_date.month, parsed_date.day
 
-                if isinstance(self.parsed_object_content[0], AbsoluteClockTime):
-                    parsed_time: AbsoluteClockTime = self.parsed_object_content[0]
+                if isinstance(self.parsed_object_content[0], AbsoluteTime):
+                    parsed_time: AbsoluteTime = self.parsed_object_content[0]
                     ev_out.year, ev_out.month, ev_out.day = self.CURRENT_DATE.year, self.CURRENT_DATE.month, self.CURRENT_DATE.day
                     ev_out.hour, ev_out.minute, ev_out.second = parsed_time.hour, parsed_time.minute, parsed_time.second
 
@@ -138,7 +139,7 @@ class Evaluator:
 
                 if isinstance(self.parsed_object_content[0], Constant):
                     object_type: Constant = self.parsed_object_content[0]
-                    object_year: AbsoluteDateTime = self.parsed_object_content[1].year
+                    object_year: AbsoluteDate = self.parsed_object_content[1].year
                     dt = datetime.strptime(f"{self.EVENTS[str(object_type.name)](object_year)}", "%Y-%m-%d %H:%M:%S")
                     if self.CURRENT_DATETIME > dt and object_year == 0:
                         dt += relativedelta(years=1)
