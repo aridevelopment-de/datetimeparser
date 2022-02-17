@@ -1,4 +1,13 @@
-from datetimeparser.baseclasses import Constants
+from datetimeparser.enums import (
+    Constants,
+    MonthConstants,
+    WeekdayConstants,
+    DatetimeConstants,
+    NumberCountConstants,
+    NumberConstants,
+    DatetimeDeltaConstants,
+)
+
 
 HEADER = "## List of Constants"
 
@@ -13,25 +22,37 @@ for j, line in enumerate(readme.split("\n")):
 
 readme = "\n".join(readme.split("\n")[:i]) + "\n" + HEADER
 
-constants_string = ""
 
-for constant in Constants.ALL:
-    alias_string = '\n'.join(f"<li>{item}</li>" for item in constant.alias)
+def get_constant_list(headline, constant_list):
+    constants_string = ""
 
-    constants_string += f"""<details>
+    for constant in constant_list:
+        alias_string = '\n'.join(f"<li>{item}</li>" for item in constant.alias)
+
+        constants_string += f"""<details>
 <summary><code>{constant.name}</code></summary>
 <ul>
 {alias_string}
 </ul>
 </details>"""
 
-readme = readme.replace(HEADER, f"""{HEADER}
-
+    return f"""    
 <details>
-<summary>List of Constants</summary>
+<summary>{headline}</summary>
 {constants_string}
-</details>""")
+</details>"""
 
+
+resulting_string = ""
+resulting_string += get_constant_list("All Normal-Constants", Constants.ALL) + "\n<br />\n"
+resulting_string += get_constant_list("All Day-Constants", DatetimeDeltaConstants.ALL) + "\n<br />\n"
+resulting_string += get_constant_list("All Weekday-Constants", WeekdayConstants.ALL) + "\n<br />\n"
+resulting_string += get_constant_list("All Month-Constants", MonthConstants.ALL) + "\n<br />\n"
+resulting_string += get_constant_list("All Datetime-Constants", DatetimeConstants.ALL) + "\n<br />\n"
+resulting_string += get_constant_list("All Number-Constants", NumberConstants.ALL) + "\n<br />\n"
+resulting_string += get_constant_list("All NumberCount-Constants", NumberCountConstants.ALL) + "\n<br />\n"
+
+readme = readme.replace(HEADER, f"{HEADER}\n{resulting_string}")
 
 with open("README.md", "w", encoding="utf-8") as f:
     f.write(readme)
