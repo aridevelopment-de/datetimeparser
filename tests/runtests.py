@@ -2,7 +2,7 @@ import argparse
 
 try:
     from testcases import testcases
-    from Colors import Colors
+    from colors import Colors
 
     from datetimeparser.parser import Parser
     from datetimeparser.evaluator import Evaluator
@@ -12,7 +12,7 @@ except (ImportError, ModuleNotFoundError):
     sys.path.insert(0, "..")
 
     from testcases import testcases
-    from Colors import Colors
+    from colors import Colors
 
     from datetimeparser.parser import Parser
     from datetimeparser.evaluator import Evaluator
@@ -67,9 +67,9 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
             parser_result = p.parse()
         except BaseException as e:
             if not disable_colored_output:
-                testcase_results[testcase] = StatusType.PARSER_EXCEPTION, f"{Colors.ANSI_CYAN}Parser {Colors.ANSI_BOLD_WHITE}raised an {Colors.ANSI_LIGHT_RED}exception: {Colors.ANSI_WHITE}{e}"
+                testcase_results[testcase] = StatusType.PARSER_EXCEPTION, f"{Colors.ANSI_CYAN}Parser {Colors.ANSI_BOLD_WHITE}raised an {Colors.ANSI_LIGHT_RED}exception: {Colors.ANSI_WHITE}{e}", None
             else:
-                testcase_results[testcase] = StatusType.PARSER_EXCEPTION, f"Parser raised an exception: {e}"
+                testcase_results[testcase] = StatusType.PARSER_EXCEPTION, f"Parser raised an exception: {e}", None
 
             continue
 
@@ -87,9 +87,9 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
             evaluator_result = e.evaluate()
         except BaseException as e:
             if not disable_colored_output:
-                testcase_results[testcase] = StatusType.EVALUATOR_EXCEPTION, f"{Colors.ANSI_CYAN}Evaluator {Colors.ANSI_BOLD_WHITE}raised an {Colors.ANSI_LIGHT_RED}exception: {Colors.ANSI_WHITE}{e}"
+                testcase_results[testcase] = StatusType.EVALUATOR_EXCEPTION, f"{Colors.ANSI_CYAN}Evaluator {Colors.ANSI_BOLD_WHITE}raised an {Colors.ANSI_LIGHT_RED}exception: {Colors.ANSI_WHITE}{e}", None
             else:
-                testcase_results[testcase] = StatusType.EVALUATOR_EXCEPTION, f"Evaluator raised an exception: {e}"
+                testcase_results[testcase] = StatusType.EVALUATOR_EXCEPTION, f"Evaluator raised an exception: {e}", None
 
             continue
 
@@ -103,7 +103,7 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
 
         if expected_value is None:
             if not disable_no_validation:
-                testcase_results[testcase] = StatusType.NO_VALIDATION, "No validation and no errors", None
+                testcase_results[testcase] = StatusType.NO_VALIDATION, evaluator_result, None
             continue
 
         if evaluator_result != expected_value:
