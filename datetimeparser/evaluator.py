@@ -7,39 +7,39 @@ from .enums import *
 from .baseclasses import *
 
 
-def eastern_calc(year_time: int) -> str:
-    A = year_time % 19
-    K = year_time // 100
-    M = 15 + (3 * K + 3) // 4 - (8 * K + 13) // 25
-    D = (19 * A + M) % 30
-    S = 2 - (3 * K + 3) // 4
-    R = D // 29 + (D // 28 - D // 29) * (A // 11)
-    OG = 21 + D + R
-    SZ = 7 - (year_time + year_time // 4 + S) % 7
-    OE = 7 - (OG - SZ) % 7
-    OS = OG + OE
+def eastern_calc(year_time: int) -> datetime:
+    a = year_time % 19
+    k = year_time // 100
+    m = 15 + (3 * k + 3) // 4 - (8 * k + 13) // 25
+    d = (19 * a + m) % 30
+    s = 2 - (3 * k + 3) // 4
+    r = d // 29 + (d // 28 - d // 29) * (a // 11)
+    og = 21 + d + r
+    sz = 7 - (year_time + year_time // 4 + s) % 7
+    oe = 7 - (og - sz) % 7
+    os = og + oe
 
-    if OS > 32:
-        return f"{year_time}-04-{OS-31} 0:00:00"
+    if os > 32:
+        return datetime(year=year_time, month=4, day=(os-31))
     else:
-        return f"{year_time}-03-{OS} 0:00:00"
+        return datetime(year=year_time, month=3, day=os)
 
 
 def thanksgiving_calc(year_time: int) -> datetime:
-    year_out = datetime.strptime(f"{year_time}-11-29 0:00:00", "%Y-%m-%d %H:%M:%S")
-    date_out = datetime.strptime(f"{year_time}-11-3 0:00:00", "%Y-%m-%d %H:%M:%S")
+    year_out = datetime(year=year_time, month=11, day=29)
+    date_out = datetime(year=year_time, month=11, day=3)
     return year_out - timedelta(days=(date_out.weekday() + 2))
 
 
-def days_feb(year_time: int) -> str:
+def days_feb(year_time: int) -> int:
     if int(year_time) % 400 == 0 or int(year_time) % 4 == 0 and not int(year_time) % 100 == 0:
-        return "29"
+        return 29
     else:
-        return "28"
+        return 28
 
 
-def year(year_time: int) -> str:
-    return f"{year_time}-01-01 0:00:00"
+def year(year_time: int) -> datetime:
+    return datetime(year=year_time, month=1, day=1)
 
 
 class Evaluator:
@@ -47,30 +47,30 @@ class Evaluator:
     CURRENT_DATETIME: datetime = datetime.strptime(datetime.strftime(datetime.now(tz=timezone("Europe/Berlin")), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
     EVENTS = {
-        "silvester": lambda year_time: f"{year_time}-12-31 0:00:00",
-        "nicholas": lambda year_time: f"{year_time}-12-06 0:00:00",
-        "christmas": lambda year_time: f"{year_time}-12-25 0:00:00",
-        "halloween": lambda year_time: f"{year_time}-10-31 0:00:00",
-        "april fools day": lambda year_time: f"{year_time}-04-01 0:00:00",
+        "silvester": lambda year_time: datetime(year=year_time, month=12, day=31),
+        "nicholas": lambda year_time: datetime(year=year_time, month=12, day=6),
+        "christmas": lambda year_time: datetime(year=year_time, month=12, day=25),
+        "halloween": lambda year_time: datetime(year=year_time, month=10, day=31),
+        "april fools day": lambda year_time: datetime(year=year_time, month=4, day=1),
         "eastern": eastern_calc,
         "thanksgiving": thanksgiving_calc,
-        "saint patrick's day": lambda year_time: f"{year_time}-03-17 0:00:00",
-        "valentines day": lambda year_time: f"{year_time}-02-14 0:00:00",
+        "saint patrick's day": lambda year_time: datetime(year=year_time, month=3, day=17),
+        "valentines day": lambda year_time: datetime(year=year_time, month=2, day=14),
 
         # meteorological dates, if someone has any problem with that... -> fork this project, build a function for that and create a pull request :)
-        "spring begin": lambda year_time: f"{year_time}-03-01 0:00:00",
-        "spring end": lambda year_time: f"{year_time}-05-31 23:59:59",
-        "summer begin": lambda year_time: f"{year_time}-06-01 0:00:00",
-        "summer end": lambda year_time: f"{year_time}-08-31 23:59:59",
-        "fall begin": lambda year_time: f"{year_time}-09-01 0:00:00",
-        "fall end": lambda year_time: f"{year_time}-11-30 23:59:59",
-        "winter begin": lambda year_time: f"{year_time}-12-01 0:00:00",
-        "winter end": lambda year_time: f"{year_time}-02-{days_feb(year_time)} 23:59:59",
+        "spring begin": lambda year_time: datetime(year=year_time, month=3, day=1),
+        "spring end": lambda year_time: datetime(year=year_time, month=5, day=31, hour=23, minute=59, second=59),
+        "summer begin": lambda year_time: datetime(year=year_time, month=6, day=1),
+        "summer end": lambda year_time: datetime(year=year_time, month=8, day=31, hour=23, minute=59, second=59),
+        "fall begin": lambda year_time: datetime(year=year_time, month=9, day=1),
+        "fall end": lambda year_time: datetime(year=year_time, month=11, day=30, hour=23, minute=59, second=59),
+        "winter begin": lambda year_time: datetime(year=year_time, month=12, day=1),
+        "winter end": lambda year_time: datetime(year=year_time, month=2, day=days_feb(year_time), hour=23, minute=59, second=59),
 
-        "aoc begin": lambda year_time: f"{year_time}-12-01 6:00:00",
-        "aoc end": lambda year_time: f"{year_time}-12-26 6:00:00",
+        "aoc begin": lambda year_time: datetime(year=year_time, month=12, day=1, hour=6),
+        "aoc end": lambda year_time: datetime(year=year_time, month=12, day=26, hour=6),
 
-        "end of year": lambda year_time: f"{year_time}-12-31 23:59:59",
+        "end of year": lambda year_time: datetime(year=year_time, month=12, day=31, hour=23, minute=59, second=59),
 
         "infinity": -1
     }
@@ -86,18 +86,18 @@ class Evaluator:
     }
 
     MONTHS = {
-        "january": lambda year_time: f"{year_time}-01-01 0:00:00",
-        "february": lambda year_time: f"{year_time}-02-01 0:00:00",
-        "march": lambda year_time: f"{year_time}-03-01 0:00:00",
-        "april": lambda year_time: f"{year_time}-04-01 0:00:00",
-        "may": lambda year_time: f"{year_time}-05-01 0:00:00",
-        "june": lambda year_time: f"{year_time}-06-01 0:00:00",
-        "july": lambda year_time: f"{year_time}-07-01 0:00:00",
-        "august": lambda year_time: f"{year_time}-08-01 0:00:00",
-        "september": lambda year_time: f"{year_time}-09-01 0:00:00",
-        "october": lambda year_time: f"{year_time}-10-01 0:00:00",
-        "november": lambda year_time: f"{year_time}-11-01 0:00:00",
-        "december": lambda year_time: f"{year_time}-12-01 0:00:00"
+        "january": lambda year_time: datetime(year=year_time, month=1, day=1),
+        "february": lambda year_time: datetime(year=year_time, month=2, day=1),
+        "march": lambda year_time: datetime(year=year_time, month=3, day=1),
+        "april": lambda year_time: datetime(year=year_time, month=4, day=1),
+        "may": lambda year_time: datetime(year=year_time, month=5, day=1),
+        "june": lambda year_time: datetime(year=year_time, month=6, day=1),
+        "july": lambda year_time: datetime(year=year_time, month=7, day=1),
+        "august": lambda year_time: datetime(year=year_time, month=8, day=1),
+        "september": lambda year_time: datetime(year=year_time, month=9, day=1),
+        "october": lambda year_time: datetime(year=year_time, month=10, day=1),
+        "november": lambda year_time: datetime(year=year_time, month=11, day=1),
+        "december": lambda year_time: datetime(year=year_time, month=12, day=1)
     }
 
     def __init__(self, parsed_object: list):
@@ -139,8 +139,8 @@ class Evaluator:
 
                 if isinstance(self.parsed_object_content[0], Constant):
                     object_type: Constant = self.parsed_object_content[0]
-                    object_year: AbsoluteDate = self.parsed_object_content[1].year
-                    dt = datetime.strptime(f"{self.EVENTS[str(object_type.name)](object_year)}", "%Y-%m-%d %H:%M:%S")
+                    object_year: AbsoluteDateTime = self.parsed_object_content[1].year
+                    dt = self.EVENTS[str(object_type.name)](object_year)
                     if self.CURRENT_DATETIME > dt and object_year == 0:
                         dt += relativedelta(years=1)
 
@@ -148,11 +148,11 @@ class Evaluator:
                 if self.parsed_object_content[0].name in self.EVENTS:
                     if self.parsed_object_content[0].name == "infinity":
                         return self.EVENTS["infinity"]
-                    dt = datetime.strptime(f"{self.EVENTS[str(self.parsed_object_content[0].name)](datetime.strftime(datetime.today(), '%Y'))}", "%Y-%m-%d %H:%M:%S")
+                    dt = self.EVENTS[str(self.parsed_object_content[0].name)](self.CURRENT_DATETIME.year)
                     if self.CURRENT_DATETIME > dt:
                         dt += relativedelta(years=1)
                 elif self.parsed_object_content[0].name in self.DAYS:
-                    dt = datetime.strptime(f"{self.DAYS[str(self.parsed_object_content[0].name)].format(datetime.strftime(datetime.today(), '%Y'))}", "%Y-%m-%d %H:%M:%S")
+                    dt = datetime.strptime(f"{self.DAYS[str(self.parsed_object_content[0].name)].format(self.CURRENT_DATETIME.year)}", "%Y-%m-%d %H:%M:%S")
             ev_out.year, ev_out.month, ev_out.day = dt.year, dt.month, dt.day
             ev_out.hour, ev_out.minute, ev_out.second = dt.hour, dt.minute, dt.second
 
