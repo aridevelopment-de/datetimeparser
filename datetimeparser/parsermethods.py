@@ -80,7 +80,7 @@ class RelativeDatetimesParser:
     PREPOSITIONS = ["in", "for", "next", "last"]
     SKIPPABLE_KEYWORDS = ["and", "in", "for", ","]
 
-    def parse(self, string: str) -> Union[None, Tuple[MethodEnum, List[Any]]]:
+    def parse(self, string: str) -> Union[None, Tuple[MethodEnum, List[Any]]]:  # noqa: C901
         """
         Parses strings like "in 5 days" or "in 5 days and 3 hours"
         Returns None if the string cannot be parsed
@@ -128,7 +128,7 @@ class RelativeDatetimesParser:
                         new_data.append(1 if preposition != "last" else -1)
                     elif not isinstance(new_data[-1], int):
                         # If the element before the keyword is not a number we have to add one ourselves
-                        # This occurs when FIXME
+                        # This occurs when TODO
                         new_data.append(1 if preposition != "last" else -1)
 
                     new_data.append(keyword)
@@ -155,7 +155,7 @@ class RelativeDatetimesParser:
                         new_data.append(1 if preposition != "last" else -1)
                     elif not isinstance(new_data[-1], int):
                         # If the element before the keyword is not a number we have to add one ourselves
-                        # This occurs when FIXME
+                        # This occurs when TODO
                         new_data.append(1 if preposition != "last" else -1)
 
                     new_data.append(keyword)
@@ -239,7 +239,7 @@ class ConstantsParser:
 
         return None
 
-    def parse(self, string: str) -> Optional[Tuple[MethodEnum, List[Any]]]:
+    def parse(self, string: str) -> Optional[Tuple[MethodEnum, List[Any]]]:  # noqa: C901
         """
         Parses strings like "today" or "next christmas" or "christmas 2022"
         Returns None if the string cannot be parsed
@@ -315,7 +315,7 @@ class DatetimeDeltaConstantsParser:
         "%H:%M"
     ]
 
-    def parse(self, string: str) -> Optional[Tuple[Any, RelativeTime]]:
+    def parse(self, string: str) -> Optional[Tuple[Any, RelativeTime]]:  # noqa: C901
         """
         Parses strings like "at 3pm tomorrow" or "at 1am" or "at 10:30"
         Returns None if the string cannot be parsed
@@ -457,7 +457,7 @@ class AbsolutePrepositionParser:
 
         return {'type': 'relative', 'data': relative}, {'type': 'keyword', 'data': word}, {'type': 'absolute', 'data': absolute}
 
-    def _parse_relative_statement(self, relative_statement: str) -> List[Union[int, Keyword]]:
+    def _parse_relative_statement(self, relative_statement: str) -> List[Union[int, Keyword]]:  # noqa: C901
         """
         Parses strings like "3 seconds, 2 minutes and 4 hours", "the fifth day", "4. week"
         It resembles `relative_datetimes`

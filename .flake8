@@ -4,4 +4,5 @@ per-file-ignores =
     Parser.py: C901,F405
     Evaluator.py: C901,F405
     baseclasses.py: E302
+    __init__.py: F401
 exclude=tests
