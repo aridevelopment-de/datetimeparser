@@ -102,7 +102,7 @@ class Evaluator:
 
     def __init__(self, parsed_object: list):
         self.parsed_object_type = parsed_object[0]
-        self.parsed_object_content: list = parsed_object[1]
+        self.parsed_object_content: Union[list, RelativeTime] = parsed_object[1]
 
     def evaluate(self) -> Union[datetime, int, None]:
         ev_out = EvaluatorOutput()
@@ -139,7 +139,7 @@ class Evaluator:
 
                 if isinstance(self.parsed_object_content[0], Constant):
                     object_type: Constant = self.parsed_object_content[0]
-                    object_year: AbsoluteDateTime = self.parsed_object_content[1].year
+                    object_year: AbsoluteDate = self.parsed_object_content[1].year
                     dt = self.EVENTS[str(object_type.name)](object_year)
                     if self.CURRENT_DATETIME > dt and object_year == 0:
                         dt += relativedelta(years=1)
@@ -175,7 +175,7 @@ class Evaluator:
 
         if self.parsed_object_type == Method.DATETIME_DELTA_CONSTANTS:
 
-            relative_time: RelativeTime = self.parsed_object_content[0]
+            relative_time: RelativeTime = self.parsed_object_content
             now: datetime = self.CURRENT_DATE
 
             ev_out.year, ev_out.month, ev_out.day = now.year, now.month, now.day
