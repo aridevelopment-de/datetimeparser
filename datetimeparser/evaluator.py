@@ -102,31 +102,21 @@ class Evaluator:
 
     def __init__(self, parsed_object: list):
         self.parsed_object_type = parsed_object[0]
-        self.parsed_object_content: Union[list, RelativeTime] = parsed_object[1]
+        self.parsed_object_content: Union[list, AbsoluteDateTime, RelativeDateTime] = parsed_object[1]
 
     def evaluate(self) -> Union[datetime, int, None]:
         ev_out = AbsoluteDateTime()
 
         if self.parsed_object_type == Method.ABSOLUTE_DATE_FORMATS:
 
-            if len(self.parsed_object_content) == 2:
-                for object_type in self.parsed_object_content:
-                    if isinstance(object_type, AbsoluteDate):
-                        object_type: AbsoluteDate
-                        ev_out.year, ev_out.month, ev_out.day = object_type.year, object_type.month, object_type.day
+            parsed_time: AbsoluteDateTime = self.parsed_object_content
 
-                    if isinstance(object_type, AbsoluteTime):
-                        object_type: AbsoluteTime
-                        ev_out.hour, ev_out.minute, ev_out.second = object_type.hour, object_type.minute, object_type.second
-            else:
-                if isinstance(self.parsed_object_content[0], AbsoluteDate):
-                    parsed_date: AbsoluteDate = self.parsed_object_content[0]
-                    ev_out.year, ev_out.month, ev_out.day = parsed_date.year, parsed_date.month, parsed_date.day
-
-                if isinstance(self.parsed_object_content[0], AbsoluteTime):
-                    parsed_time: AbsoluteTime = self.parsed_object_content[0]
-                    ev_out.year, ev_out.month, ev_out.day = self.CURRENT_DATE.year, self.CURRENT_DATE.month, self.CURRENT_DATE.day
-                    ev_out.hour, ev_out.minute, ev_out.second = parsed_time.hour, parsed_time.minute, parsed_time.second
+            ev_out.year = self.CURRENT_DATETIME.year if parsed_time.year == 0 else parsed_time.year
+            ev_out.month = self.CURRENT_DATETIME.month if parsed_time.month == 0 else parsed_time.month
+            ev_out.day = self.CURRENT_DATETIME.day if parsed_time.day == 0 else parsed_time.day
+            ev_out.hour = parsed_time.hour
+            ev_out.minute = parsed_time.minute
+            ev_out.second = parsed_time.second
 
         if self.parsed_object_type == Method.ABSOLUTE_PREPOSITIONS:
             pass
@@ -139,7 +129,7 @@ class Evaluator:
 
                 if isinstance(self.parsed_object_content[0], Constant):
                     object_type: Constant = self.parsed_object_content[0]
-                    object_year: AbsoluteDate = self.parsed_object_content[1].year
+                    object_year: AbsoluteDateTime = self.parsed_object_content[1].year
                     dt = self.EVENTS[str(object_type.name)](object_year)
                     if self.CURRENT_DATETIME > dt and object_year == 0:
                         dt += relativedelta(years=1)
@@ -161,13 +151,13 @@ class Evaluator:
             new = self.CURRENT_DATETIME
 
             new += relativedelta(
-                years=self.parsed_object_content[0].years,
-                months=self.parsed_object_content[0].months,
-                weeks=self.parsed_object_content[0].weeks,
-                days=self.parsed_object_content[0].days,
-                hours=self.parsed_object_content[1].hours,
-                minutes=self.parsed_object_content[1].minutes,
-                seconds=self.parsed_object_content[1].seconds
+                years=self.parsed_object_content.years,
+                months=self.parsed_object_content.months,
+                weeks=self.parsed_object_content.weeks,
+                days=self.parsed_object_content.days,
+                hours=self.parsed_object_content.hours,
+                minutes=self.parsed_object_content.minutes,
+                seconds=self.parsed_object_content.seconds
             )
 
             ev_out.year, ev_out.month, ev_out.day = new.year, new.month, new.day
@@ -175,7 +165,7 @@ class Evaluator:
 
         if self.parsed_object_type == Method.DATETIME_DELTA_CONSTANTS:
 
-            relative_time: RelativeTime = self.parsed_object_content
+            relative_time: RelativeDateTime = self.parsed_object_content
             now: datetime = self.CURRENT_DATE
 
             ev_out.year, ev_out.month, ev_out.day = now.year, now.month, now.day
