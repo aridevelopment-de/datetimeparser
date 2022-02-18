@@ -6,32 +6,27 @@ from .enums import *
 from .baseclasses import *
 
 
-class RelativeDateHelper:
+class RelativeDatetimeHelper:
     @staticmethod
-    def from_keyword(keyword: Keyword, delta: int = 1) -> RelativeDate:
+    def from_keyword(keyword: Keyword, delta: int = 1) -> RelativeDateTime:
         if keyword == DatetimeConstants.DAYS:
-            return RelativeDate(days=delta)
+            return RelativeDateTime(days=delta)
         elif keyword == DatetimeConstants.WEEKS:
-            return RelativeDate(weeks=delta)
+            return RelativeDateTime(weeks=delta)
         elif keyword == DatetimeConstants.MONTHS:
-            return RelativeDate(months=delta)
+            return RelativeDateTime(months=delta)
         elif keyword == DatetimeConstants.YEARS:
-            return RelativeDate(years=delta)
-
-
-class RelativeTimeHelper:
-    @staticmethod
-    def from_keyword(keyword: Keyword, delta: int = 1) -> RelativeTime:
-        if keyword == DatetimeConstants.SECONDS:
-            return RelativeTime(seconds=delta)
-        elif keyword == DatetimeConstants.MINUTES:
-            return RelativeTime(minutes=delta)
+            return RelativeDateTime(years=delta)
         elif keyword == DatetimeConstants.HOURS:
-            return RelativeTime(hours=delta)
+            return RelativeDateTime(hours=delta)
+        elif keyword == DatetimeConstants.MINUTES:
+            return RelativeDateTime(minutes=delta)
+        elif keyword == DatetimeConstants.SECONDS:
+            return RelativeDateTime(seconds=delta)
 
 
 class AbsoluteDateFormatsParser:
-    DATETIME_FORMATS = [
+    DATETIME_FORMATS = (
         "%Y.%m.%d %H:%M:%S",
         "%d.%m.%Y %H:%M:%S",
         "%Y.%m.%d",
@@ -40,12 +35,12 @@ class AbsoluteDateFormatsParser:
         "%H:%M",
         "%Y.%m.d %H:%M",
         "%d.%m.%Y %H:%M"
-    ]
+    )
 
-    CLOCKTIME_FORMATS = [
+    CLOCKTIME_FORMATS = (
         "%H:%M:%S",
         "%H:%M"
-    ]
+    )
 
     def parse(self, string: str) -> Union[None, Tuple[MethodEnum, List[Any]]]:
         """
@@ -66,10 +61,10 @@ class AbsoluteDateFormatsParser:
                 continue
 
             if datetime_format not in self.CLOCKTIME_FORMATS:
-                timings.append(AbsoluteDate(year=time.year, month=time.month, day=time.day))
+                timings.append(AbsoluteDateTime(year=time.year, month=time.month, day=time.day))
 
             # Always add the time because datetime.datetimes values are always set
-            timings.append(AbsoluteTime(hour=time.hour, minute=time.minute, second=time.second))
+            timings.append(AbsoluteDateTime(hour=time.hour, minute=time.minute, second=time.second))
 
             return Method.ABSOLUTE_DATE_FORMATS, timings
 
@@ -77,10 +72,10 @@ class AbsoluteDateFormatsParser:
 
 
 class RelativeDatetimesParser:
-    PREPOSITIONS = ["in", "for", "next", "last"]
-    SKIPPABLE_KEYWORDS = ["and", "in", "for", ","]
+    PREPOSITIONS = ("in", "for", "next", "last")
+    SKIPPABLE_KEYWORDS = ("and", "in", "for", ",")
 
-    def parse(self, string: str) -> Union[None, Tuple[MethodEnum, List[Any]]]:  # noqa: C901
+    def parse(self, string: str) -> Union[None, Tuple[MethodEnum, RelativeDateTime]]:  # noqa: C901
         """
         Parses strings like "in 5 days" or "in 5 days and 3 hours"
         Returns None if the string cannot be parsed
@@ -182,8 +177,7 @@ class RelativeDatetimesParser:
             if not_possible:
                 return None
 
-        date = RelativeDate()
-        time = RelativeTime()
+        date = RelativeDateTime()
 
         # Has to be a multiple of 2 (because there's always a number before a keyword e.g. "1 day")
         # Otherwise it's not a valid relative date
@@ -205,13 +199,13 @@ class RelativeDatetimesParser:
                     date.years = number
             elif type_ in DatetimeConstants.TIME:
                 if type_ == DatetimeConstants.SECONDS:
-                    time.seconds = number
+                    date.seconds = number
                 elif type_ == DatetimeConstants.MINUTES:
-                    time.minutes = number
+                    date.minutes = number
                 elif type_ == DatetimeConstants.HOURS:
-                    time.hours = number
+                    date.hours = number
 
-        return Method.RELATIVE_DATETIMES, [date, time]
+        return Method.RELATIVE_DATETIMES, date
 
 
 class ConstantsParser:
@@ -293,13 +287,13 @@ class ConstantsParser:
                 else:
                     # Depending on the preposition the constant is either a future or past constant
                     if preposition in self.PAST_PREPOSITIONS:
-                        return Method.CONSTANTS, [constant, RelativeDate(days=-1)]
+                        return Method.CONSTANTS, [constant, RelativeDateTime(days=-1)]
                     elif preposition in self.FUTURE_PREPOSITIONS:
                         if constant in DatetimeConstants.ALL:
                             if constant in DatetimeConstants.TIME:
-                                return Method.CONSTANTS, [RelativeTimeHelper.from_keyword(constant, delta=1)]
+                                return Method.CONSTANTS, [RelativeDateTimeHelper.from_keyword(constant, delta=1)]
                             elif constant in DatetimeConstants.DATE:
-                                return Method.CONSTANTS, [RelativeDateHelper.from_keyword(constant, delta=1)]
+                                return Method.CONSTANTS, [RelativeDatetimeHelper.from_keyword(constant, delta=1)]
                         elif constant in [*WeekdayConstants.ALL, *Constants.ALL]:
                             return Method.CONSTANTS, [constant]
                         else:
@@ -310,12 +304,12 @@ class ConstantsParser:
 
 class DatetimeDeltaConstantsParser:
     DATETIME_DELTA_CONSTANTS_PATTERN = re.compile("(([0-9]{1,2}:[0-9]{1,2})|([0-9]{1,2}))(am|pm|)")
-    CLOCKTIME_FORMATS = [
+    CLOCKTIME_FORMATS = (
         "%H:%M:%S",
         "%H:%M"
-    ]
+    )
 
-    def parse(self, string: str) -> Optional[Tuple[Any, RelativeTime]]:  # noqa: C901
+    def parse(self, string: str) -> Optional[Tuple[MethodEnum, RelativeTime]]:  # noqa: C901
         """
         Parses strings like "at 3pm tomorrow" or "at 1am" or "at 10:30"
         Returns None if the string cannot be parsed
@@ -534,7 +528,7 @@ class AbsolutePrepositionParser:
 
         return returned_data
 
-    def _concatenate_relative_data(self, relative_data_tokens: List[Union[int, Keyword]], preposition: str) -> List[Union[int, Keyword, RelativeDate, RelativeTime]]:
+    def _concatenate_relative_data(self, relative_data_tokens: List[Union[int, Keyword]], preposition: str) -> List[Union[int, Keyword, RelativeDateTime, RelativeTime]]:
         """
         Concatenates [1, RelativeDate(DAY), 2, RelativeDate(MONTH)] into [RelativeDate(days=1, months=2)]
         respecting the preposition (future and past)
@@ -560,9 +554,9 @@ class AbsolutePrepositionParser:
                     value *= -1
 
                 if unit in DatetimeConstants.DATE:
-                    current_data = RelativeDateHelper.from_keyword(unit, value)
+                    current_data = RelativeDatetimeHelper.from_keyword(unit, value)
                 elif unit in DatetimeConstants.TIME:
-                    current_data = RelativeTimeHelper.from_keyword(unit, value)
+                    current_data = RelativeDateTimeHelper.from_keyword(unit, value)
                 else:
                     raise RuntimeError("Unknown Datetime Constant:", unit)
 
