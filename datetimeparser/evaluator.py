@@ -105,7 +105,7 @@ class Evaluator:
         self.parsed_object_content: Union[list, RelativeTime] = parsed_object[1]
 
     def evaluate(self) -> Union[datetime, int, None]:
-        ev_out = EvaluatorOutput()
+        ev_out = AbsoluteDateTime()
 
         if self.parsed_object_type == Method.ABSOLUTE_DATE_FORMATS:
 
