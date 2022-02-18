@@ -8,7 +8,27 @@ class Printable:
         return self.__str__()
 
 
-class EvaluatorOutput(Printable):
+class Concatenable(Printable):
+    @classmethod
+    def _concatenate(cls, new, o1, o2):
+        for field in cls.FIELDS:
+            d1 = getattr(o1, field)
+            d2 = getattr(o2, field)
+
+            if d1 == 0 and d2 == 0:
+                continue
+
+            if d1 != 0 and d2 != 0:
+                setattr(new, field, d2)
+
+            if d1 == 0:
+                setattr(new, field, d2)
+            elif d2 == 0:
+                setattr(new, field, d1)
+
+        return new
+
+class AbsoluteDateTime(Concatenable):
     FIELDS = ["year", "month", "day", "hour", "minute", "second"]
 
     def __init__(self, year=0, month=0, day=0, hour=0, minute=0, second=0):
@@ -19,84 +39,26 @@ class EvaluatorOutput(Printable):
         self.minute = minute
         self.second = second
 
-
-class AbsoluteDate(Printable):
-    FIELDS = ["year", "month", "day"]
-
-    def __init__(self, year=0, month=0, day=0):
-        self.year = year
-        self.month = month
-        self.day = day
+    @classmethod
+    def concatenate(cls, o1: 'AbsoluteDateTime', o2: 'AbsoluteDateTime') -> 'AbsoluteDateTime':
+        return cls._concatenate(AbsoluteDateTime(), o1, o2)
 
 
-class AbsoluteTime(Printable):
-    FIELDS = ["hour", "minute", "second"]
+class RelativeDateTime(Concatenable):
+    FIELDS = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"]
 
-    def __init__(self, hour=0, minute=0, second=0):
-        self.hour = hour
-        self.minute = minute
-        self.second = second
-
-
-class RelativeDate(Printable):
-    FIELDS = ["years", "months", "weeks", "days"]
-
-    def __init__(self, years=0, months=0, weeks=0, days=0):
+    def __init__(self, years=0, months=0, weeks=0, days=0, hours=0, minutes=0, seconds=0):
         self.years = years
         self.months = months
         self.weeks = weeks
         self.days = days
-
-    @classmethod
-    def concatenate(cls, o1: 'RelativeDate', o2: 'RelativeDate') -> 'RelativeDate':
-        new = RelativeDate()
-
-        for field in cls.FIELDS:
-            d1 = getattr(o1, field)
-            d2 = getattr(o2, field)
-
-            if d1 == 0 and d2 == 0:
-                continue
-
-            if d1 != 0 and d2 != 0:
-                setattr(new, field, d2)
-
-            if d1 == 0:
-                setattr(new, field, d2)
-            elif d2 == 0:
-                setattr(new, field, d1)
-
-        return new
-
-
-class RelativeTime(Printable):
-    FIELDS = ["hours", "minutes", "seconds"]
-
-    def __init__(self, hours=0, minutes=0, seconds=0):
         self.hours = hours
         self.minutes = minutes
         self.seconds = seconds
 
     @classmethod
-    def concatenate(cls, o1: 'RelativeTime', o2: 'RelativeTime') -> 'RelativeTime':
-        new = RelativeTime()
-
-        for field in cls.FIELDS:
-            d1 = getattr(o1, field)
-            d2 = getattr(o2, field)
-
-            if d1 == 0 and d2 == 0:
-                continue
-
-            if d1 != 0 and d2 != 0:
-                setattr(new, field, d2)
-
-            if d1 == 0:
-                setattr(new, field, d2)
-            elif d2 == 0:
-                setattr(new, field, d1)
-
-        return new
+    def concatenate(cls, o1: 'RelativeDateTime', o2: 'RelativeDateTime') -> 'RelativeDateTime':
+        return cls._concatenate(RelativeDateTime(), o1, o2)
 
 
 class Constant(Printable):
