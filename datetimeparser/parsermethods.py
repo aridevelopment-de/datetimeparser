@@ -8,7 +8,7 @@ from .baseclasses import *
 
 class RelativeDatetimeHelper:
     @staticmethod
-    def from_keyword(keyword: Keyword, delta: int = 1) -> RelativeDateTime:
+    def from_keyword(keyword: Constant, delta: int = 1) -> RelativeDateTime:
         if keyword == DatetimeConstants.DAYS:
             return RelativeDateTime(days=delta)
         elif keyword == DatetimeConstants.WEEKS:
@@ -217,7 +217,7 @@ class ConstantsParser:
     # Order is important because "at" and "the" are both in "at the"
     CUTOFF_KEYWORDS = ("at the", "at", "the")
 
-    def _find_constant(self, argument: str) -> Optional[Keyword]:
+    def _find_constant(self, argument: str) -> Optional[Constant]:
         """
         Finds a constant without any preposition or years
         Simply just "today" or "christmas"
@@ -450,7 +450,7 @@ class AbsolutePrepositionParser:
 
         return {'type': 'relative', 'data': relative}, {'type': 'keyword', 'data': word}, {'type': 'absolute', 'data': absolute}
 
-    def _parse_relative_statement(self, relative_statement: str) -> List[Union[int, Keyword]]:  # noqa: C901
+    def _parse_relative_statement(self, relative_statement: str) -> List[Union[int, Constant]]:  # noqa: C901
         """
         Parses strings like "3 seconds, 2 minutes and 4 hours", "the fifth day", "4. week"
         It resembles `relative_datetimes`
@@ -527,7 +527,7 @@ class AbsolutePrepositionParser:
 
         return returned_data
 
-    def _concatenate_relative_data(self, relative_data_tokens: List[Union[int, Keyword]], preposition: str) -> List[Union[int, Keyword, RelativeDateTime]]:
+    def _concatenate_relative_data(self, relative_data_tokens: List[Union[int, Constant]], preposition: str) -> List[Union[int, Constant, RelativeDateTime]]:
         """
         Concatenates [1, RelativeDate(DAY), 2, RelativeDate(MONTH)] into [RelativeDate(days=1, months=2)]
         respecting the preposition (future and past)
@@ -604,7 +604,7 @@ class AbsolutePrepositionParser:
         else:
             return self._convert_tokens(data)
 
-    def _convert_tokens(self, tokens: Tuple[dict, dict, dict]) -> List[Union[int, Keyword, RelativeDateTime]]:
+    def _convert_tokens(self, tokens: Tuple[dict, dict, dict]) -> List[Union[int, Constant, RelativeDateTime]]:
         """
         Converts and parses the splitted tokens from _split_data into Tokens suited for the Evaluator
 
@@ -642,7 +642,7 @@ class AbsolutePrepositionParser:
 
         return returned_data
 
-    def parse(self, string: str) -> Optional[Tuple[MethodEnum, List[Union[int, Keyword, RelativeDateTime]]]]:
+    def parse(self, string: str) -> Optional[Tuple[MethodEnum, List[Union[int, Constant, RelativeDateTime]]]]:
         """
         Parses strings like "3 days after christmas" or "1 hour, 2 minutes and 5 days after 3 months before christmas"
         Returns None if the string cannot be parsed
