@@ -1,4 +1,4 @@
-from .baseclasses import Constant, Keyword, MethodEnum
+from .baseclasses import Constant, Constant, MethodEnum
 
 
 class Constants:
@@ -159,13 +159,13 @@ class NumberCountConstants:
 
 
 class DatetimeConstants:
-    SECONDS = Keyword('seconds', ['second', 'sec', 'secs'])
-    MINUTES = Keyword('minutes', ['minute', 'min', 'mins'])
-    HOURS = Keyword('hours', ['hour'])
-    DAYS = Keyword('days', ['day'])
-    WEEKS = Keyword('weeks', ['week'])
-    MONTHS = Keyword('months', ['month'])
-    YEARS = Keyword('years', ['year'])
+    SECONDS = Constant('seconds', ['second', 'sec', 'secs'])
+    MINUTES = Constant('minutes', ['minute', 'min', 'mins'])
+    HOURS = Constant('hours', ['hour'])
+    DAYS = Constant('days', ['day'])
+    WEEKS = Constant('weeks', ['week'])
+    MONTHS = Constant('months', ['month'])
+    YEARS = Constant('years', ['year'])
 
     TIME = [SECONDS, MINUTES, HOURS]
     DATE = [DAYS, WEEKS, MONTHS, YEARS]
@@ -217,12 +217,12 @@ class MonthConstants:
 
 
 class Keywords:
-    OF = Keyword('of')
-    AFTER = Keyword('after')
-    BEFORE = Keyword('before')
-    NEXT = Keyword('next')
-    IN = Keyword('in')
-    FOR = Keyword('for')
+    OF = Constant('of')
+    AFTER = Constant('after')
+    BEFORE = Constant('before')
+    NEXT = Constant('next')
+    IN = Constant('in')
+    FOR = Constant('for')
 
 
 class Method:

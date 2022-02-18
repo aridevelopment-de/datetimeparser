@@ -1,3 +1,6 @@
+from typing import Callable
+
+
 class Printable:
     FIELDS = []
 
@@ -62,10 +65,11 @@ class RelativeDateTime(Concatenable):
 
 
 class Constant(Printable):
-    FIELDS = ["name", "alias", "value"]
+    FIELDS = ["name", "alias", "value", "time_value"]
 
-    def __init__(self, name, alias=None, value=None):
+    def __init__(self, name, alias=None, value=None, time_value: Callable = None):
         self.name = name
+        self.time_value = time_value
 
         if alias is not None:
             self.alias = alias
@@ -76,10 +80,6 @@ class Constant(Printable):
 
     def get_all(self):
         return [self.name, *self.alias]
-
-
-class Keyword(Constant):
-    pass
 
 
 class MethodEnum:
