@@ -8,14 +8,11 @@ from datetimeparser.evaluator import Evaluator
 def parse(datetime_string) -> Union[datetime.datetime, int, None]:
     """
     Parses a datetime string and returns a datetime object.
-    There are special cases where an integer is returned instead.
-    These currently consist of:
-    - Infinity
-
+    -1 is returned if the result is Infinity.
     If the datetime string cannot be parsed, None is returned.
 
     :param datetime_string: The datetime string to parse.
-    :return: A datetime object or an integer.
+    :return: A datetime object or an integer or None
     """
     parser_result = Parser(datetime_string).parse()
 
