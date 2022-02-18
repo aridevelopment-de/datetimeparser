@@ -1,6 +1,6 @@
 import re
 import datetime
-from typing import Union, List, Any, Tuple, Optional
+from typing import Union, List, Tuple, Optional
 
 from .enums import *
 from .baseclasses import *
@@ -42,7 +42,7 @@ class AbsoluteDateFormatsParser:
         "%H:%M"
     )
 
-    def parse(self, string: str) -> Union[None, Tuple[MethodEnum, List[Any]]]:
+    def parse(self, string: str) -> Union[None, Tuple[MethodEnum, List[AbsoluteDateTime]]]:
         """
         Parses strings like "2020.01.01 12:00:00" or "2020.01.01"
         Returns None if the string cannot be parsed
@@ -233,7 +233,7 @@ class ConstantsParser:
 
         return None
 
-    def parse(self, string: str) -> Optional[Tuple[MethodEnum, List[Any]]]:  # noqa: C901
+    def parse(self, string: str) -> Optional[Tuple[MethodEnum, Tuple]]:  # noqa: C901
         """
         Parses strings like "today" or "next christmas" or "christmas 2022"
         Returns None if the string cannot be parsed
@@ -273,7 +273,7 @@ class ConstantsParser:
             if constant is None:
                 return None
             else:
-                return Method.CONSTANTS, [constant, AbsoluteDate(year=year)]
+                return Method.CONSTANTS, (constant, AbsoluteDateTime(year=year))
         else:
             # Otherwise search for constants with or without prepositions
             # e.g. "christmas", "tomorrow", "tuesday"
@@ -283,19 +283,19 @@ class ConstantsParser:
                 return None
             else:
                 if preposition is None:
-                    return Method.CONSTANTS, [constant]
+                    return Method.CONSTANTS, (constant,)
                 else:
                     # Depending on the preposition the constant is either a future or past constant
                     if preposition in self.PAST_PREPOSITIONS:
-                        return Method.CONSTANTS, [constant, RelativeDateTime(days=-1)]
+                        return Method.CONSTANTS, (constant, RelativeDateTime(days=-1))
                     elif preposition in self.FUTURE_PREPOSITIONS:
                         if constant in DatetimeConstants.ALL:
                             if constant in DatetimeConstants.TIME:
-                                return Method.CONSTANTS, [RelativeDateTimeHelper.from_keyword(constant, delta=1)]
+                                return Method.CONSTANTS, (RelativeDatetimeHelper.from_keyword(constant, delta=1),)
                             elif constant in DatetimeConstants.DATE:
-                                return Method.CONSTANTS, [RelativeDatetimeHelper.from_keyword(constant, delta=1)]
+                                return Method.CONSTANTS, (RelativeDatetimeHelper.from_keyword(constant, delta=1),)
                         elif constant in [*WeekdayConstants.ALL, *Constants.ALL]:
-                            return Method.CONSTANTS, [constant]
+                            return Method.CONSTANTS, (constant,)
                         else:
                             return None
 
@@ -309,7 +309,7 @@ class DatetimeDeltaConstantsParser:
         "%H:%M"
     )
 
-    def parse(self, string: str) -> Optional[Tuple[MethodEnum, RelativeTime]]:  # noqa: C901
+    def parse(self, string: str) -> Optional[Tuple[MethodEnum, RelativeDateTime]]:  # noqa: C901
         """
         Parses strings like "at 3pm tomorrow" or "at 1am" or "at 10:30"
         Returns None if the string cannot be parsed
@@ -343,14 +343,14 @@ class DatetimeDeltaConstantsParser:
             # e.g. "3(pm|am)", return that time respecting the after_midday flag
             if not parsed_time and time.count(":") == 0 and time.isdigit():
                 if after_midday is not None:
-                    parsed_time = RelativeTime(hours=(12 if after_midday else 0) + int(time))
+                    parsed_time = RelativeDateTime(hours=(12 if after_midday else 0) + int(time))
                 else:
-                    parsed_time = RelativeTime(hours=int(time))
+                    parsed_time = RelativeDateTime(hours=int(time))
             elif parsed_time:
                 if after_midday is not None:
-                    parsed_time = RelativeTime(hours=(12 if after_midday else 0) + parsed_time.hour, minutes=parsed_time.minute, seconds=parsed_time.second)
+                    parsed_time = RelativeDateTime(hours=(12 if after_midday else 0) + parsed_time.hour, minutes=parsed_time.minute, seconds=parsed_time.second)
                 else:
-                    parsed_time = RelativeTime(hours=parsed_time.hour, minutes=parsed_time.minute, seconds=parsed_time.second)
+                    parsed_time = RelativeDateTime(hours=parsed_time.hour, minutes=parsed_time.minute, seconds=parsed_time.second)
             else:
                 return None
 
@@ -528,7 +528,7 @@ class AbsolutePrepositionParser:
 
         return returned_data
 
-    def _concatenate_relative_data(self, relative_data_tokens: List[Union[int, Keyword]], preposition: str) -> List[Union[int, Keyword, RelativeDateTime, RelativeTime]]:
+    def _concatenate_relative_data(self, relative_data_tokens: List[Union[int, Keyword]], preposition: str) -> List[Union[int, Keyword, RelativeDateTime]]:
         """
         Concatenates [1, RelativeDate(DAY), 2, RelativeDate(MONTH)] into [RelativeDate(days=1, months=2)]
         respecting the preposition (future and past)
@@ -556,7 +556,7 @@ class AbsolutePrepositionParser:
                 if unit in DatetimeConstants.DATE:
                     current_data = RelativeDatetimeHelper.from_keyword(unit, value)
                 elif unit in DatetimeConstants.TIME:
-                    current_data = RelativeDateTimeHelper.from_keyword(unit, value)
+                    current_data = RelativeDatetimeHelper.from_keyword(unit, value)
                 else:
                     raise RuntimeError("Unknown Datetime Constant:", unit)
 
@@ -598,14 +598,14 @@ class AbsolutePrepositionParser:
             if result is None:
                 # If the result is None there may be just a normal year (e.g. "2018")
                 if data.isnumeric():
-                    return (AbsoluteDate(year=int(data)),)
+                    return (AbsoluteDateTime(year=int(data)),)
             else:
                 # The first element is the Method signature (Method.CONSTANTS)
                 return result[1]
         else:
             return self._convert_tokens(data)
 
-    def _convert_tokens(self, tokens: Tuple[dict, dict, dict]) -> List[Union[int, Keyword]]:
+    def _convert_tokens(self, tokens: Tuple[dict, dict, dict]) -> List[Union[int, Keyword, RelativeDateTime]]:
         """
         Converts and parses the splitted tokens from _split_data into Tokens suited for the Evaluator
 
@@ -643,7 +643,7 @@ class AbsolutePrepositionParser:
 
         return returned_data
 
-    def parse(self, string: str) -> Optional[Tuple[Any, List]]:
+    def parse(self, string: str) -> Optional[Tuple[MethodEnum, List[Union[int, Keyword, RelativeDateTime]]]]:
         """
         Parses strings like "3 days after christmas" or "1 hour, 2 minutes and 5 days after 3 months before christmas"
         Returns None if the string cannot be parsed
