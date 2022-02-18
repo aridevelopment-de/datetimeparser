@@ -42,7 +42,7 @@ class AbsoluteDateFormatsParser:
         "%H:%M"
     )
 
-    def parse(self, string: str) -> Union[None, Tuple[MethodEnum, List[AbsoluteDateTime]]]:
+    def parse(self, string: str) -> Union[None, Tuple[MethodEnum, AbsoluteDateTime]]:
         """
         Parses strings like "2020.01.01 12:00:00" or "2020.01.01"
         Returns None if the string cannot be parsed
@@ -51,8 +51,6 @@ class AbsoluteDateFormatsParser:
         :return: A tuple containing the method and the parsed data or None
         """
         for datetime_format in self.DATETIME_FORMATS:
-            timings = []
-
             # Trying to find the right datetime format
             # And then instantly return the parsed datetime
             try:
@@ -60,13 +58,14 @@ class AbsoluteDateFormatsParser:
             except ValueError:
                 continue
 
+            resulting_datetime = AbsoluteDateTime(hour=time.hour, minute=time.minute, second=time.second)
+
             if datetime_format not in self.CLOCKTIME_FORMATS:
-                timings.append(AbsoluteDateTime(year=time.year, month=time.month, day=time.day))
+                resulting_datetime.year = time.year
+                resulting_datetime.month = time.month
+                resulting_datetime.day = time.day
 
-            # Always add the time because datetime.datetimes values are always set
-            timings.append(AbsoluteDateTime(hour=time.hour, minute=time.minute, second=time.second))
-
-            return Method.ABSOLUTE_DATE_FORMATS, timings
+            return Method.ABSOLUTE_DATE_FORMATS, resulting_datetime
 
         return None
 
