@@ -6,24 +6,37 @@ from .formulars import days_feb, eastern_calc, thanksgiving_calc, year_start
 
 class Constants:
     CHRISTMAS = Constant('christmas', ['xmas'], time_value=lambda year_time: datetime(year=year_time, month=12, day=25))
-    SILVESTER = Constant('silvester', ['new years eve'], time_value=lambda year_time: datetime(year=year_time, month=12, day=31))
+    SILVESTER = Constant('silvester', ['new years eve'],
+                         time_value=lambda year_time: datetime(year=year_time, month=12, day=31))
     EASTERN = Constant('eastern', ['easter'], time_value=eastern_calc)
-    NICHOLAS = Constant('nicholas', ['nicholas day'], time_value=lambda year_time: datetime(year=year_time, month=12, day=6))
+    NICHOLAS = Constant('nicholas', ['nicholas day'],
+                        time_value=lambda year_time: datetime(year=year_time, month=12, day=6))
     HALLOWEEN = Constant('halloween', time_value=lambda year_time: datetime(year=year_time, month=10, day=31))
-    APRIL_FOOLS_DAY = Constant('april fools day', ['april fool day'], time_value=lambda year_time: datetime(year=year_time, month=4, day=1))
+    APRIL_FOOLS_DAY = Constant('april fools day', ['april fool day'],
+                               time_value=lambda year_time: datetime(year=year_time, month=4, day=1))
     THANKSGIVING = Constant('thanksgiving', time_value=thanksgiving_calc)
-    SAINT_PATRICKS_DAY = Constant('saint patrick\'s day', ['saint patricks day', 'st. patrick\'s day', 'saint pt. day', 'st patrick\'s day', 'st patricks day'], time_value=lambda year_time: datetime(year=year_time, month=3, day=17))
-    VALENTINES_DAY = Constant('valentines day', ['valentine', 'valentine day'], time_value=lambda year_time: datetime(year=year_time, month=2, day=14))
+    SAINT_PATRICKS_DAY = Constant('saint patrick\'s day', ['saint patricks day', 'st. patrick\'s day', 'saint pt. day', 'st patrick\'s day', 'st patricks day'],
+                                  time_value=lambda year_time: datetime(year=year_time, month=3, day=17))
+    VALENTINES_DAY = Constant('valentines day', ['valentine', 'valentine day'],
+                              time_value=lambda year_time: datetime(year=year_time, month=2, day=14))
 
-    SUMMER_BEGIN = Constant('summer begin', ['summer', 'begin of summer', 'begin of the summer'], time_value=lambda year_time: datetime(year=year_time, month=6, day=1))
-    WINTER_BEGIN = Constant('winter begin', ['winter', 'begin of winter', 'begin of the winter'], time_value=lambda year_time: datetime(year=year_time, month=12, day=1))
-    SPRING_BEGIN = Constant('spring begin', ['spring', 'begin of spring', 'begin of the spring'], time_value=lambda year_time: datetime(year=year_time, month=3, day=1))
+    SUMMER_BEGIN = Constant('summer begin', ['summer', 'begin of summer', 'begin of the summer'],
+                            time_value=lambda year_time: datetime(year=year_time, month=6, day=1))
+    WINTER_BEGIN = Constant('winter begin', ['winter', 'begin of winter', 'begin of the winter'],
+                            time_value=lambda year_time: datetime(year=year_time, month=12, day=1))
+    SPRING_BEGIN = Constant('spring begin', ['spring', 'begin of spring', 'begin of the spring'],
+                            time_value=lambda year_time: datetime(year=year_time, month=3, day=1))
     FALL_BEGIN = Constant('fall begin', ['fall', 'begin of fall', 'begin of the fall', 'autumn begin', 'autumn',
-                                         'begin of autumn', 'begin of the autumn'], time_value=lambda year_time: datetime(year=year_time, month=9, day=1))
-    SUMMER_END = Constant('summer end', ['end of summer', 'end of the summer'], time_value=lambda year_time: datetime(year=year_time, month=8, day=31, hour=23, minute=59, second=59))
-    WINTER_END = Constant('winter end', ['end of winter', 'end of the winter'], time_value=lambda year_time: datetime(year=year_time, month=2, day=days_feb(year_time), hour=23, minute=59, second=59))
-    SPRING_END = Constant('spring end', ['end of spring', 'end of the spring'], time_value=lambda year_time: datetime(year=year_time, month=5, day=31, hour=23, minute=59, second=59))
-    FALL_END = Constant('fall end', ['end of fall', 'end of the fall', 'autumn end', 'end of autumn', 'end of the autumn'], time_value=lambda year_time: datetime(year=year_time, month=11, day=30, hour=23, minute=59, second=59))
+                                         'begin of autumn', 'begin of the autumn'],
+                          time_value=lambda year_time: datetime(year=year_time, month=9, day=1))
+    SUMMER_END = Constant('summer end', ['end of summer', 'end of the summer'],
+                          time_value=lambda year_time: datetime(year=year_time, month=8, day=31, hour=23, minute=59, second=59))
+    WINTER_END = Constant('winter end', ['end of winter', 'end of the winter'],
+                          time_value=lambda year_time: datetime(year=year_time, month=2, day=days_feb(year_time), hour=23, minute=59, second=59))
+    SPRING_END = Constant('spring end', ['end of spring', 'end of the spring'],
+                          time_value=lambda year_time: datetime(year=year_time, month=5, day=31, hour=23, minute=59, second=59))
+    FALL_END = Constant('fall end', ['end of fall', 'end of the fall', 'autumn end', 'end of autumn', 'end of the autumn'],
+                        time_value=lambda year_time: datetime(year=year_time, month=11, day=30, hour=23, minute=59, second=59))
 
     MORNING = Constant('morning', ['at morning', 'in the next morning', 'in the morning'])
     EVENING = Constant('evening', ['at evening', 'in the next evening', 'in the evening'])
@@ -31,12 +44,16 @@ class Constants:
 
     BEGIN_AOC = Constant('aoc begin', ['aoc', 'next aoc', 'begin of aoc', 'begin of the aoc', 'advent of code begin',
                                        'advent of code', 'next advent of code', 'begin of advent of code',
-                                       'begin of the advent of code'], time_value=lambda year_time: datetime(year=year_time, month=12, day=1, hour=6))
+                                       'begin of the advent of code'],
+                         time_value=lambda year_time: datetime(year=year_time, month=12, day=1, hour=6))
     END_AOC = Constant('aoc end', ['end of aoc', 'end of the aoc', 'advent of code end', 'end of advent of code',
-                                   'end of the advent of code'], time_value=lambda year_time: datetime(year=year_time, month=12, day=26, hour=6))
+                                   'end of the advent of code'],
+                       time_value=lambda year_time: datetime(year=year_time, month=12, day=26, hour=6))
 
-    END_OF_YEAR = Constant('end of year', ['the end of year', 'the end of the year', 'end of the year'], time_value=lambda year_time: datetime(year=year_time, month=12, day=31, hour=23, minute=59, second=59))
-    BEGIN_OF_YEAR = Constant('begin of year', ['the begin of year', 'the begin of the year', 'begin of the year'], time_value=year_start)
+    END_OF_YEAR = Constant('end of year', ['the end of year', 'the end of the year', 'end of the year'],
+                           time_value=lambda year_time: datetime(year=year_time, month=12, day=31, hour=23, minute=59, second=59))
+    BEGIN_OF_YEAR = Constant('begin of year', ['the begin of year', 'the begin of the year', 'begin of the year'],
+                             time_value=year_start)
 
     INFINITY = Constant('infinity', ['inf'], value=-1)
 

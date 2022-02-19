@@ -14,7 +14,7 @@ def eastern_calc(year_time: int) -> datetime:
     os = og + oe
 
     if os > 32:
-        return datetime(year=year_time, month=4, day=(os-31))
+        return datetime(year=year_time, month=4, day=(os - 31))
     else:
         return datetime(year=year_time, month=3, day=os)
 
