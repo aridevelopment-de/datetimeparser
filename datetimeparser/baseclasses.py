@@ -31,6 +31,7 @@ class Concatenable(Printable):
 
         return new
 
+
 class AbsoluteDateTime(Concatenable):
     FIELDS = ["year", "month", "day", "hour", "minute", "second"]
 
