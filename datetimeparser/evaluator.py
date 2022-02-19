@@ -7,13 +7,11 @@ from .enums import *
 
 
 class Evaluator:
-
-    def __init__(self, parsed_object: tuple, tz: str = None):
-
+    def __init__(self, parsed_object, tz="Europe/Berlin"):
         try:
             tiz = timezone(tz)
         except UnknownTimeZoneError:
-            tiz = timezone("Europe/Berlin")
+            raise ValueError("Unknown timezone: {}".format(tz))
 
         self.parsed_object_type = parsed_object[0]
         self.parsed_object_content: Union[list, AbsoluteDateTime, RelativeDateTime] = parsed_object[1]
