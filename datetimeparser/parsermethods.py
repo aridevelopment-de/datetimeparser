@@ -1,5 +1,4 @@
 import re
-import datetime
 from typing import Union, List, Tuple, Optional
 
 from .enums import *
@@ -54,7 +53,7 @@ class AbsoluteDateFormatsParser:
             # Trying to find the right datetime format
             # And then instantly return the parsed datetime
             try:
-                time = datetime.datetime.strptime(string, datetime_format)
+                time = datetime.strptime(string, datetime_format)
             except ValueError:
                 continue
 
@@ -334,7 +333,7 @@ class DatetimeDeltaConstantsParser:
 
             for clocktime_format in self.CLOCKTIME_FORMATS:
                 try:
-                    parsed_time = datetime.datetime.strptime(time, clocktime_format)
+                    parsed_time = datetime.strptime(time, clocktime_format)
                 except ValueError:
                     continue
 
