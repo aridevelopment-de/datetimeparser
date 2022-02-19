@@ -1,9 +1,6 @@
-from dateutil.relativedelta import relativedelta
 from pytz import timezone, UnknownTimeZoneError
-from typing import Union
 
-from .baseclasses import *
-from .enums import *
+from .evaluatormethods import *
 
 
 class Evaluator:
@@ -19,71 +16,37 @@ class Evaluator:
         self.current_datetime: datetime = datetime.strptime(datetime.strftime(datetime.now(tz=tiz), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
     def evaluate(self) -> Union[datetime, int, None]:
-        ev_out = AbsoluteDateTime()
+        ev_out = None
 
         if self.parsed_object_type == Method.ABSOLUTE_DATE_FORMATS:
-            parsed_time: AbsoluteDateTime = self.parsed_object_content
-
-            ev_out.year = self.current_datetime.year if parsed_time.year == 0 else parsed_time.year
-            ev_out.month = self.current_datetime.month if parsed_time.month == 0 else parsed_time.month
-            ev_out.day = self.current_datetime.day if parsed_time.day == 0 else parsed_time.day
-            ev_out.hour = parsed_time.hour
-            ev_out.minute = parsed_time.minute
-            ev_out.second = parsed_time.second
+            ev_out = evaluate_absolute_date_formats(
+                self.current_datetime,
+                self.parsed_object_content
+            )
 
         if self.parsed_object_type == Method.ABSOLUTE_PREPOSITIONS:
             pass
 
         if self.parsed_object_type == Method.CONSTANTS:
-            dt: datetime = self.current_datetime
-
-            if len(self.parsed_object_content) == 2:
-                if isinstance(self.parsed_object_content[0], Constant):
-                    object_type: Constant = self.parsed_object_content[0]
-                    object_year: AbsoluteDateTime = self.parsed_object_content[1].year
-                    dt = object_type.time_value(object_year)
-
-                    if self.current_datetime > dt and object_year == 0:
-                        dt += relativedelta(years=1)
-
-            else:
-                object_type: Constant = self.parsed_object_content[0]
-
-                if object_type.name == "infinity":
-                    return object_type.value
-
-                elif object_type in WeekdayConstants.ALL:
-                    return object_type.time_value(self.current_datetime)
-
-                dt = object_type.time_value(self.current_datetime.year)
-                if self.current_datetime > dt:
-                    dt += relativedelta(years=1)
-
-            ev_out.year, ev_out.month, ev_out.day = dt.year, dt.month, dt.day
-            ev_out.hour, ev_out.minute, ev_out.second = dt.hour, dt.minute, dt.second
-
-        if self.parsed_object_type == Method.RELATIVE_DATETIMES:
-            new = self.current_datetime
-
-            new += relativedelta(
-                years=self.parsed_object_content.years,
-                months=self.parsed_object_content.months,
-                weeks=self.parsed_object_content.weeks,
-                days=self.parsed_object_content.days,
-                hours=self.parsed_object_content.hours,
-                minutes=self.parsed_object_content.minutes,
-                seconds=self.parsed_object_content.seconds
+            ev_out = evaluate_constants(
+                self.current_datetime,
+                self.parsed_object_content
             )
 
-            ev_out.year, ev_out.month, ev_out.day = new.year, new.month, new.day
-            ev_out.hour, ev_out.minute, ev_out.second = new.hour, new.minute, new.second
+            if not isinstance(ev_out, AbsoluteDateTime):
+                return ev_out
+
+        if self.parsed_object_type == Method.RELATIVE_DATETIMES:
+            ev_out = evaluate_relative_datetimes(
+                self.current_datetime,
+                self.parsed_object_content
+            )
 
         if self.parsed_object_type == Method.DATETIME_DELTA_CONSTANTS:
-            relative_time: RelativeDateTime = self.parsed_object_content
-            now: datetime = self.current_date
-
-            ev_out.year, ev_out.month, ev_out.day = now.year, now.month, now.day
-            ev_out.hour, ev_out.minute, ev_out.second = relative_time.hours, relative_time.minutes, relative_time.seconds
+            ev_out = evaluate_datetime_delta_constants(
+                self.current_datetime,
+                self.parsed_object_content
+            )
 
         try:
             dt_object = datetime(
