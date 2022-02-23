@@ -6,7 +6,9 @@ from discord import Embed, Intents
 from discord.ext.commands import Bot, when_mentioned_or
 from discord.ext.commands.context import Context
 from dotenv import load_dotenv
-from datetimeparser import Evaluator, Parser, parse as parse_date
+from datetimeparser.evaluator import Evaluator
+from datetimeparser.parser import Parser
+from datetimeparser import parse as parse_date
 
 load_dotenv()
 
