@@ -38,7 +38,7 @@ def run_testcase(testcase, disable_colored_output=False):
         else:
             return print(f"{testcase} (❌): Parser returned None")
 
-    e = Evaluator(parser_result)
+    e = Evaluator(parser_result, tz="Europe/Berlin")
     evaluator_result = e.evaluate()
 
     if evaluator_result is None:
@@ -81,7 +81,7 @@ def main(sort=False, disable_colored_output=False, disable_no_validation=False, 
 
             continue
 
-        e = Evaluator(parser_result)
+        e = Evaluator(parser_result, tz="Europe/Berlin")
 
         try:
             evaluator_result = e.evaluate()
