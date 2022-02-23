@@ -5,13 +5,14 @@ from datetimeparser.parser import Parser
 from datetimeparser.evaluator import Evaluator
 
 
-def parse(datetime_string) -> Union[datetime.datetime, int, None]:
+def parse(datetime_string: str, timezone: str) -> Union[datetime.datetime, int, None]:
     """
     Parses a datetime string and returns a datetime object.
     -1 is returned if the result is Infinity.
     If the datetime string cannot be parsed, None is returned.
 
     :param datetime_string: The datetime string to parse.
+    :param timezone: The timezone to use. Should be a valid timezone for pytz.timezone().
     :return: A datetime object or an integer or None
     """
     parser_result = Parser(datetime_string).parse()
@@ -19,7 +20,7 @@ def parse(datetime_string) -> Union[datetime.datetime, int, None]:
     if parser_result is None:
         return None
 
-    evaluator_result = Evaluator(parser_result).evaluate()
+    evaluator_result = Evaluator(parser_result, tz=timezone).evaluate()
 
     if evaluator_result is None:
         return None
