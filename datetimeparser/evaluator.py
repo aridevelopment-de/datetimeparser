@@ -1,3 +1,4 @@
+from typing import Optional
 from pytz import timezone, UnknownTimeZoneError
 
 from .evaluatormethods import *
@@ -14,7 +15,7 @@ class Evaluator:
         self.parsed_object_content: Union[list, AbsoluteDateTime, RelativeDateTime] = parsed_object[1]
         self.current_datetime: datetime = datetime.strptime(datetime.strftime(datetime.now(tz=tiz), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
-    def evaluate(self) -> Union[datetime, int, None]:
+    def evaluate(self) -> Optional[datetime, int]:
         ev_out = None
 
         if self.parsed_object_type == Method.ABSOLUTE_DATE_FORMATS:
@@ -24,7 +25,10 @@ class Evaluator:
             )
 
         if self.parsed_object_type == Method.ABSOLUTE_PREPOSITIONS:
-            pass
+            ev_out = evaluate_absolute_prepositions(
+                self.current_datetime,
+                self.parsed_object_content
+            )
 
         if self.parsed_object_type == Method.CONSTANTS:
             ev_out = evaluate_constants(

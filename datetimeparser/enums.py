@@ -244,6 +244,8 @@ class Keywords:
     IN = Constant('in')
     FOR = Constant('for')
 
+    ALL = [OF, AFTER, BEFORE, NEXT, IN, FOR]
+
 
 class Method:
     ABSOLUTE_PREPOSITIONS = MethodEnum('absolute_prepositions')

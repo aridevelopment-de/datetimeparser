@@ -18,6 +18,10 @@ def evaluate_absolute_date_formats(current_time: datetime, parsed: AbsoluteDateT
     return ev_out
 
 
+def evaluate_absolute_prepositions(current_time: datetime, parsed: list):  # -> AbsoluteDateTime:
+    pass
+
+
 def evaluate_constants(current_time: datetime, parsed_object) -> Union[AbsoluteDateTime, datetime, int]:
     dt: datetime = current_time
     object_type: Constant = parsed_object[0]
