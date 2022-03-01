@@ -4,6 +4,7 @@ from .parsermethods import (
     AbsoluteDateFormatsParser,
     RelativeDatetimesParser,
     ConstantsParser,
+    ConstantRelativeExtensionsParser,
     DatetimeDeltaConstantsParser,
     AbsolutePrepositionParser
 )
@@ -11,11 +12,12 @@ from .parsermethods import (
 
 class Parser:
     PROCEDURE = (
-        AbsoluteDateFormatsParser().parse,
-        RelativeDatetimesParser().parse,
-        ConstantsParser().parse,
-        DatetimeDeltaConstantsParser().parse,
-        AbsolutePrepositionParser().parse
+        # AbsoluteDateFormatsParser().parse,
+        # RelativeDatetimesParser().parse,
+        # ConstantsParser().parse,
+        ConstantRelativeExtensionsParser().parse,
+        # DatetimeDeltaConstantsParser().parse,
+        # AbsolutePrepositionParser().parse
     )
 
     def __init__(self, string):

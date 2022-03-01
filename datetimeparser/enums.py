@@ -249,5 +249,6 @@ class Method:
     ABSOLUTE_PREPOSITIONS = MethodEnum('absolute_prepositions')
     ABSOLUTE_DATE_FORMATS = MethodEnum('absolute_date_formats')
     CONSTANTS = MethodEnum('constants')
+    CONSTANTS_RELATIVE_EXTENSIONS = MethodEnum('constants_relative_extensions')
     DATETIME_DELTA_CONSTANTS = MethodEnum('datetime_delta_constants')
     RELATIVE_DATETIMES = MethodEnum('relative_datetimes')

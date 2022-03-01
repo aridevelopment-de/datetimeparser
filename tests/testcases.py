@@ -71,6 +71,18 @@ testcases = {
     "begin of advent of code 2022": datetime.datetime(2022, 12, 1, 6),
     "end of aoc 2022": datetime.datetime(2022, 12, 26, 6),
     "end of the year": datetime.datetime(today.year, 12, 31, 23, 59, 59),
+    # Constant Relative Extensions
+    "daylight change tomorrow": None,
+    "daylight change yesterday": None,
+    "daylight change 01.01.2022": None,
+    "monday in two weeks": None,
+    "tomorrow 12 o'clock": None,
+    "tomorrow at 7pm": None,
+    "tomorrow at 17h": None,
+    "tomorrow at 17:13": None,
+    "tomorrow at 17": None,
+    "tomorrow afternoon": None,
+    "at the next afternoon at tomorrow": None,
     # Datetime Delta
     "at 9pm": datetime.datetime(today.year, today.month, today.day, 21),
     "at 9:00pm": datetime.datetime(today.year, today.month, today.day, 21),

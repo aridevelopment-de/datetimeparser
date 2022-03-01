@@ -233,7 +233,7 @@ class ConstantsParser:
 
     def parse(self, string: str) -> Optional[Tuple[MethodEnum, Tuple]]:  # noqa: C901
         """
-        Parses strings like "today" or "next christmas" or "christmas 2022"
+        Parses strings like "today" or "next christmas" or "christmas 2022" or "last christmas"
         Returns None if the string cannot be parsed
 
         :param string: The string to parse
@@ -299,6 +299,140 @@ class ConstantsParser:
 
         return None
 
+
+class ConstantRelativeExtensionsParser:
+    ABSOLUTE_KEYWORDS = (*Constants.ALL,)
+    RELATIVE_KEYWORDS = (*DatetimeDeltaConstants.ALL,)
+    CONSTANT_KEYWORDS = ABSOLUTE_KEYWORDS + RELATIVE_KEYWORDS
+    
+    PREPOSITIONS = ("last", "next", "this", "previous", "at")
+    PAST_PREPOSITIONS = ("last", "previous")
+    FUTURE_PREPOSITIONS = ("next", "this")
+
+    # Order is important because "at" and "the" are both in "at the"
+    CUTOFF_KEYWORDS = ("at the", "at", "the")
+
+    def _find_constant(self, argument: str) -> Optional[Constant]:
+        """
+        Finds a constant without any preposition or years
+        Simply just "tomorrow" or "daylight change"
+
+        :param argument: The argument to look for
+        :return: The constant if found, None otherwise
+        """
+
+        for keyword in self.CONSTANT_KEYWORDS:
+            if argument in [alias for alias in keyword.get_all()]:
+                return keyword
+
+        return None
+
+    def parse(self, string: str) -> Optional[Tuple[Method, Tuple]]:
+        """
+        Parses strings like "tomorrow afternoon" or "daylight change yesterday" or "monday in two weeks" or "tomorrow at 17"
+        Returns None if the string cannot be parsed
+
+        :param string: The string to parse
+        :return: A tuple containing the method and the data or None
+        """
+
+        # IGNORE at the next daylight change at the next morning
+
+        string = string.lower()
+
+        # Cut off 'at', 'at the' and 'the'
+        for cutoff_word in self.CUTOFF_KEYWORDS:
+            if string.startswith(cutoff_word):
+                string = string[len(cutoff_word):]
+                string = string.strip()
+
+        # IGNORE next daylight change at the next morning
+
+        # Remove whitespaces
+        string = " ".join(string.split())
+
+        # Cut off the preposition if the strings starts with one and save the preposition
+        # To differentiate future and past
+        for first_preposition in self.PREPOSITIONS:
+            if string.startswith(first_preposition):
+                string = string[len(first_preposition):]
+                break
+        else:
+            first_preposition = None
+
+        string = " ".join(string.split())
+
+
+        # IGNORE daylight change at the next morning
+
+        # "Bruteforcing" the next arguments
+        # Until a keyword has been found   
+        arguments = string.split()
+        first_keyword = None
+
+        for i in range(1, len(arguments) + 1):
+            tryable_keyword = " ".join(arguments[:i])
+            first_keyword = self._find_constant(tryable_keyword)
+
+            if first_keyword is not None:
+                break
+        else:
+            return None
+        
+        # IGNORE daylight change | at the next morning
+        string = string[len(tryable_keyword):]
+        string = " ".join(string.split())
+
+        # There has to be some contents left
+        # Otherwise its not valid
+        if not string:
+            return None
+
+        # INGORE at the next morning
+
+        # Cut off 'at', 'at the' and 'the'
+        for cutoff_word in self.CUTOFF_KEYWORDS:
+            if string.startswith(cutoff_word):
+                string = string[len(cutoff_word):]
+                string = string.strip()
+        
+        string = " ".join(string.split())
+        
+        # Cut off the preposition if the strings starts with one and save the preposition
+        # To differentiate future and past
+        for second_preposition in self.PREPOSITIONS:
+            if string.startswith(second_preposition):
+                string = string[len(second_preposition):]
+                break
+        else:
+            second_preposition = None
+
+        string = " ".join(string.split())
+
+        # IGNORE morning
+
+        # "Bruteforcing" the next arguments
+        # Until a keyword has been found   
+        arguments = string.split()
+        second_keyword = None
+
+        for i in range(1, len(arguments) + 1):
+            tryable_keyword = " ".join(arguments[:i])
+            second_keyword = self._find_constant(tryable_keyword)
+
+            if second_keyword is not None:
+                break
+        else:
+            return None
+
+        if first_keyword in self.RELATIVE_KEYWORDS:
+            relative = first_preposition, first_keyword
+            absolute = second_preposition, second_keyword
+        else:
+            relative = second_preposition, second_keyword
+            absolute = first_preposition, first_keyword
+
+        return Method.CONSTANTS_RELATIVE_EXTENSIONS, (*relative, *absolute)
 
 class DatetimeDeltaConstantsParser:
     DATETIME_DELTA_CONSTANTS_PATTERN = re.compile("(([0-9]{1,2}:[0-9]{1,2})|([0-9]{1,2}))(am|pm|)")
@@ -584,6 +718,7 @@ class AbsolutePrepositionParser:
         """
 
         if isinstance(data, str):
+            # TODO: Call ConstantRelativeExtensionsParser as well
             constants_parser = ConstantsParser()
             constants_parser.CONSTANT_KEYWORDS = (*Constants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL)
             constants_parser.PREPOSITIONS = ("last", "next", "this", "previous")
