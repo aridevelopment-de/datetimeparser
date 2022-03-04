@@ -1,4 +1,3 @@
-from typing import Optional
 from pytz import timezone, UnknownTimeZoneError
 
 from .evaluatormethods import *
