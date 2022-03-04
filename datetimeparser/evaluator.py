@@ -15,7 +15,7 @@ class Evaluator:
         self.parsed_object_content: Union[list, AbsoluteDateTime, RelativeDateTime] = parsed_object[1]
         self.current_datetime: datetime = datetime.strptime(datetime.strftime(datetime.now(tz=tiz), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
-    def evaluate(self) -> Optional[datetime, int]:
+    def evaluate(self) -> Union[datetime, int, None]:
         ev_out = None
 
         if self.parsed_object_type == Method.ABSOLUTE_DATE_FORMATS:
