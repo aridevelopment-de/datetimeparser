@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 from .baseclasses import Constant, MethodEnum
 from .formulars import days_feb, eastern_calc, thanksgiving_calc, year_start
@@ -57,10 +58,10 @@ class Constants:
 
     INFINITY = Constant('infinity', ['inf'], value=-1)
 
-    TODAY = Constant('today')
-    TOMORROW = Constant('tomorrow')
-    YESTERDAY = Constant('yesterday')
-    NOW = Constant('now', ['at the moment', 'current time', 'current time now'])
+    TODAY = Constant('today', time_value=lambda _: datetime.today())
+    TOMORROW = Constant('tomorrow', time_value=lambda _: datetime.today() + relativedelta(days=1))
+    YESTERDAY = Constant('yesterday', time_value=lambda _: datetime.today() - relativedelta(days=1))
+    NOW = Constant('now', ['at the moment', 'current time', 'current time now'], time_value=lambda _: datetime.now())
 
     ALL = [
         CHRISTMAS, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY, VALENTINES_DAY,
