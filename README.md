@@ -50,7 +50,7 @@ print(parse("in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds"))
 # 2023-05-01 17:59:52
 
 print(parse("10 days and 2 hours after 3 months before christmas 2020"))
-# 
+# 2020-10-05 02:00:00
 ```
 
 ## Installation
