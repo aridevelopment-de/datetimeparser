@@ -50,6 +50,8 @@ class Evaluator:
                 self.parsed_object_content
             )
 
+        if isinstance(ev_out, datetime):
+            return ev_out
         try:
             dt_object = datetime(
                 ev_out.year,

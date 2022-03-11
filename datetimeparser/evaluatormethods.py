@@ -1,8 +1,49 @@
-from dateutil.relativedelta import relativedelta
 from typing import Union
 
 from .baseclasses import *
 from .enums import *
+
+
+class AbsolutePrepositionsEvaluator:
+
+    @staticmethod
+    def sanitize_input(parsed_list: list) -> list:
+        """removes useless keywords"""
+        return [element for element in parsed_list if element not in Keywords.ALL]
+
+    @staticmethod
+    def get_base(sanitized_input: list, year: int) -> datetime:
+        print(sanitized_input)
+        if isinstance(sanitized_input[-1], AbsoluteDateTime):
+            if isinstance(sanitized_input[-2], Constant):
+                if isinstance(sanitized_input[-3], int):
+                    dt: datetime = sanitized_input[-2].time_value(sanitized_input[-1].year)
+                    day: int = sanitized_input[-3]
+                    return datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
+                return sanitized_input[-2].time_value(sanitized_input[-1].year)
+            return datetime(sanitized_input[-1].year, 1, 1)
+        elif isinstance(sanitized_input[-1], Constant):
+            if isinstance(sanitized_input[-2], int):
+                dt: datetime = sanitized_input[-1].time_value(year)
+                day: int = sanitized_input[-2]
+                return datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
+            return sanitized_input[-1].time_value(year)
+
+    @staticmethod
+    def calc_relative_time(sanitized_list: list) -> RelativeDateTime:
+        rel_list = [relative_time for relative_time in sanitized_list if isinstance(relative_time, RelativeDateTime)]
+
+        ev_out = RelativeDateTime()
+        for i in rel_list:
+            ev_out.years += i.years
+            ev_out.months += i.months
+            ev_out.weeks += i.weeks
+            ev_out.days += i.days
+            ev_out.hours += i.hours
+            ev_out.minutes += i.minutes
+            ev_out.seconds += i.seconds
+
+        return ev_out
 
 
 def evaluate_absolute_date_formats(current_time: datetime, parsed: AbsoluteDateTime) -> AbsoluteDateTime:
@@ -19,7 +60,23 @@ def evaluate_absolute_date_formats(current_time: datetime, parsed: AbsoluteDateT
 
 
 def evaluate_absolute_prepositions(current_time: datetime, parsed: list):  # -> AbsoluteDateTime:
-    pass
+    ev = AbsolutePrepositionsEvaluator()
+    base_year = current_time.year
+    sanitized = ev.sanitize_input(parsed)
+    base = ev.get_base(sanitized, base_year)
+    rel_out = ev.calc_relative_time(sanitized)
+
+    base += relativedelta(
+        years=rel_out.years,
+        months=rel_out.months,
+        weeks=rel_out.weeks,
+        days=rel_out.days,
+        hours=rel_out.hours,
+        minutes=rel_out.minutes,
+        seconds=rel_out.seconds
+    )
+
+    return base
 
 
 def evaluate_constants(current_time: datetime, parsed_object) -> Union[AbsoluteDateTime, datetime, int]:
