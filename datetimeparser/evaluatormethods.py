@@ -79,6 +79,7 @@ def evaluate_absolute_prepositions(current_time: datetime, parsed: list):  # -> 
 
 
 def evaluate_constants(current_time: datetime, parsed_object) -> Union[AbsoluteDateTime, datetime, int]:
+    print(parsed_object)
     dt: datetime = current_time
     object_type: Constant = parsed_object[0]
 
@@ -103,7 +104,7 @@ def evaluate_constants(current_time: datetime, parsed_object) -> Union[AbsoluteD
         else:
             dt = object_type.time_value(current_time.year)
 
-        if current_time > dt:
+        if current_time > dt and parsed_object[0] not in Constants.ALL_RELATIVE_CONSTANTS:
             dt += relativedelta(years=1)
 
     ev_out = AbsoluteDateTime(

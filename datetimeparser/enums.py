@@ -72,6 +72,7 @@ class Constants:
         INFINITY,
         TODAY, TOMORROW, YESTERDAY, NOW
     ]
+    ALL_RELATIVE_CONSTANTS = [TODAY, TOMORROW, YESTERDAY, NOW]
 
 
 class DatetimeDeltaConstants:
