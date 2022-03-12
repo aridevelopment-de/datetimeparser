@@ -1,4 +1,10 @@
-from typing import Callable
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from datetimeparser.enums import ConstantOption
+
+from typing import Callable, List
 
 
 class Printable:
@@ -68,16 +74,12 @@ class RelativeDateTime(Concatenable):
 class Constant(Printable):
     FIELDS = ["name", "alias", "value", "time_value"]
 
-    def __init__(self, name, alias=None, value=None, time_value: Callable = None):
+    def __init__(self, name, alias=None, value=None, options: List['ConstantOption'] = None, time_value: Callable = None):
         self.name = name
-        self.time_value = time_value
-
-        if alias is not None:
-            self.alias = alias
-        else:
-            self.alias = []
-
+        self.alias = alias or []
         self.value = value
+        self.options = options or []
+        self.time_value = time_value
 
     def get_all(self):
         return [self.name, *self.alias]
