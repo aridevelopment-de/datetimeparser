@@ -13,7 +13,6 @@ class AbsolutePrepositionsEvaluator:
 
     @staticmethod
     def get_base(sanitized_input: list, year: int) -> datetime:
-        print(sanitized_input)
         if isinstance(sanitized_input[-1], AbsoluteDateTime):
             if isinstance(sanitized_input[-2], Constant):
                 if isinstance(sanitized_input[-3], int):
