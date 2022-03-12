@@ -24,7 +24,10 @@ class Evaluator:
             )
 
         if self.parsed_object_type == Method.ABSOLUTE_PREPOSITIONS:
-            pass
+            ev_out = evaluate_absolute_prepositions(
+                self.current_datetime,
+                self.parsed_object_content
+            )
 
         if self.parsed_object_type == Method.CONSTANTS:
             ev_out = evaluate_constants(
@@ -47,6 +50,8 @@ class Evaluator:
                 self.parsed_object_content
             )
 
+        if isinstance(ev_out, datetime):
+            return ev_out
         try:
             dt_object = datetime(
                 ev_out.year,

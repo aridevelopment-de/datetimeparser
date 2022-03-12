@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from enum import Enum, auto
 
+from dateutil.relativedelta import relativedelta
+
 from .baseclasses import Constant, MethodEnum
 from .formulars import days_feb, eastern_calc, thanksgiving_calc, year_start
 
@@ -69,10 +71,10 @@ class Constants:
 
     INFINITY = Constant('infinity', ['inf'], value=-1)
 
-    TODAY = Constant('today', options=[ConstantOption.TIME_VARIABLE])
-    TOMORROW = Constant('tomorrow', options=[ConstantOption.TIME_VARIABLE])
-    YESTERDAY = Constant('yesterday', options=[ConstantOption.TIME_VARIABLE])
-    NOW = Constant('now', ['at the moment', 'current time', 'current time now'])
+    TODAY = Constant('today', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day))
+    TOMORROW = Constant('tomorrow', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime.today() + relativedelta(days=1))
+    YESTERDAY = Constant('yesterday', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime.today() - relativedelta(days=1))
+    NOW = Constant('now', ['at the moment', 'current time', 'current time now'], time_value=lambda _: datetime.now())
 
     ALL = [
         CHRISTMAS, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY, VALENTINES_DAY,
@@ -83,6 +85,7 @@ class Constants:
         INFINITY,
         TODAY, TOMORROW, YESTERDAY, NOW
     ]
+    ALL_RELATIVE_CONSTANTS = [TODAY, TOMORROW, YESTERDAY, NOW]
 
 
 class DatetimeDeltaConstants:
@@ -257,6 +260,8 @@ class Keywords:
     NEXT = Constant('next')
     IN = Constant('in')
     FOR = Constant('for')
+
+    ALL = [OF, AFTER, BEFORE, NEXT, IN, FOR]
 
 
 class Method:

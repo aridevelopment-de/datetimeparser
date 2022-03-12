@@ -25,9 +25,9 @@ Datetimeparser can even parse complex grammar and sentence structure.
 
 <!-- LATESTCOMMIT:START -->
 
-[<img width="380px" height="200px" src="https://opengraph.githubassets.com/f3dd7e8d60b8858b0b5f3e506c2ec71a92b64c9b1650e05272b9c8b9b9775acc/aridevelopment-de/datetimeparser/commit/8abef6e2b47b92f25cd709e788d4b6f4aa5ed4fd" />][commitUrl]
+[<img width="380px" height="200px" src="https://opengraph.githubassets.com/a547843ebada90a4aeccc682463001d12bb9ea3a718a1b01bfcd70bb69b55406/aridevelopment-de/datetimeparser/commit/5ccc1e59c6852a353a04eea508a14fc6afdb1b14" />][commitUrl]
 
-[commitUrl]: https://github.com/aridevelopment-de/datetimeparser/commit/8abef6e2b47b92f25cd709e788d4b6f4aa5ed4fd
+[commitUrl]: https://github.com/aridevelopment-de/datetimeparser/commit/5ccc1e59c6852a353a04eea508a14fc6afdb1b14
 <!-- LATESTCOMMIT:END -->
 
 ## Examples
@@ -50,7 +50,7 @@ print(parse("in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds"))
 # 2023-05-01 17:59:52
 
 print(parse("10 days and 2 hours after 3 months before christmas 2020"))
-# 
+# 2020-10-05 02:00:00
 ```
 
 ## Installation
