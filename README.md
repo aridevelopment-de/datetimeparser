@@ -66,7 +66,7 @@ If you want to contribute to datetimeparser, please use feature branches. If pos
 We highly appreciate everyone who wants to help our project!
 
 ## List of Constants
-    
+
 <details>
 <summary>All Normal-Constants</summary>
 <details>
@@ -182,15 +182,11 @@ We highly appreciate everyone who wants to help our project!
 <summary><code>morning</code></summary>
 <ul>
 <li>at morning</li>
-<li>in the next morning</li>
-<li>in the morning</li>
 </ul>
 </details><details>
 <summary><code>evening</code></summary>
 <ul>
 <li>at evening</li>
-<li>in the next evening</li>
-<li>in the evening</li>
 </ul>
 </details><details>
 <summary><code>lunchtime</code></summary>
@@ -201,12 +197,10 @@ We highly appreciate everyone who wants to help our project!
 <summary><code>aoc begin</code></summary>
 <ul>
 <li>aoc</li>
-<li>next aoc</li>
 <li>begin of aoc</li>
 <li>begin of the aoc</li>
 <li>advent of code begin</li>
 <li>advent of code</li>
-<li>next advent of code</li>
 <li>begin of advent of code</li>
 <li>begin of the advent of code</li>
 </ul>
@@ -263,7 +257,7 @@ We highly appreciate everyone who wants to help our project!
 </details>
 </details>
 <br />
-    
+
 <details>
 <summary>All Day-Constants</summary>
 <details>
@@ -290,6 +284,12 @@ We highly appreciate everyone who wants to help our project!
 <summary><code>morning night</code></summary>
 <ul>
 
+</ul>
+</details><details>
+<summary><code>daylight change</code></summary>
+<ul>
+<li>daylight saving</li>
+<li>daylight saving time</li>
 </ul>
 </details><details>
 <summary><code>midnight</code></summary>
@@ -339,7 +339,7 @@ We highly appreciate everyone who wants to help our project!
 </details>
 </details>
 <br />
-    
+
 <details>
 <summary>All Weekday-Constants</summary>
 <details>
@@ -380,7 +380,7 @@ We highly appreciate everyone who wants to help our project!
 </details>
 </details>
 <br />
-    
+
 <details>
 <summary>All Month-Constants</summary>
 <details>
@@ -446,7 +446,7 @@ We highly appreciate everyone who wants to help our project!
 </details>
 </details>
 <br />
-    
+
 <details>
 <summary>All Datetime-Constants</summary>
 <details>
@@ -491,7 +491,7 @@ We highly appreciate everyone who wants to help our project!
 </details>
 </details>
 <br />
-    
+
 <details>
 <summary>All Number-Constants</summary>
 <details>
@@ -662,7 +662,7 @@ We highly appreciate everyone who wants to help our project!
 </details>
 </details>
 <br />
-    
+
 <details>
 <summary>All NumberCount-Constants</summary>
 <details>

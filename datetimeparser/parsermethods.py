@@ -1,5 +1,5 @@
 import re
-from typing import Union, List, Tuple, Optional
+from typing import Optional, Tuple, Union
 
 from .enums import *
 from .baseclasses import *
@@ -214,7 +214,7 @@ class ConstantsParser:
     FUTURE_PREPOSITIONS = ("next", "this")
 
     # Order is important because "at" and "the" are both in "at the"
-    CUTOFF_KEYWORDS = ("at the", "at", "the")
+    CUTOFF_KEYWORDS = ("at the", "in the", "at", "the")
 
     def _find_constant(self, argument: str) -> Optional[Constant]:
         """
@@ -226,14 +226,14 @@ class ConstantsParser:
         """
 
         for keyword in self.CONSTANT_KEYWORDS:
-            if argument in [alias for alias in keyword.get_all()]:
+            if argument in keyword.get_all():
                 return keyword
 
         return None
 
     def parse(self, string: str) -> Optional[Tuple[MethodEnum, Tuple]]:  # noqa: C901
         """
-        Parses strings like "today" or "next christmas" or "christmas 2022"
+        Parses strings like "today" or "next christmas" or "christmas 2022" or "last christmas"
         Returns None if the string cannot be parsed
 
         :param string: The string to parse
@@ -300,8 +300,225 @@ class ConstantsParser:
         return None
 
 
+class ConstantRelativeExtensionsParser:
+    ABSOLUTE_KEYWORDS = (*Constants.ALL, *WeekdayConstants.ALL, *MonthConstants.ALL)
+    RELATIVE_KEYWORDS = (*DatetimeDeltaConstants.ALL,)
+    RELATIVE_TYPES = (RelativeDateTime,)
+    CONSTANT_KEYWORDS = ABSOLUTE_KEYWORDS + RELATIVE_KEYWORDS
+
+    PREPOSITIONS = ("last", "next", "this", "previous", "at", "on", "in")
+    PAST_PREPOSITIONS = ("last", "previous")
+    FUTURE_PREPOSITIONS = ("next", "this", "in")
+    DATETIME_PREPOSITIONS = ("at", "on")
+
+    # Order is important because "at" and "the" are both in "at the"
+    CUTOFF_KEYWORDS = ("at the", "at", "the")
+
+    @staticmethod
+    def _find_number(string: str) -> Optional[int]:
+        """
+        Searches for a number in the string
+
+        :param string: The string to search in
+        :return: The number if found, None otherwise
+        """
+
+        if string == "a":
+            return 1
+
+        if string.isdecimal():
+            return int(string)
+
+        for constant in NumberConstants.ALL:
+            for alias in constant.get_all():
+                if string == alias:
+                    return constant.value
+
+        return None
+
+    @staticmethod
+    def _find_datetime_constant(string: str) -> Optional[Constant]:
+        """
+        Searches for a datetime constant in the string
+
+        :param string: The string to search in
+        :return: The constant if found, None otherwise
+        """
+
+        for constant in DatetimeConstants.ALL:
+            for alias in constant.get_all():
+                if string == alias:
+                    return constant
+
+        return None
+
+    def _find_constant(self, argument: str) -> Optional[Constant]:
+        """
+        Finds a constant without any preposition or years
+        Simply just "tomorrow" or "daylight change"
+
+        :param argument: The argument to look for
+        :return: The constant if found, None otherwise
+        """
+
+        for keyword in self.CONSTANT_KEYWORDS:
+            if argument in keyword.get_all():
+                return keyword
+
+        return None
+
+    def _get_preposition(self, string: str) -> Optional[Tuple[str, str]]:
+        """
+        Gets the preposition of a string if it exists (e.g. "next)
+        :param string: the current string
+        :return: the preposition if it exists otherwise None and the new string
+        """
+        string = " ".join(string.split())
+
+        # Cut off the preposition if the strings starts with one and save the preposition
+        # To differentiate future and past
+        for preposition in self.PREPOSITIONS:
+            if string.startswith(preposition):
+                string = string[len(preposition):]
+                break
+        else:
+            preposition = "at"
+
+        string = " ".join(string.split())
+
+        return preposition, string
+
+    def _get_preposition_keyword(self, string: str) -> Optional[Tuple[str, str, Union[Constant, RelativeDateTime], str]]:
+        """
+        Gets the preposition and the constant of a string if it exists (e.g. "next daylight change)
+        :param string: the current string
+        :return: the preposition, the keyword as the string, the keyword and the new string if found otherwise None
+        """
+        # Cut off 'at', 'at the' and 'the'
+        for cutoff_word in self.CUTOFF_KEYWORDS:
+            if string.startswith(cutoff_word):
+                string = string[len(cutoff_word):]
+                string = string.strip()
+
+        preposition, string = self._get_preposition(string)
+
+        # "Bruteforce" the next arguments
+        # Until a keyword has been found
+        # The keyword can either be a constant, an absolute time, a clock time or a constant with a number
+        # Unfortunately, we have to implement such parsing methods ourselves because we cannot use other parsers
+        arguments = string.split()
+
+        for i in range(1, len(arguments) + 1):
+            tryable_keyword = " ".join(arguments[:i])
+
+            # Try general keywords (e.g. "afternoon", "tomorrow", ...)
+            # TODO: Add support for years (e.g. "monday 2021")
+            keyword = self._find_constant(tryable_keyword)
+
+            if keyword is not None:
+                break
+
+            # Try datetime delta constants (e.g. "17pm", "17:30", ...)
+            datetime_delta_constants_parser = DatetimeDeltaConstantsParser()
+            keyword = datetime_delta_constants_parser.parse(tryable_keyword)
+
+            if keyword is not None:
+                keyword = keyword[1]
+
+                if preposition in self.DATETIME_PREPOSITIONS:
+                    break
+                else:
+                    continue
+
+            # Try absolute datetime formats (e.g. "17:30", "01.02.2020", ...)
+            absolute_datetime_parser = AbsoluteDateFormatsParser()
+            absolute_datetime_parser.DATETIME_FORMATS = (
+                "%d.%m.%Y",
+                "%Y.%m.%d"
+            )
+            absolute_datetime_parser.CLOCKTIME_FORMATS = ()
+            keyword = absolute_datetime_parser.parse(tryable_keyword)
+
+            if keyword is not None:
+                keyword = keyword[1]
+
+                if preposition in self.DATETIME_PREPOSITIONS:
+                    break
+                else:
+                    return None
+
+            # Try a mix of numbers and constants (e.g. "two weeks", "two years", ...)
+            # TODO: This is the second only case where years could also be included
+            # e.g. "(monday in) two weeks 2020"
+            if len(tryable_keyword.split()) >= 2:
+                number = self._find_number(tryable_keyword.split()[0])
+
+                if number is None:
+                    continue
+
+                datetime_constant = self._find_datetime_constant(" ".join(tryable_keyword.split()[1:]))
+
+                if datetime_constant is None:
+                    continue
+
+                keyword = RelativeDatetimeHelper.from_keyword(datetime_constant, delta=number)
+                break
+        else:
+            return None
+
+        return preposition, tryable_keyword, keyword, string
+
+    def parse(self, string: str) -> Optional[Tuple[Method, Tuple]]:
+        """
+        Parses strings like "tomorrow afternoon" or "daylight change yesterday" or "monday in two weeks" or "tomorrow at 17"
+        Returns None if the string cannot be parsed
+
+        :param string: The string to parse
+        :return: A tuple containing the method and the data or None
+        """
+        string = string.lower()
+        result = self._get_preposition_keyword(string)
+
+        if result is None:
+            return None
+
+        first_preposition, tryable_keyword, first_keyword, string = result
+        string = string[len(tryable_keyword):]
+        string = " ".join(string.split())
+
+        # There has to be some contents left
+        # Otherwise its not valid
+        if not string:
+            return None
+
+        result = self._get_preposition_keyword(string)
+
+        if result is None:
+            return None
+
+        second_preposition, tryable_keyword, second_keyword, string = result
+
+        if first_keyword in self.ABSOLUTE_KEYWORDS and second_keyword in self.ABSOLUTE_KEYWORDS:
+            return None
+
+        if first_keyword in self.RELATIVE_KEYWORDS and second_keyword in self.RELATIVE_KEYWORDS:
+            return None
+
+        if first_keyword in self.RELATIVE_TYPES and second_keyword in self.RELATIVE_TYPES:
+            return None
+
+        if first_keyword in self.RELATIVE_KEYWORDS or type(second_keyword) in self.RELATIVE_TYPES:
+            relative = first_preposition, first_keyword
+            absolute = second_preposition, second_keyword
+        else:
+            relative = second_preposition, second_keyword
+            absolute = first_preposition, first_keyword
+
+        return Method.CONSTANTS_RELATIVE_EXTENSIONS, (*relative, *absolute)
+
+
 class DatetimeDeltaConstantsParser:
-    DATETIME_DELTA_CONSTANTS_PATTERN = re.compile("(([0-9]{1,2}:[0-9]{1,2})|([0-9]{1,2}))(am|pm|)")
+    DATETIME_DELTA_CONSTANTS_PATTERN = re.compile("(([0-9]{1,2}:[0-9]{1,2})|([0-9]{1,2}))(am|pm|h| o\'clock|)")
     CLOCKTIME_FORMATS = (
         "%H:%M:%S",
         "%H:%M"
@@ -309,7 +526,7 @@ class DatetimeDeltaConstantsParser:
 
     def parse(self, string: str) -> Optional[Tuple[MethodEnum, RelativeDateTime]]:  # noqa: C901
         """
-        Parses strings like "at 3pm tomorrow" or "at 1am" or "at 10:30"
+        Parses strings like "at 3pm tomorrow" or "at 1am" or "at 10:30" or "at 17"
         Returns None if the string cannot be parsed
 
         :param string: The string to parse
@@ -328,7 +545,7 @@ class DatetimeDeltaConstantsParser:
         if self.DATETIME_DELTA_CONSTANTS_PATTERN.match(data[0]):
             time = data.pop(0)
             after_midday = time.endswith("pm") if time.endswith(("pm", "am")) else None
-            time = time.replace("pm", "").replace("am", "")
+            time = time.replace("pm", "").replace("am", "").replace("h", "").replace(" o'clock", "")
             parsed_time = None
 
             for clocktime_format in self.CLOCKTIME_FORMATS:
@@ -584,6 +801,7 @@ class AbsolutePrepositionParser:
         """
 
         if isinstance(data, str):
+            # TODO: Call ConstantRelativeExtensionsParser as well
             constants_parser = ConstantsParser()
             constants_parser.CONSTANT_KEYWORDS = (*Constants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL)
             constants_parser.PREPOSITIONS = ("last", "next", "this", "previous")

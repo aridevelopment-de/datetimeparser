@@ -4,6 +4,7 @@ from .parsermethods import (
     AbsoluteDateFormatsParser,
     RelativeDatetimesParser,
     ConstantsParser,
+    ConstantRelativeExtensionsParser,
     DatetimeDeltaConstantsParser,
     AbsolutePrepositionParser
 )
@@ -14,6 +15,7 @@ class Parser:
         AbsoluteDateFormatsParser().parse,
         RelativeDatetimesParser().parse,
         ConstantsParser().parse,
+        ConstantRelativeExtensionsParser().parse,
         DatetimeDeltaConstantsParser().parse,
         AbsolutePrepositionParser().parse
     )
