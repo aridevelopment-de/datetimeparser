@@ -1,8 +1,8 @@
 import datetime
 from typing import Union
 
-from datetimeparser.parser import Parser
 from datetimeparser.evaluator import Evaluator
+from datetimeparser.parser import Parser
 
 
 def parse(datetime_string: str, timezone: str = "Europe/Berlin") -> Union[datetime.datetime, int, None]:

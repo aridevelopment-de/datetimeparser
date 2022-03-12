@@ -1,10 +1,9 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
+from __future__ import annotations  # noqa: I2041
+
+from typing import Callable, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from datetimeparser.enums import ConstantOption
-
-from typing import Callable, List
+    from datetimeparser.enums import ConstantOption  # noqa: I2041
 
 
 class Printable:

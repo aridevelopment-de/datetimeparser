@@ -12,12 +12,12 @@ from .parsermethods import (
 
 class Parser:
     PROCEDURE = (
-        # AbsoluteDateFormatsParser().parse,
-        # RelativeDatetimesParser().parse,
-        # ConstantsParser().parse,
+        AbsoluteDateFormatsParser().parse,
+        RelativeDatetimesParser().parse,
+        ConstantsParser().parse,
         ConstantRelativeExtensionsParser().parse,
-        # DatetimeDeltaConstantsParser().parse,
-        # AbsolutePrepositionParser().parse
+        DatetimeDeltaConstantsParser().parse,
+        AbsolutePrepositionParser().parse
     )
 
     def __init__(self, string):
