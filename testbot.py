@@ -54,6 +54,7 @@ async def parse(ctx: Context, *, datetime_string: str):
 
     try:
         res = Parser(datetime_string).parse()
+        parser_res = res
 
         if res is None:
             result = "```mkd\nNone (Parser returned None)```"
@@ -61,7 +62,7 @@ async def parse(ctx: Context, *, datetime_string: str):
             res = Evaluator(res).evaluate()
 
             if res is None:
-                result = "```mkd\nNone (Evaluator returned None)```"
+                result = f"```mkd\nNone (Evaluator returned None)```\nParser output: ```mkd\n{parser_res}```"
             else:
                 result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n\n# {parse_date(datetime_string)}```"
     except:  # noqa

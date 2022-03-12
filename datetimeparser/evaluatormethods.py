@@ -79,7 +79,6 @@ def evaluate_absolute_prepositions(current_time: datetime, parsed: list):  # -> 
 
 
 def evaluate_constants(current_time: datetime, parsed_object) -> Union[AbsoluteDateTime, datetime, int]:
-    print(parsed_object)
     dt: datetime = current_time
     object_type: Constant = parsed_object[0]
 
