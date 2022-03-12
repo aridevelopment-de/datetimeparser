@@ -9,7 +9,7 @@ class AbsolutePrepositionsEvaluator:
     @staticmethod
     def sanitize_input(parsed_list: list) -> list:
         """removes useless keywords"""
-        return [element for element in parsed_list if element not in Keywords.ALL]
+        return [element for element in parsed_list if element not in Keywords.ALL and not isinstance(element, str)]
 
     @staticmethod
     def get_base(sanitized_input: list, year: int) -> datetime:
@@ -58,8 +58,53 @@ def evaluate_absolute_date_formats(current_time: datetime, parsed: AbsoluteDateT
     return ev_out
 
 
-def evaluate_absolute_prepositions(current_time: datetime, parsed: list):  # -> AbsoluteDateTime:
-    ev = AbsolutePrepositionsEvaluator()
+def evaluate_constant_relatives(current_time: datetime, parsed: list) -> datetime:
+    sanitized = AbsolutePrepositionsEvaluator.sanitize_input(parsed)
+    base: datetime = current_time
+    ev_out = None
+
+    if isinstance(sanitized[-1], Constant):
+        base = sanitized[-1].time_value(current_time.year)
+        hour, minute, sec = sanitized[-2].time_value(None)
+        ev_out = datetime(base.year, base.month, base.day, hour, minute, sec)
+
+    elif isinstance(sanitized[-1], RelativeDateTime):
+        base += relativedelta(
+            years=sanitized[-1].years,
+            months=sanitized[-1].months,
+            weeks=sanitized[-1].weeks,
+            days=sanitized[-1].days,
+            hours=sanitized[-1].hours,
+            minutes=sanitized[-1].minutes,
+            seconds=sanitized[-1].seconds
+        )
+        if sanitized[-2] in WeekdayConstants.ALL:
+            ev_out = datetime.strptime(
+                sanitized[-2].time_value(base),
+                "%Y-%m-%d %H:%M:%S"
+            )
+        elif sanitized[-2] in Constants.ALL_RELATIVE_CONSTANTS:
+            base = sanitized[-2].time_value(None)
+            hour, minute, sec = sanitized[-1].hours, sanitized[-1].minutes, sanitized[-1].seconds
+            ev_out = datetime(base.year, base.month, base.day, hour, minute, sec)
+
+    elif isinstance(sanitized[-1], AbsoluteDateTime):
+        base = datetime(
+            year=current_time.year if sanitized[-1].year == 0 else sanitized[-1].year,
+            month=current_time.month if sanitized[-1].month == 0 else sanitized[-1].month,
+            day=current_time.day if sanitized[-1].day == 0 else sanitized[-1].day,
+            hour=sanitized[-1].hour,
+            minute=sanitized[-1].minute,
+            second=sanitized[-1].second
+        )
+        hour, minute, sec = sanitized[-2].time_value(None)
+        ev_out = datetime(base.year, base.month, base.day, hour, minute, sec)
+
+    return ev_out
+
+
+def evaluate_absolute_prepositions(current_time: datetime, parsed: list) -> datetime:
+    ev = AbsolutePrepositionsEvaluator
     base_year = current_time.year
     sanitized = ev.sanitize_input(parsed)
     base = ev.get_base(sanitized, base_year)
@@ -113,7 +158,7 @@ def evaluate_constants(current_time: datetime, parsed_object) -> Union[AbsoluteD
     return ev_out
 
 
-def evaluate_relative_datetimes(current_time: datetime, parsed: RelativeDateTime) -> AbsoluteDateTime:
+def evaluate_relative_datetime(current_time: datetime, parsed: RelativeDateTime) -> AbsoluteDateTime:
     out: datetime = current_time
 
     out += relativedelta(

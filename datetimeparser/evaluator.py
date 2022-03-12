@@ -39,7 +39,13 @@ class Evaluator:
                 return ev_out
 
         if self.parsed_object_type == Method.RELATIVE_DATETIMES:
-            ev_out = evaluate_relative_datetimes(
+            ev_out = evaluate_relative_datetime(
+                self.current_datetime,
+                self.parsed_object_content
+            )
+
+        if self.parsed_object_type == Method.CONSTANTS_RELATIVE_EXTENSIONS:
+            ev_out = evaluate_constant_relatives(
                 self.current_datetime,
                 self.parsed_object_content
             )
