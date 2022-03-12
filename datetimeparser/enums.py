@@ -89,23 +89,28 @@ class Constants:
 
 
 class DatetimeDeltaConstants:
-    MIDNIGHT = Constant('midnight', value=0, options=[ConstantOption.DATE_VARIABLE])
-    NIGHT = Constant('night', value=0, options=[ConstantOption.DATE_VARIABLE])
-    MORNING_NIGHT = Constant('morning night', value=0, options=[ConstantOption.DATE_VARIABLE])
+    # time_value is a tuple containing (hours, minutes, seconds)
+    MIDNIGHT = Constant('midnight', value=0, options=[ConstantOption.DATE_VARIABLE], time_value=lambda _: (0, 0, 0))
+    NIGHT = Constant('night', value=0, options=[ConstantOption.DATE_VARIABLE], time_value=lambda _: (21, 0, 0))
+    MORNING_NIGHT = Constant('morning night', value=0, options=[ConstantOption.DATE_VARIABLE],
+                             time_value=lambda _: (3, 0, 0))
     DAYLIGHT_CHANGE = Constant('daylight change', ['daylight saving', 'daylight saving time'], value=0,
-                               options=[ConstantOption.YEAR_VARIABLE, ConstantOption.DATE_VARIABLE])
-    DAWN = Constant('dawn', value=0, options=[ConstantOption.DATE_VARIABLE])
-    SUNRISE = Constant('sunrise', value=0, options=[ConstantOption.DATE_VARIABLE])
-    MORNING = Constant('morning', value=0, options=[ConstantOption.DATE_VARIABLE])
-    BREAKFAST = Constant('breakfast', value=0, options=[ConstantOption.DATE_VARIABLE])
+                               options=[ConstantOption.YEAR_VARIABLE, ConstantOption.DATE_VARIABLE],
+                               time_value=lambda _: (6, 0, 0))
+    SUNRISE = Constant('sunrise', value=0, options=[ConstantOption.DATE_VARIABLE], time_value=lambda _: (7, 0, 0))
+    MORNING = Constant('morning', value=0, options=[ConstantOption.DATE_VARIABLE], time_value=lambda _: (6, 0, 0))
+    BREAKFAST = Constant('breakfast', value=0, options=[ConstantOption.DATE_VARIABLE], time_value=lambda _: (8, 0, 0))
 
-    MIDDAY = Constant('midday', value=12, options=[ConstantOption.DATE_VARIABLE])
-    LUNCH = Constant('lunch', ['lunchtime'], value=12, options=[ConstantOption.DATE_VARIABLE])
-    AFTERNOON = Constant('afternoon', value=12, options=[ConstantOption.DATE_VARIABLE])
-    EVENING = Constant('evening', value=12, options=[ConstantOption.DATE_VARIABLE])
-    DINNER = Constant('dinner', ['dinnertime'], value=12, options=[ConstantOption.DATE_VARIABLE])
-    DUSK = Constant('dusk', value=12, options=[ConstantOption.DATE_VARIABLE])
-    SUNSET = Constant('sunset', value=12, options=[ConstantOption.DATE_VARIABLE])
+    MIDDAY = Constant('midday', value=12, options=[ConstantOption.DATE_VARIABLE], time_value=lambda _: (12, 0, 0))
+    LUNCH = Constant('lunch', ['lunchtime'], value=12, options=[ConstantOption.DATE_VARIABLE],
+                     time_value=lambda _: (12, 0, 0))
+    AFTERNOON = Constant('afternoon', value=12, options=[ConstantOption.DATE_VARIABLE], time_value=lambda _: (15, 0, 0))
+    EVENING = Constant('evening', value=12, options=[ConstantOption.DATE_VARIABLE], time_value=lambda _: (18, 0, 0))
+    DINNER = Constant('dinner', ['dinnertime'], value=12, options=[ConstantOption.DATE_VARIABLE],
+                      time_value=lambda _: (19, 0, 0))
+    DAWN = Constant('dawn', value=12, options=[ConstantOption.DATE_VARIABLE], time_value=lambda _: (6, 0, 0))
+    DUSK = Constant('dusk', value=12, options=[ConstantOption.DATE_VARIABLE], time_value=lambda _: (20, 0, 0))
+    SUNSET = Constant('sunset', value=12, options=[ConstantOption.DATE_VARIABLE], time_value=lambda _: (18, 30, 0))
 
     ALL = [
         MORNING, AFTERNOON, EVENING, NIGHT, MORNING_NIGHT, DAYLIGHT_CHANGE, MIDNIGHT, MIDDAY, DAWN, DUSK,
