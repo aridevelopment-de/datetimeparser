@@ -94,6 +94,7 @@ class DatetimeDeltaConstants:
     MORNING_NIGHT = Constant('morning night', value=0, options=[ConstantOption.DATE_VARIABLE])
     DAYLIGHT_CHANGE = Constant('daylight change', ['daylight saving', 'daylight saving time'], value=0,
                                options=[ConstantOption.YEAR_VARIABLE, ConstantOption.DATE_VARIABLE])
+    DAWN = Constant('dawn', value=0, options=[ConstantOption.DATE_VARIABLE])
     SUNRISE = Constant('sunrise', value=0, options=[ConstantOption.DATE_VARIABLE])
     MORNING = Constant('morning', value=0, options=[ConstantOption.DATE_VARIABLE])
     BREAKFAST = Constant('breakfast', value=0, options=[ConstantOption.DATE_VARIABLE])
@@ -103,7 +104,6 @@ class DatetimeDeltaConstants:
     AFTERNOON = Constant('afternoon', value=12, options=[ConstantOption.DATE_VARIABLE])
     EVENING = Constant('evening', value=12, options=[ConstantOption.DATE_VARIABLE])
     DINNER = Constant('dinner', ['dinnertime'], value=12, options=[ConstantOption.DATE_VARIABLE])
-    DAWN = Constant('dawn', value=12, options=[ConstantOption.DATE_VARIABLE])
     DUSK = Constant('dusk', value=12, options=[ConstantOption.DATE_VARIABLE])
     SUNSET = Constant('sunset', value=12, options=[ConstantOption.DATE_VARIABLE])
 
