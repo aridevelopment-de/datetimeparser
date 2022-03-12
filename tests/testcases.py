@@ -76,6 +76,7 @@ testcases = {
     "daylight change yesterday": None,
     "daylight change 01.01.2022": None,
     "monday in two weeks": None,
+    "tuesday in two years": None,
     "tomorrow 12 o'clock": None,
     "tomorrow at 7pm": None,
     "tomorrow at 17h": None,
