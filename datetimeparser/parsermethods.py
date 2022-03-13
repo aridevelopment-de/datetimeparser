@@ -790,7 +790,7 @@ class AbsolutePrepositionParser:
 
         return returned_data
 
-    def _parse_absolute_statement(self, data: Union[str, Tuple]):
+    def _parse_absolute_statement(self, data: Union[str, Tuple]) -> Optional:
         """
         Parses constant values like "christmas", "previous st. patricks day", ..
         If the input is a Tuple containing the absolute preposition tokens, we return the result of`_convert_tokens`
@@ -815,13 +815,15 @@ class AbsolutePrepositionParser:
                 # If the result is None there may be just a normal year (e.g. "2018")
                 if data.isnumeric():
                     return (AbsoluteDateTime(year=int(data)),)
+                else:
+                    return None
             else:
                 # The first element is the Method signature (Method.CONSTANTS)
                 return result[1]
         else:
             return self._convert_tokens(data)
 
-    def _convert_tokens(self, tokens: Tuple[dict, dict, dict]) -> List[Union[int, Constant, RelativeDateTime]]:
+    def _convert_tokens(self, tokens: Tuple[dict, dict, dict]) -> Optional[List[Union[int, Constant, RelativeDateTime]]]:
         """
         Converts and parses the splitted tokens from _split_data into Tokens suited for the Evaluator
 
@@ -854,7 +856,12 @@ class AbsolutePrepositionParser:
                 else:
                     raise ValueError("No preposition given")
             elif data_part["type"] == "absolute":
-                for absolute_part_data in self._parse_absolute_statement(data_part["data"]):
+                absolute_data = self._parse_absolute_statement(data_part["data"])
+
+                if absolute_data is None:
+                    return None
+
+                for absolute_part_data in absolute_data:
                     returned_data.append(absolute_part_data)
 
         return returned_data
@@ -874,5 +881,8 @@ class AbsolutePrepositionParser:
             return None
 
         data = self._convert_tokens(prepared_data)
+
+        if data is None:
+            return None
 
         return Method.ABSOLUTE_PREPOSITIONS, data
