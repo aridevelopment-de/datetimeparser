@@ -10,7 +10,7 @@ setup(
   long_description_content_type="text/markdown",
   long_description=long_description,
   packages=['datetimeparser'],
-  version='0.1d',
+  version='0.1d0',  # important is the zero at the end
   license='MIT',
   description='A parser library built for parsing the english language into datetime objects.',
   author='Ari24',
