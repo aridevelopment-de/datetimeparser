@@ -32,10 +32,7 @@ Datetimeparser can even parse complex grammar and sentence structure.
 
 ## Examples
 
-Below you can find some examples of how datetimeparser can be used.  
-The resulting value from the parser is a datetime object, integer or None, depending on the outcome:
-- "Infinity" leads to -1
-- A wrong input date leads to None
+Below you can find some examples of how datetimeparser can be used.
 
 ```python
 from datetimeparser import parse
@@ -57,7 +54,7 @@ print(parse("10 days and 2 hours after 3 months before christmas 2020"))
 
 Use pip to install the library:
 ```shell
-$ pip install datetimeparser
+$ pip install python-datetimeparser
 ```
 
 ## Contributing
