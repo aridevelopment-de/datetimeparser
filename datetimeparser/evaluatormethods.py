@@ -44,6 +44,10 @@ class AbsolutePrepositionsEvaluator:
 
         return ev_out
 
+    @staticmethod
+    def remove_milli_seconds(dt: datetime) -> datetime:
+        return datetime.strptime(dt.strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+
 
 def evaluate_absolute_date_formats(current_time: datetime, parsed: AbsoluteDateTime) -> AbsoluteDateTime:
     ev_out = AbsoluteDateTime(
@@ -120,7 +124,7 @@ def evaluate_absolute_prepositions(current_time: datetime, parsed: list) -> date
         seconds=rel_out.seconds
     )
 
-    return base
+    return ev.remove_milli_seconds(base)
 
 
 def evaluate_constants(current_time: datetime, parsed_object) -> Union[AbsoluteDateTime, datetime, int]:
