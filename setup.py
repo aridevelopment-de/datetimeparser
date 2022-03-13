@@ -10,13 +10,13 @@ setup(
   long_description_content_type="text/markdown",
   long_description=long_description,
   packages=['datetimeparser'],
-  version='0.1d0',  # important is the zero at the end
+  version='0.1e0',  # important is the zero at the end
   license='MIT',
   description='A parser library built for parsing the english language into datetime objects.',
   author='Ari24',
   author_email='ari.publicmail@gmail.com',
   url='https://github.com/aridevelopment-de/datetimeparser',
-  download_url='https://github.com/aridevelopment-de/datetimeparser/archive/v0.1d.tar.gz',
+  download_url='https://github.com/aridevelopment-de/datetimeparser/archive/v0.1e.tar.gz',
   keywords=['datetime', 'parser', 'parsing', 'grammar', 'datetime-parser'],
   install_requires=[
           'python-dateutil',
