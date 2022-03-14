@@ -208,7 +208,7 @@ class RelativeDatetimesParser:
 
 class ConstantsParser:
     # Weekday must go before DatetimeConstants because `friday` contains the word `day`
-    CONSTANT_KEYWORDS = (*Constants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL, *DatetimeConstants.ALL)
+    CONSTANT_KEYWORDS = (*DatetimeDeltaConstants.ALL, *Constants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL, *DatetimeConstants.ALL)
     PREPOSITIONS = ("last", "next", "this", "previous", "at")
     PAST_PREPOSITIONS = ("last", "previous")
     FUTURE_PREPOSITIONS = ("next", "this")
