@@ -92,6 +92,16 @@ def evaluate_constant_relatives(current_time: datetime, parsed: list) -> datetim
             hour, minute, sec = sanitized[-1].hours, sanitized[-1].minutes, sanitized[-1].seconds
             ev_out = datetime(base.year, base.month, base.day, hour, minute, sec)
 
+        elif sanitized[-2] in DatetimeDeltaConstants.ALL:
+            ev_out = datetime(
+                year=base.year,
+                month=base.month,
+                day=base.day,
+                hour=sanitized[-2].time_value(None)[0],
+                minute=sanitized[-2].time_value(None)[1],
+                second=sanitized[-2].time_value(None)[2]
+            )
+
     elif isinstance(sanitized[-1], AbsoluteDateTime):
         base = datetime(
             year=current_time.year if sanitized[-1].year == 0 else sanitized[-1].year,
@@ -151,6 +161,16 @@ def evaluate_constants(current_time: datetime, parsed_object) -> Union[AbsoluteD
 
         else:
             dt = object_type.time_value(current_time.year)
+
+            if isinstance(dt, tuple):
+                dt = datetime(
+                    year=current_time.year,
+                    month=current_time.month,
+                    day=current_time.day,
+                    hour=dt[0],
+                    minute=dt[1],
+                    second=dt[2]
+                )
 
         if current_time > dt and parsed_object[0] not in Constants.ALL_RELATIVE_CONSTANTS:
             dt += relativedelta(years=1)
