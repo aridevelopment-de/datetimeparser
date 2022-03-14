@@ -631,6 +631,8 @@ class AbsolutePrepositionParser:
         "before"
     )
 
+    MAX_RECURSION_DEPTH = 13
+
     def _split_data(self, string: str) -> Optional[Tuple[dict, dict, dict]]:
         """
         Splits the data into 3 parts
@@ -661,8 +663,10 @@ class AbsolutePrepositionParser:
         absolute = string[char_count:]
 
         # There may be more prepositions in the absolute part so we try it again via recursion
-        if self._split_data(absolute) is not None:
-            absolute = self._split_data(absolute)
+        recursion_result = self._split_data(absolute)
+
+        if recursion_result is not None:
+            absolute = recursion_result
 
         return {'type': 'relative', 'data': relative}, {'type': 'keyword', 'data': word}, {'type': 'absolute', 'data': absolute}
 
