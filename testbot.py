@@ -64,10 +64,7 @@ async def parse(ctx: Context, *, datetime_string: str):
             if res is None:
                 result = f"```mkd\nNone (Evaluator returned None)```\nParser output: ```mkd\n{parser_res}```"
             else:
-                if len(datetime_string) > 3500:
-                    datetime_string = datetime_string[:3500] + "..."
-
-                result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string}\")```\n```mkd\n\n# {parse_date(datetime_string)}```"
+                result = f"```python\nfrom datetimeparser import parse\n\nparse(\"{datetime_string if len(datetime_string) < 3000 else datetime_string[:3000]}\")```\n```mkd\n\n# {parse_date(datetime_string)}```"
     except:  # noqa
         result = f"```mkd\n{get_latest_stacktrace()}```"
         color = 0xFF0000
