@@ -5,6 +5,23 @@ from .enums import *
 from .baseclasses import *
 
 
+def parse_int(text: str) -> Optional[int]:
+    """
+    Normally we would use str.isnumeric and int. The problem is, that isnumeric doesn't account for negative values.
+    That is the job of this helper function.
+
+    :param text: the text to convert to an integer
+    :return: the resulting integer or None if it isn't one
+    """
+    negative = text.startswith("-")
+    text = text.strip("-")
+
+    if text.isdecimal():
+        return int(text) * -1 if negative else 1
+    
+    return None
+
+
 class RelativeDatetimeHelper:
     @staticmethod
     def from_keyword(keyword: Constant, delta: int = 1) -> RelativeDateTime:
@@ -130,7 +147,7 @@ class RelativeDatetimesParser:
                     not_possible = False
 
             # If the argument is a number, simply add it to the list
-            if argument.isnumeric():
+            if parse_int(argument) is not None:
                 new_data.append(int(argument) if preposition != "last" else -int(argument))
                 not_possible = False
 
@@ -159,7 +176,7 @@ class RelativeDatetimesParser:
             else:
                 # If the everything up to the last letter is numeric and the last letter is a valid mini date keyword (e.g. "30d", "10m", ...)
                 # Add the number to the list and add the keyword to the list
-                if argument[:-1].isnumeric():
+                if parse_int(argument[:-1]) is not None:
                     number = int(argument[:-1]) if preposition != "last" else -int(argument[:-1])
                     keyword = argument[-1]
 
@@ -266,7 +283,7 @@ class ConstantsParser:
 
         # If the last argument is a number, it must be a year
         # e.g. "christmas 2024"
-        if arguments[-1].isnumeric():
+        if parse_int(arguments[-1]) is not None:
             year = int(arguments.pop(-1))
             constant = self._find_constant(" ".join(arguments))
 
@@ -328,7 +345,7 @@ class ConstantRelativeExtensionsParser:
         if string == "a":
             return 1
 
-        if string.isdecimal():
+        if parse_int(string) is not None:
             return int(string)
 
         for constant in NumberConstants.ALL:
@@ -558,7 +575,7 @@ class DatetimeDeltaConstantsParser:
 
             # If the time does not match a clocktime format, does not contain a colon and is a number
             # e.g. "3(pm|am)", return that time respecting the after_midday flag
-            if not parsed_time and time.count(":") == 0 and time.isdigit():
+            if not parsed_time and time.count(":") == 0 and parse_int(time) is not None:
                 if after_midday is not None:
                     parsed_time = RelativeDateTime(hours=(12 if after_midday else 0) + int(time))
                 else:
@@ -698,7 +715,7 @@ class AbsolutePrepositionParser:
                 returned_data.append(1)
                 continue
 
-            if argument.isnumeric():
+            if parse_int(argument) is not None:
                 returned_data.append(int(argument))
                 continue
 
@@ -795,7 +812,7 @@ class AbsolutePrepositionParser:
 
             if result is None:
                 # If the result is None there may be just a normal year (e.g. "2018")
-                if data.isnumeric():
+                if parse_int(data) is not None:
                     return (AbsoluteDateTime(year=int(data)),)
                 else:
                     return None
