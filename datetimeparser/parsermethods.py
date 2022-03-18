@@ -18,6 +18,8 @@ class RelativeDatetimeHelper:
             return RelativeDateTime(years=delta)
         elif keyword == DatetimeConstants.HOURS:
             return RelativeDateTime(hours=delta)
+        elif keyword == DatetimeConstants.QUARTERS:
+            return RelativeDateTime(minutes=15 * delta)
         elif keyword == DatetimeConstants.MINUTES:
             return RelativeDateTime(minutes=delta)
         elif keyword == DatetimeConstants.SECONDS:
@@ -748,9 +750,7 @@ class AbsolutePrepositionParser:
                 if preposition in self.RELATIVE_PAST_PREPOSITIONS:
                     value *= -1
 
-                if unit in DatetimeConstants.DATE:
-                    current_data = RelativeDatetimeHelper.from_keyword(unit, value)
-                elif unit in DatetimeConstants.TIME:
+                if unit in DatetimeConstants.ALL:
                     current_data = RelativeDatetimeHelper.from_keyword(unit, value)
                 else:
                     raise RuntimeError("Unknown Datetime Constant:", unit)
