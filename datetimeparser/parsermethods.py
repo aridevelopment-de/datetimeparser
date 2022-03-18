@@ -674,13 +674,13 @@ class AbsolutePrepositionParser:
 
         return {'type': 'relative', 'data': relative}, {'type': 'keyword', 'data': word}, {'type': 'absolute', 'data': absolute}
 
-    def _parse_relative_statement(self, relative_statement: str) -> List[Union[int, Constant]]:  # noqa: C901
+    def _parse_relative_statement(self, relative_statement: str) -> Optional[List[Union[int, Constant]]]:  # noqa: C901
         """
         Parses strings like "3 seconds, 2 minutes and 4 hours", "the fifth day", "4. week"
         It resembles `relative_datetimes`
 
         :param relative_statement: The statement to parse
-        :return: List of integers and keywords
+        :return: List of integers and keywords or None if the statement is invalid
         """
 
         arguments = relative_statement.lower().split()
@@ -722,6 +722,8 @@ class AbsolutePrepositionParser:
                     continue
 
                 break
+            else:
+                return None
 
         return returned_data
 
@@ -817,10 +819,10 @@ class AbsolutePrepositionParser:
         for i, data_part in enumerate(tokens):
             if data_part["type"] == "relative":
                 # "3 hours and 4 minutes (after christmas)", "the 5th (of july)", ...
-                relative_data = []
+                relative_data = self._parse_relative_statement(data_part["data"])
 
-                for relative_part_data in self._parse_relative_statement(data_part["data"]):
-                    relative_data.append(relative_part_data)
+                if relative_data is None:
+                    return None
 
                 preposition = tokens[1]["data"]
                 relative_data = self._concatenate_relative_data(relative_data, preposition)
