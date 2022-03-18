@@ -18,6 +18,8 @@ class RelativeDatetimeHelper:
             return RelativeDateTime(years=delta)
         elif keyword == DatetimeConstants.HOURS:
             return RelativeDateTime(hours=delta)
+        elif keyword == DatetimeConstants.QUARTERS:
+            return RelativeDateTime(minutes=15 * delta)
         elif keyword == DatetimeConstants.MINUTES:
             return RelativeDateTime(minutes=delta)
         elif keyword == DatetimeConstants.SECONDS:
@@ -621,6 +623,8 @@ class AbsolutePrepositionParser:
         Keywords.BEFORE
     )
 
+    RELATIVE_DATETIME_CONSTANTS = (*NumberCountConstants.ALL, *NumberConstants.ALL, *DatetimeConstants.ALL)
+
     RELATIVE_DATA_SKIPPABLE_WORDS = (
         "and",
         ",",
@@ -683,11 +687,7 @@ class AbsolutePrepositionParser:
         returned_data = []
 
         for argument in arguments:
-            if argument.endswith(","):
-                argument = argument[:-1]
-
-            if argument.startswith(","):
-                argument = argument[1:]
+            argument = argument.strip(",")
 
             # Skip words like "and", "," or "the"
             if argument in self.RELATIVE_DATA_SKIPPABLE_WORDS:
@@ -702,43 +702,21 @@ class AbsolutePrepositionParser:
                 returned_data.append(int(argument))
                 continue
 
-            found_keyword = False
-
             # '1st', '1.', 'first', ...
-            for keyword in NumberCountConstants.ALL:
-                for alias in keyword.get_all():
-                    if alias == argument:
-                        returned_data.append(keyword.value)
-                        found_keyword = True
-                        break
-                else:
-                    continue
-
-                break
-
-            if found_keyword:
-                continue
-
             # 'one', 'two', 'three', ...
-            for keyword in NumberConstants.ALL:
-                for alias in keyword.get_all():
-                    if alias == argument:
-                        returned_data.append(keyword.value)
-                        found_keyword = True
-                        break
-                else:
-                    continue
-
-                break
-
-            if found_keyword:
-                continue
-
             # 'seconds', 'minutes', 'hours', ...
-            for keyword in DatetimeConstants.ALL:
+            for keyword in self.RELATIVE_DATETIME_CONSTANTS:
                 for alias in keyword.get_all():
                     if alias == argument:
-                        returned_data.append(keyword)
+                        if keyword in DatetimeConstants.ALL:
+                            if not returned_data or not isinstance(returned_data[-1], int):
+                                # For cases like 'day and month (before christmas)'
+                                returned_data.append(1)
+
+                            returned_data.append(keyword)
+                        else:
+                            returned_data.append(keyword.value)
+
                         break
                 else:
                     continue
@@ -772,9 +750,7 @@ class AbsolutePrepositionParser:
                 if preposition in self.RELATIVE_PAST_PREPOSITIONS:
                     value *= -1
 
-                if unit in DatetimeConstants.DATE:
-                    current_data = RelativeDatetimeHelper.from_keyword(unit, value)
-                elif unit in DatetimeConstants.TIME:
+                if unit in DatetimeConstants.ALL:
                     current_data = RelativeDatetimeHelper.from_keyword(unit, value)
                 else:
                     raise RuntimeError("Unknown Datetime Constant:", unit)

@@ -203,15 +203,16 @@ class NumberCountConstants:
 class DatetimeConstants:
     SECONDS = Constant('seconds', ['second', 'sec', 'secs'])
     MINUTES = Constant('minutes', ['minute', 'min', 'mins'])
+    QUARTERS = Constant('quarters', ['quarter', 'qtr', 'qtrs'])
     HOURS = Constant('hours', ['hour'])
     DAYS = Constant('days', ['day'])
     WEEKS = Constant('weeks', ['week'])
     MONTHS = Constant('months', ['month'])
     YEARS = Constant('years', ['year'])
 
-    TIME = [SECONDS, MINUTES, HOURS]
+    TIME = [SECONDS, MINUTES, QUARTERS, HOURS]
     DATE = [DAYS, WEEKS, MONTHS, YEARS]
-    ALL = [SECONDS, MINUTES, HOURS, DAYS, WEEKS, MONTHS, YEARS]
+    ALL = [SECONDS, MINUTES, QUARTERS, HOURS, DAYS, WEEKS, MONTHS, YEARS]
 
     @classmethod
     def convert_from_mini_date(cls, md):
