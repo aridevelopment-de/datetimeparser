@@ -72,8 +72,8 @@ class Constants:
     INFINITY = Constant('infinity', ['inf'], value=-1)
 
     TODAY = Constant('today', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day))
-    TOMORROW = Constant('tomorrow', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime.today() + relativedelta(days=1))
-    YESTERDAY = Constant('yesterday', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime.today() - relativedelta(days=1))
+    TOMORROW = Constant('tomorrow', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day) + relativedelta(days=1))
+    YESTERDAY = Constant('yesterday', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day) - relativedelta(days=1))
     NOW = Constant('now', ['at the moment', 'current time', 'current time now'], time_value=lambda _: datetime.now())
 
     ALL = [
