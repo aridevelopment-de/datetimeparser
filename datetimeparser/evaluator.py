@@ -1,6 +1,10 @@
+from datetime import datetime
 from pytz import timezone, UnknownTimeZoneError
+from typing import Union
 
-from .evaluatormethods import *
+from .baseclasses import AbsoluteDateTime, RelativeDateTime
+from .enums import Method
+from .evaluatormethods import EvaluatorMethods
 
 
 class Evaluator:
@@ -16,57 +20,27 @@ class Evaluator:
 
     def evaluate(self) -> Union[datetime, int, None]:
         ev_out = None
+        ev = EvaluatorMethods(self.parsed_object_content, self.current_datetime)
 
         if self.parsed_object_type == Method.ABSOLUTE_DATE_FORMATS:
-            ev_out = evaluate_absolute_date_formats(
-                self.current_datetime,
-                self.parsed_object_content
-            )
+            ev_out = ev.evaluate_absolute_date_formats()
 
         if self.parsed_object_type == Method.ABSOLUTE_PREPOSITIONS:
-            ev_out = evaluate_absolute_prepositions(
-                self.current_datetime,
-                self.parsed_object_content
-            )
+            ev_out = ev.evaluate_absolute_prepositions()
 
         if self.parsed_object_type == Method.CONSTANTS:
-            ev_out = evaluate_constants(
-                self.current_datetime,
-                self.parsed_object_content
-            )
-
-            if not isinstance(ev_out, AbsoluteDateTime):
-                return ev_out
+            ev_out = ev.evaluate_constants()
 
         if self.parsed_object_type == Method.RELATIVE_DATETIMES:
-            ev_out = evaluate_relative_datetime(
-                self.current_datetime,
-                self.parsed_object_content
-            )
+            ev_out = ev.evaluate_relative_datetime()
 
         if self.parsed_object_type == Method.CONSTANTS_RELATIVE_EXTENSIONS:
-            ev_out = evaluate_constant_relatives(
-                self.current_datetime,
-                self.parsed_object_content
-            )
+            ev_out = ev.evaluate_constant_relatives()
 
         if self.parsed_object_type == Method.DATETIME_DELTA_CONSTANTS:
-            ev_out = evaluate_datetime_delta_constants(
-                self.current_datetime,
-                self.parsed_object_content
-            )
+            ev_out = ev.evaluate_datetime_delta_constants()
 
-        if isinstance(ev_out, datetime):
+        if ev_out:
             return ev_out
-        try:
-            dt_object = datetime(
-                ev_out.year,
-                ev_out.month,
-                ev_out.day,
-                ev_out.hour,
-                ev_out.minute,
-                ev_out.second
-            )
-            return dt_object
-        except ValueError:
-            return None
+        else:
+            raise ValueError
