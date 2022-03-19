@@ -16,6 +16,8 @@ class ConstantOption(Enum):
 class Constants:
     CHRISTMAS = Constant('christmas', ['xmas'], options=[ConstantOption.YEAR_VARIABLE],
                          time_value=lambda year_time: datetime(year=year_time, month=12, day=25))
+    HOLY_EVE = Constant('holy eve', options=[ConstantOption.YEAR_VARIABLE],
+                        time_value=lambda year_time: datetime(year=year_time, month=12, day=24))
     SILVESTER = Constant('silvester', ['new years eve'], options=[ConstantOption.YEAR_VARIABLE],
                          time_value=lambda year_time: datetime(year=year_time, month=12, day=31))
     EASTERN = Constant('eastern', ['easter'], options=[ConstantOption.YEAR_VARIABLE], time_value=eastern_calc)
@@ -77,7 +79,7 @@ class Constants:
     NOW = Constant('now', ['at the moment', 'current time', 'current time now'], time_value=lambda _: datetime.now())
 
     ALL = [
-        CHRISTMAS, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY, VALENTINES_DAY,
+        CHRISTMAS, HOLY_EVE, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY, VALENTINES_DAY,
         SUMMER_END, WINTER_END, SPRING_END, FALL_END, SUMMER_BEGIN, WINTER_BEGIN, SPRING_BEGIN, FALL_BEGIN,
         MORNING, EVENING, LUNCHTIME,
         BEGIN_AOC, END_AOC,
