@@ -211,10 +211,16 @@ class DatetimeConstants:
     WEEKS = Constant('weeks', ['week'])
     MONTHS = Constant('months', ['month'])
     YEARS = Constant('years', ['year'])
+    OLYMPIADS = Constant('olympiads', ['olympiad'])  # 4 years
+    DECADES = Constant('decades', ['decade'])  # 10 years
+    CENTURIES = Constant('centuries', ['century'])  # 100 years
+    MILLENNIUMS = Constant('millenniums', ['millennium'])  # 1,000 years
+    MEGAANNUMS = Constant('megaannuums', ['megaannuum'])  # 1,000,000 years
+    GIGAANNUMS = Constant('gigaannuums', ['gigaannuum'])  # 1,000,000,000 years
 
     TIME = [SECONDS, MINUTES, QUARTERS, HOURS]
-    DATE = [DAYS, WEEKS, MONTHS, YEARS]
-    ALL = [SECONDS, MINUTES, QUARTERS, HOURS, DAYS, WEEKS, MONTHS, YEARS]
+    DATE = [DAYS, WEEKS, MONTHS, YEARS, DECADES, CENTURIES, MILLENNIUMS]
+    ALL = [*DATE, *TIME]
 
     @classmethod
     def convert_from_mini_date(cls, md):
