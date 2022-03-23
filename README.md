@@ -21,14 +21,6 @@ Datetimeparser is a python library capable of parsing the english language into 
 It was created due to the lack of such library and need for it. We knew that there was [dateutil](https://github.com/dateutil/dateutil/) but we wanted a more powerful parsing library.  
 Datetimeparser can even parse complex grammar and sentence structure.
 
-## Latest Change
-
-<!-- LATESTCOMMIT:START -->
-
-[<img width="380px" height="200px" src="https://opengraph.githubassets.com/e71e927d15fa55be49969cc497087e3a9ea1cedfe3d7a7a3b3db6c4c532cdf7d/aridevelopment-de/datetimeparser/commit/a8fe98008409f23e7b50ec356bd5bcf6bd0d5936" />][commitUrl]
-
-[commitUrl]: https://github.com/aridevelopment-de/datetimeparser/commit/a8fe98008409f23e7b50ec356bd5bcf6bd0d5936
-<!-- LATESTCOMMIT:END -->
 
 ## Examples
 
@@ -61,6 +53,7 @@ $ pip install python-datetimeparser
 
 If you want to contribute to datetimeparser, please use feature branches. If possible, name them after an already opened issue (e.g. feature/131).  
 We highly appreciate everyone who wants to help our project!
+
 
 ## List of Constants
 
