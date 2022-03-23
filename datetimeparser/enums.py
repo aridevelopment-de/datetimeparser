@@ -274,8 +274,9 @@ class Keywords:
     NEXT = Constant('next')
     IN = Constant('in')
     FOR = Constant('for')
+    PAST = Constant('past')
 
-    ALL = [OF, AFTER, BEFORE, NEXT, IN, FOR]
+    ALL = [OF, AFTER, BEFORE, NEXT, IN, FOR, PAST]
 
 
 class Method:

@@ -307,11 +307,8 @@ class ConstantsParser:
                         return Method.CONSTANTS, (constant, RelativeDateTime(days=-1))
                     elif preposition in self.FUTURE_PREPOSITIONS:
                         if constant in DatetimeConstants.ALL:
-                            if constant in DatetimeConstants.TIME:
-                                return Method.CONSTANTS, (RelativeDatetimeHelper.from_keyword(constant, delta=1),)
-                            elif constant in DatetimeConstants.DATE:
-                                return Method.CONSTANTS, (RelativeDatetimeHelper.from_keyword(constant, delta=1),)
-                        elif constant in [*WeekdayConstants.ALL, *Constants.ALL]:
+                            return Method.CONSTANTS, (RelativeDatetimeHelper.from_keyword(constant, delta=1),)
+                        elif constant in (*WeekdayConstants.ALL, *Constants.ALL, *DatetimeDeltaConstants.ALL):
                             return Method.CONSTANTS, (constant,)
                         else:
                             return None
@@ -637,10 +634,12 @@ class AbsolutePrepositionParser:
     ABSOLUTE_PREPOSITION_TOKENS = (
         Keywords.OF,
         Keywords.AFTER,
-        Keywords.BEFORE
+        Keywords.BEFORE,
+        Keywords.PAST
     )
 
     RELATIVE_DATETIME_CONSTANTS = (*NumberCountConstants.ALL, *NumberConstants.ALL, *DatetimeConstants.ALL)
+    RELATIVE_TIME_CONSTANTS = DatetimeConstants.ALL
 
     RELATIVE_DATA_SKIPPABLE_WORDS = (
         "and",
@@ -691,7 +690,7 @@ class AbsolutePrepositionParser:
 
         return {'type': 'relative', 'data': relative}, {'type': 'keyword', 'data': word}, {'type': 'absolute', 'data': absolute}
 
-    def _parse_relative_statement(self, relative_statement: str) -> Optional[List[Union[int, Constant]]]:  # noqa: C901
+    def _parse_relative_statement(self, relative_statement: str, preposition: str) -> Optional[List[Union[int, Constant]]]:  # noqa: C901
         """
         Parses strings like "3 seconds, 2 minutes and 4 hours", "the fifth day", "4. week"
         It resembles `relative_datetimes`
@@ -722,7 +721,7 @@ class AbsolutePrepositionParser:
             # '1st', '1.', 'first', ...
             # 'one', 'two', 'three', ...
             # 'seconds', 'minutes', 'hours', ...
-            for keyword in self.RELATIVE_DATETIME_CONSTANTS:
+            for keyword in self.RELATIVE_DATETIME_CONSTANTS if preposition != "past" else (*self.RELATIVE_DATETIME_CONSTANTS, self.RELATIVE_TIME_CONSTANTS):
                 for alias in keyword.get_all():
                     if alias == argument:
                         if keyword in DatetimeConstants.ALL:
@@ -800,25 +799,39 @@ class AbsolutePrepositionParser:
         """
 
         if isinstance(data, str):
-            # TODO: Call ConstantRelativeExtensionsParser as well
+            # Try constants (e.g. "(three days after) christmas")
             constants_parser = ConstantsParser()
-            constants_parser.CONSTANT_KEYWORDS = (*Constants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL)
+            constants_parser.CONSTANT_KEYWORDS = (*Constants.ALL, *DatetimeDeltaConstants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL)
             constants_parser.PREPOSITIONS = ("last", "next", "this", "previous")
             constants_parser.PAST_PREPOSITIONS = ("last", "previous")
             constants_parser.FUTURE_PREPOSITIONS = ("next", "this")
-            constants_parser.CUTOFF_KEYWORDS = ("the",)
+            constants_parser.CUTOFF_KEYWORDS = ("at the", "the", "at")
 
             result = constants_parser.parse(data)
 
-            if result is None:
-                # If the result is None there may be just a normal year (e.g. "2018")
-                if parse_int(data) is not None:
-                    return (AbsoluteDateTime(year=int(data)),)
-                else:
-                    return None
-            else:
+            if result is not None:
                 # The first element is the Method signature (Method.CONSTANTS)
                 return result[1]
+
+            # If the result is None there may be just a normal year (e.g. "(three days after) 2018")
+            if parse_int(data) is not None:
+                return (AbsoluteDateTime(year=int(data)),)
+
+            # Try relative constants (e.g. "(2 hours after) daylight change yesterday")
+            constant_relative_extensions_parser = ConstantRelativeExtensionsParser()
+            result = constant_relative_extensions_parser.parse(data)
+
+            if result is not None:
+                return result[1]
+
+            # Try datetime delta constants (e.g. "(two quarters past) five")
+            datetime_delta_parser = DatetimeDeltaConstantsParser()
+            result = datetime_delta_parser.parse(data)
+
+            if result is not None:
+                return (result[1],)
+
+            return None
         else:
             return self._convert_tokens(data)
 
@@ -835,13 +848,14 @@ class AbsolutePrepositionParser:
         # Choose the right parsing method for the specific data types
         for i, data_part in enumerate(tokens):
             if data_part["type"] == "relative":
+                preposition = tokens[1]["data"]
+
                 # "3 hours and 4 minutes (after christmas)", "the 5th (of july)", ...
-                relative_data = self._parse_relative_statement(data_part["data"])
+                relative_data = self._parse_relative_statement(data_part["data"], preposition)
 
                 if relative_data is None:
                     return None
 
-                preposition = tokens[1]["data"]
                 relative_data = self._concatenate_relative_data(relative_data, preposition)
 
                 for relative_part_data in relative_data:
