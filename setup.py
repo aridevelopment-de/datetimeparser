@@ -10,7 +10,7 @@ setup(
   long_description_content_type="text/markdown",
   long_description=long_description,
   packages=['datetimeparser'],
-  version='0.8rc2',  # version number: https://peps.python.org/pep-0440/
+  version='0.9rc1',  # version number: https://peps.python.org/pep-0440/
   license='MIT',
   description='A parser library built for parsing the english language into datetime objects.',
   author='Ari24',
