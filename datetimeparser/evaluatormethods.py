@@ -100,12 +100,23 @@ class EvaluatorUtils:
 
         return datetime.strptime(dt.strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
+    @staticmethod
+    def get_offset(con: Constant, offset) -> RelativeDateTime:
+        off: int = 0
+        if con.offset:
+            if con.offset < 0:
+                off += abs(con.offset)
+            else:
+                off += con.offset
+            return RelativeDateTime(hours=off + offset.seconds / 3600 + offset.days * 24)
+
 
 class EvaluatorMethods(EvaluatorUtils):
 
-    def __init__(self, parsed, current_time: datetime):
+    def __init__(self, parsed, current_time: datetime, offset: timedelta = None):
         self.parsed = parsed
         self.current_time = current_time
+        self.offset = offset
 
     def evaluate_absolute_date_formats(self) -> datetime:
         ev_out = datetime(
@@ -218,6 +229,9 @@ class EvaluatorMethods(EvaluatorUtils):
         ev_out = datetime(
             dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second
         )
+
+        if object_type.offset:
+            ev_out += self.prepare_relative_delta(self.get_offset(object_type, self.offset))
 
         return ev_out
 

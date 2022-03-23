@@ -71,14 +71,15 @@ class RelativeDateTime(Concatenable):
 
 
 class Constant(Printable):
-    FIELDS = ["name", "alias", "value", "time_value"]
+    FIELDS = ["name", "alias", "value", "options", "time_value", "offset"]
 
-    def __init__(self, name, alias=None, value=None, options: List['ConstantOption'] = None, time_value: Callable = None):
+    def __init__(self, name, alias=None, value=None, options: List['ConstantOption'] = None, time_value: Callable = None, offset: int = None):
         self.name = name
         self.alias = alias or []
         self.value = value
         self.options = options or []
         self.time_value = time_value
+        self.offset = offset
 
     def get_all(self):
         return [self.name, *self.alias]

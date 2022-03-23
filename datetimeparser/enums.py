@@ -60,10 +60,13 @@ class Constants:
                        options=[ConstantOption.YEAR_VARIABLE, ConstantOption.DATE_VARIABLE])
     LUNCHTIME = Constant('lunchtime', ['lunch'], options=[ConstantOption.YEAR_VARIABLE, ConstantOption.DATE_VARIABLE])
 
+    # advent of code always starts at midnight 1st december in SET (5 hours negative UTC offset)
     BEGIN_AOC = Constant('aoc begin', ['aoc', 'begin of aoc', 'begin of the aoc', 'advent of code begin', 'advent of code', 'begin of advent of code', 'begin of the advent of code'],
-                         options=[ConstantOption.YEAR_VARIABLE], time_value=lambda year_time: datetime(year=year_time, month=12, day=1, hour=6))
+                         options=[ConstantOption.YEAR_VARIABLE], time_value=lambda year_time: datetime(year=year_time, month=12, day=1, hour=0),
+                         offset=-5)
     END_AOC = Constant('aoc end', ['end of aoc', 'end of the aoc', 'advent of code end', 'end of advent of code', 'end of the advent of code'],
-                       options=[ConstantOption.YEAR_VARIABLE], time_value=lambda year_time: datetime(year=year_time, month=12, day=26, hour=6))
+                       options=[ConstantOption.YEAR_VARIABLE], time_value=lambda year_time: datetime(year=year_time, month=12, day=26, hour=0),
+                       offset=-5)
 
     END_OF_YEAR = Constant('end of year', ['the end of year', 'the end of the year', 'end of the year'],
                            options=[ConstantOption.YEAR_VARIABLE],
