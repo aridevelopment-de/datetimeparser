@@ -1,7 +1,10 @@
 from distutils.core import setup
+from pathlib import Path
+
+from datetimeparser.datetimeparser import __version__
+
 
 # for the readme
-from pathlib import Path
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
@@ -10,7 +13,7 @@ setup(
   long_description_content_type="text/markdown",
   long_description=long_description,
   packages=['datetimeparser'],
-  version='0.10rc2',  # version number: https://peps.python.org/pep-0440/
+  version=".".join(__version__.split(".")[:2]) + "rc1." + __version__.split(".")[2],  # version number: https://peps.python.org/pep-0440/
   license='MIT',
   description='A parser library built for parsing the english language into datetime objects.',
   author='Ari24',
