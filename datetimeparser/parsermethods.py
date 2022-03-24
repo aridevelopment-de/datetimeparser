@@ -215,22 +215,9 @@ class RelativeDatetimesParser:
             number = new_data.pop(0)
             type_ = new_data.pop(0)
 
-            if type_ in DatetimeConstants.DATE:
-                if type_ == DatetimeConstants.DAYS:
-                    date.days = number
-                elif type_ == DatetimeConstants.WEEKS:
-                    date.weeks = number
-                elif type_ == DatetimeConstants.MONTHS:
-                    date.months = number
-                elif type_ == DatetimeConstants.YEARS:
-                    date.years = number
-            elif type_ in DatetimeConstants.TIME:
-                if type_ == DatetimeConstants.SECONDS:
-                    date.seconds = number
-                elif type_ == DatetimeConstants.MINUTES:
-                    date.minutes = number
-                elif type_ == DatetimeConstants.HOURS:
-                    date.hours = number
+            if type_ in DatetimeConstants.ALL:
+                relative_date = RelativeDatetimeHelper.from_keyword(type_, number)
+                date = RelativeDateTime.concatenate(relative_date, date)
 
         return Method.RELATIVE_DATETIMES, date
 
