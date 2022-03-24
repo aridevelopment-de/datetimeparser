@@ -18,7 +18,7 @@ def parse_int(text: str) -> Optional[int]:
 
     if text.isdecimal():
         return int(text) * -1 if negative else 1
-    
+
     return None
 
 
@@ -537,7 +537,7 @@ class DatetimeDeltaConstantsParser:
         "%H:%M"
     )
 
-    def parse(self, string: str) -> Optional[Tuple[MethodEnum, RelativeDateTime]]:  # noqa: C901
+    def parse(self, string: str) -> Optional[Tuple[MethodEnum, AbsoluteDateTime]]:  # noqa: C901
         """
         Parses strings like "at 3pm tomorrow" or "at 1am" or "at 10:30" or "at 17"
         Returns None if the string cannot be parsed
@@ -571,19 +571,19 @@ class DatetimeDeltaConstantsParser:
             # e.g. "3(pm|am)", return that time respecting the after_midday flag
             if not parsed_time and time.count(":") == 0 and parse_int(time) is not None:
                 if after_midday is not None:
-                    parsed_time = RelativeDateTime(hours=(12 if after_midday else 0) + int(time))
+                    parsed_time = AbsoluteDateTime(hour=(12 if after_midday else 0) + int(time))
                 else:
-                    parsed_time = RelativeDateTime(hours=int(time))
+                    parsed_time = AbsoluteDateTime(hour=int(time))
             elif parsed_time:
                 if after_midday is not None:
-                    parsed_time = RelativeDateTime(hours=(12 if after_midday else 0) + parsed_time.hour, minutes=parsed_time.minute, seconds=parsed_time.second)
+                    parsed_time = AbsoluteDateTime(hour=(12 if after_midday else 0) + parsed_time.hour, minute=parsed_time.minute, second=parsed_time.second)
                 else:
-                    parsed_time = RelativeDateTime(hours=parsed_time.hour, minutes=parsed_time.minute, seconds=parsed_time.second)
+                    parsed_time = AbsoluteDateTime(hour=parsed_time.hour, minute=parsed_time.minute, second=parsed_time.second)
             else:
                 return None
 
             # If the time is invalid return None
-            if parsed_time.hours > 23 or parsed_time.minutes > 59 or parsed_time.seconds > 59:
+            if parsed_time.hour > 23 or parsed_time.minute > 59 or parsed_time.second > 59:
                 return None
 
             # If there's no more content left
@@ -616,10 +616,10 @@ class DatetimeDeltaConstantsParser:
                     return None
 
                 # Value is either 0 or 12 (depending on the constant)
-                parsed_time.hours += value
+                parsed_time.hour += value
 
                 # If the time is invalid return None
-                if parsed_time.hours > 23:
+                if parsed_time.hour > 23:
                     return None
 
                 return Method.DATETIME_DELTA_CONSTANTS, parsed_time
@@ -821,7 +821,7 @@ class AbsolutePrepositionParser:
             if result is not None:
                 return result[1]
 
-            # Try datetime delta constants (e.g. "(two quarters past) five")
+            # Try datetime delta constants (e.g. "(two quarters past) 5pm")
             datetime_delta_parser = DatetimeDeltaConstantsParser()
             result = datetime_delta_parser.parse(data)
 
