@@ -18,7 +18,7 @@ def parse_int(text: str) -> Optional[int]:
 
     if text.isdecimal():
         return int(text) * -1 if negative else 1
-    
+
     return None
 
 
