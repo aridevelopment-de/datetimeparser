@@ -222,7 +222,7 @@ class DatetimeConstants:
     GIGAANNUMS = Constant('gigaannuums', ['gigaannuum'])  # 1,000,000,000 years
 
     TIME = [SECONDS, MINUTES, QUARTERS, HOURS]
-    DATE = [DAYS, WEEKS, MONTHS, YEARS, DECADES, CENTURIES, MILLENNIUMS]
+    DATE = [DAYS, WEEKS, MONTHS, YEARS, DECADES, CENTURIES, MILLENNIUMS, MEGAANNUMS, GIGAANNUMS]
     ALL = [*DATE, *TIME]
 
     @classmethod

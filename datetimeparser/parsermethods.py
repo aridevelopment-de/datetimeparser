@@ -33,6 +33,16 @@ class RelativeDatetimeHelper:
             return RelativeDateTime(months=delta)
         elif keyword == DatetimeConstants.YEARS:
             return RelativeDateTime(years=delta)
+        elif keyword == DatetimeConstants.OLYMPIADS:
+            return RelativeDateTime(years=4)
+        elif keyword == DatetimeConstants.CENTURIES:
+            return RelativeDateTime(years=100)
+        elif keyword == DatetimeConstants.MILLENNIUMS:
+            return RelativeDateTime(years=1000)
+        elif keyword == DatetimeConstants.MEGAANNUMS:
+            return RelativeDateTime(years=1000000)
+        elif keyword == DatetimeConstants.GIGAANNUMS:
+            return RelativeDateTime(years=1000000000)
         elif keyword == DatetimeConstants.HOURS:
             return RelativeDateTime(hours=delta)
         elif keyword == DatetimeConstants.QUARTERS:
