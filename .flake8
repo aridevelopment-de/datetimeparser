@@ -1,13 +1,10 @@
 [flake8]
-ignore=F405,E501,F403,I2041
+ignore=I2043,I2041,F403,F405
 per-file-ignores =
-    Parser.py: C901,F405
-    parsermethods.py: I2043
-    Evaluator.py: C901,F405
-    baseclasses.py: E302
     __init__.py: F401
 exclude =
     tests
     editreadme.py
+    setup.py
     testbot.py
     __init__.py
