@@ -103,7 +103,7 @@ testcases = {
     "quarter past 5pm": datetime(today.year, today.month, today.day, 17, 15, 0),
     "two quarters past 5h": datetime(today.year, today.month, today.day, 17, 30, 0),
     "one quarter before 10pm": datetime(today.year, today.month, today.day, 21, 45, 0),
-    "ten quarters after 03:01:10am": datetime(today.year, today.month, today.day, 5, 41, 10),
+    "ten quarters after 03:01:10am": datetime(today.year, today.month, today.day, 5, 31, 10),
     "hour past christmas": datetime(today.year, 12, 25, 1),
     "30 minutes past easter": None
 }
