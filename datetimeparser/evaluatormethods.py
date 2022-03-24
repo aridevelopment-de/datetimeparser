@@ -21,13 +21,24 @@ class EvaluatorUtils:
         return [element for element in parsed_list if element not in Keywords.ALL and not isinstance(element, str)]
 
     @staticmethod
-    def get_base(sanitized_input: list, year: int) -> datetime:
+    def cut_time(time: datetime) -> datetime:
+        """
+        Removes the time, only returning the date
+
+        :param time: Time with hours, minutes, seconds
+        :return: datetime
+        """
+        return datetime(time.year, time.month, time.day, 0, 0, 0)
+
+    @staticmethod
+    def get_base(sanitized_input: list, year: int, current_time: datetime) -> datetime:
         """
         Takes the last elements from the list and tries to generate a basis for further processing from them.
         The base consists of at least one constant, to which values are then assigned.
 
         :param sanitized_input: The sanitized list
         :param year: The year for the Constant
+        :param current_time: The current datetime
         :return: datetime
         """
 
@@ -38,7 +49,18 @@ class EvaluatorUtils:
                     day: int = sanitized_input[-3]
                     return datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
                 return sanitized_input[-2].time_value(sanitized_input[-1].year)
-            return datetime(sanitized_input[-1].year, 1, 1)
+            if sanitized_input[-1].year != 0:
+                return datetime(sanitized_input[-1].year, 1, 1)
+            else:
+                dt = datetime(
+                    year=current_time.year if sanitized_input[-1].year == 0 else sanitized_input[-1].year,
+                    month=current_time.month if sanitized_input[-1].month == 0 else sanitized_input[-1].month,
+                    day=current_time.day if sanitized_input[-1].day == 0 else sanitized_input[-1].day,
+                    hour=sanitized_input[-1].hour,
+                    minute=sanitized_input[-1].minute,
+                    second=sanitized_input[-1].second
+                )
+                return dt
         elif isinstance(sanitized_input[-1], Constant):
             if isinstance(sanitized_input[-2], int):
                 dt: datetime = sanitized_input[-1].time_value(year)
@@ -137,13 +159,17 @@ class EvaluatorMethods(EvaluatorUtils):
 
         if isinstance(sanitized[-1], Constant):
             base = sanitized[-1].time_value(self.current_time.year)
-            hour, minute, sec = sanitized[-2].time_value(None)
+            if isinstance(sanitized[-2], Constant):
+                hour, minute, sec = sanitized[-2].time_value(None)
+            else:
+                hour, minute, sec = sanitized[-2].hour, sanitized[-2].minute, sanitized[-2].second
             ev_out = datetime(base.year, base.month, base.day, hour, minute, sec)
 
         elif isinstance(sanitized[-1], RelativeDateTime):
             base += self.prepare_relative_delta(sanitized[-1])
 
             if sanitized[-2] in WeekdayConstants.ALL:
+                base = self.cut_time(base)
                 ev_out = datetime.strptime(
                     sanitized[-2].time_value(base),
                     "%Y-%m-%d %H:%M:%S"
@@ -182,7 +208,7 @@ class EvaluatorMethods(EvaluatorUtils):
     def evaluate_absolute_prepositions(self) -> datetime:
         base_year = self.current_time.year
         sanitized = self.sanitize_input(self.parsed)
-        base = self.get_base(sanitized, base_year)
+        base = self.get_base(sanitized, base_year, self.current_time)
         rel_out = self.calc_relative_time(sanitized)
         base += self.prepare_relative_delta(rel_out)
 
@@ -206,7 +232,7 @@ class EvaluatorMethods(EvaluatorUtils):
 
             elif object_type in WeekdayConstants.ALL:
                 dt: datetime = datetime.strptime(
-                    object_type.time_value(self.current_time),
+                    object_type.time_value(self.cut_time(self.current_time)),
                     "%Y-%m-%d %H:%M:%S"
                 )
 
@@ -248,7 +274,7 @@ class EvaluatorMethods(EvaluatorUtils):
     def evaluate_datetime_delta_constants(self) -> datetime:
         ev_out = datetime(
             self.current_time.year, self.current_time.month, self.current_time.day,
-            self.parsed.hours, self.parsed.minutes, self.parsed.seconds
+            self.parsed.hour, self.parsed.minute, self.parsed.second
         )
 
         return ev_out
