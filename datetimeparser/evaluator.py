@@ -9,6 +9,11 @@ from .evaluatormethods import EvaluatorMethods
 
 class Evaluator:
     def __init__(self, parsed_object, tz="Europe/Berlin"):
+        """
+        :param parsed_object: the parsed object from parser
+        :param tz: the timezone for the datetime
+        """
+
         try:
             tiz = timezone(tz)
         except UnknownTimeZoneError:
