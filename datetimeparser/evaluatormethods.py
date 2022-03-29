@@ -28,6 +28,7 @@ class EvaluatorUtils:
         :param time: Time with hours, minutes, seconds
         :return: datetime
         """
+
         return datetime(time.year, time.month, time.day, 0, 0, 0)
 
     @staticmethod
@@ -76,6 +77,7 @@ class EvaluatorUtils:
         :param sanitized_list: The sanitized list
         :return: RelativeDateTime
         """
+
         rel_list = [relative_time for relative_time in sanitized_list if isinstance(relative_time, RelativeDateTime)]
 
         ev_out = RelativeDateTime()
@@ -124,18 +126,36 @@ class EvaluatorUtils:
 
     @staticmethod
     def get_offset(con: Constant, offset) -> RelativeDateTime:
+        """
+        Calculates the UTC-offset from a Constant-object
+
+        :param con: the Constant
+        :param offset: the UTC-offset from the timezone
+        :return: RelativeDateTime
+        """
+
         off: int = 0
         if con.offset:
             if con.offset < 0:
                 off += abs(con.offset)
             else:
                 off += con.offset
+
             return RelativeDateTime(hours=off + offset.seconds / 3600 + offset.days * 24)
 
 
 class EvaluatorMethods(EvaluatorUtils):
+    """
+    Evaluates a datetime-object from a given list returned from the parser
+    """
 
     def __init__(self, parsed, current_time: datetime, offset: timedelta = None):
+        """
+        :param parsed: object returned from the parser
+        :param current_time: the current datetime
+        :param offset: the UTC-offset from the current timezone. Default: None
+        """
+
         self.parsed = parsed
         self.current_time = current_time
         self.offset = offset
@@ -174,6 +194,7 @@ class EvaluatorMethods(EvaluatorUtils):
                     sanitized[-2].time_value(base),
                     "%Y-%m-%d %H:%M:%S"
                 )
+
             elif sanitized[-2] in Constants.ALL_RELATIVE_CONSTANTS:
                 base = sanitized[-2].time_value(None)
                 hour, minute, sec = sanitized[-1].hours, sanitized[-1].minutes, sanitized[-1].seconds
@@ -188,6 +209,7 @@ class EvaluatorMethods(EvaluatorUtils):
                     minute=sanitized[-2].time_value(None)[1],
                     second=sanitized[-2].time_value(None)[2]
                 )
+
             elif sanitized[-2] in Constants.ALL:
                 ev_out = sanitized[-2].time_value(base.year)
 
@@ -200,6 +222,7 @@ class EvaluatorMethods(EvaluatorUtils):
                 minute=sanitized[-1].minute,
                 second=sanitized[-1].second
             )
+
             hour, minute, sec = sanitized[-2].time_value(None)
             ev_out = datetime(base.year, base.month, base.day, hour, minute, sec)
 
