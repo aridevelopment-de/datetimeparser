@@ -1,5 +1,3 @@
-from typing import Union
-
 from .baseclasses import *
 from .enums import *
 
@@ -237,7 +235,7 @@ class EvaluatorMethods(EvaluatorUtils):
 
         return self.remove_milli_seconds(base)
 
-    def evaluate_constants(self) -> Union[datetime, int]:
+    def evaluate_constants(self) -> datetime:
         dt: datetime = self.current_time
         object_type: Constant = self.parsed[0]
 
@@ -251,7 +249,7 @@ class EvaluatorMethods(EvaluatorUtils):
 
         else:
             if object_type.name == "infinity":
-                return object_type.value
+                raise ValueError("'infinity' isn't a valid time")
 
             elif object_type in WeekdayConstants.ALL:
                 dt: datetime = datetime.strptime(

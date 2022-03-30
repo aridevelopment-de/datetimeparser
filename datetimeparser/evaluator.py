@@ -24,7 +24,7 @@ class Evaluator:
         self.current_datetime: datetime = datetime.strptime(datetime.strftime(datetime.now(tz=tiz), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
         self.offset = tiz.utcoffset(self.current_datetime)
 
-    def evaluate(self) -> Union[datetime, int, None]:
+    def evaluate(self) -> Union[datetime, None]:
         ev_out = None
         ev = EvaluatorMethods(self.parsed_object_content, self.current_datetime, self.offset)
 
