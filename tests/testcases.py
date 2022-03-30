@@ -28,8 +28,8 @@ testcases = {
     "3 minutes and 4 hours, 2 seconds after new years eve 2000": datetime(year=2000, month=12, day=31, hour=4, minute=3, second=2),
     "2 days after christmas 2023": datetime(year=2023, month=12, day=27),
     # Infinity
-    "infinity": -1,
-    "inf": -1,
+    "infinity": None,
+    "inf": None,
     # Relative Datetimes
     "in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds": today + relativedelta(years=1, months=2, weeks=3, days=4, hours=5, minutes=6, seconds=7),
     "in a year and in 2 months, in 3 seconds and 4 days": today + relativedelta(years=1, months=2, days=4, seconds=3),

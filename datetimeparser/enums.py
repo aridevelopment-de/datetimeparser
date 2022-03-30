@@ -74,7 +74,7 @@ class Constants:
     BEGIN_OF_YEAR = Constant('begin of year', ['the begin of year', 'the begin of the year', 'begin of the year'],
                              options=[ConstantOption.YEAR_VARIABLE], time_value=year_start)
 
-    INFINITY = Constant('infinity', ['inf'], value=-1)
+    INFINITY = Constant('infinity', ['inf'], value=None)
 
     TODAY = Constant('today', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day))
     TOMORROW = Constant('tomorrow', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day) + relativedelta(days=1))
