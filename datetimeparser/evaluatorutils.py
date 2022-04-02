@@ -17,10 +17,10 @@ class EvaluatorUtils:
         """
         for index, element in enumerate(parsed_list):
             if isinstance(element, Constant) and element.name == "of":
-                if isinstance(parsed_list[index-1], RelativeDateTime):
-                    if parsed_list[index-1].years != 0:
-                        parsed_list[index-1].years -= 1
-                    if parsed_list[index-1].months != 0:
+                if isinstance(parsed_list[index - 1], RelativeDateTime):
+                    if parsed_list[index - 1].years != 0:
+                        parsed_list[index - 1].years -= 1
+                    if parsed_list[index - 1].months != 0:
                         parsed_list[index - 1].months -= 1
 
         return [element for element in parsed_list if element not in Keywords.ALL and not isinstance(element, str)]
