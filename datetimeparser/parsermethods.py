@@ -5,21 +5,20 @@ from .enums import *
 from .baseclasses import *
 
 
-def parse_int(text: str) -> Optional[int]:
+def parse_int(text: str) -> bool:
     """
     Normally we would use str.isnumeric and int. The problem is, that isnumeric doesn't account for negative values.
     That is the job of this helper function.
+    In earlier versions this function returned the integer value, but now it returns a boolean. This is because we made two calls.
+    In Python 3.8+ we can use the Walrus Operator to make this cleaner but that would break backward compatibility with Python 3.7.
 
     :param text: the text to convert to an integer
     :return: the resulting integer or None if it isn't one
     """
-    negative = text.startswith("-")
-    text = text.strip("-")
+    if text.strip("-").isdecimal():
+        return True
 
-    if text.isdecimal():
-        return int(text) * -1 if negative else 1
-
-    return None
+    return False
 
 
 class RelativeDatetimeHelper:
@@ -34,15 +33,15 @@ class RelativeDatetimeHelper:
         elif keyword == DatetimeConstants.YEARS:
             return RelativeDateTime(years=delta)
         elif keyword == DatetimeConstants.OLYMPIADS:
-            return RelativeDateTime(years=4)
+            return RelativeDateTime(years=4 * delta)
         elif keyword == DatetimeConstants.CENTURIES:
-            return RelativeDateTime(years=100)
+            return RelativeDateTime(years=100 * delta)
         elif keyword == DatetimeConstants.MILLENNIUMS:
-            return RelativeDateTime(years=1000)
+            return RelativeDateTime(years=1000 * delta)
         elif keyword == DatetimeConstants.MEGAANNUMS:
-            return RelativeDateTime(years=1000000)
+            return RelativeDateTime(years=1000000 * delta)
         elif keyword == DatetimeConstants.GIGAANNUMS:
-            return RelativeDateTime(years=1000000000)
+            return RelativeDateTime(years=1000000000 * delta)
         elif keyword == DatetimeConstants.HOURS:
             return RelativeDateTime(hours=delta)
         elif keyword == DatetimeConstants.QUARTERS:
@@ -124,33 +123,26 @@ class RelativeDatetimesParser:
 
         for argument in string.split():
             not_possible = True
-            argument = argument.lower()
+            argument = argument.lower().strip(",")
 
             # Skip unnecessary keywords
             if argument.lower() in self.SKIPPABLE_KEYWORDS:
                 continue
 
             # an `a` always represents a 1 (e.g. a day = 1 day)
-            elif argument.lower() == "a":
+            if argument.lower() == "a":
                 new_data.append(1 if preposition != "last" else -1)
                 not_possible = False
 
-            # Cut off commas, they get in the way with parsing
-            elif argument.endswith(","):
-                argument = argument[:-1]
-
             # If the argument is a mini date format (m = minutes, s = seconds, ...) add the corresponding keyword to the list
-            # Prepends a 1 if there wasn't a number set before the keyword (e.g. "s" doesnt make any sense so we prepend it with a 1)
+            # Prepends a 1 if there wasn't a number set before the keyword (e.g. "s" doesn't make any sense, so we prepend it with a 1)
             if len(argument) == 1:
                 keyword = DatetimeConstants.convert_from_mini_date(argument)
 
                 if keyword is not None:
                     if not new_data:
-                        # If there is no number before the keyword, we need to add one ourselves
                         new_data.append(1 if preposition != "last" else -1)
                     elif not isinstance(new_data[-1], int):
-                        # If the element before the keyword is not a number we have to add one ourselves
-                        # This occurs when TODO
                         new_data.append(1 if preposition != "last" else -1)
 
                     new_data.append(keyword)
@@ -169,22 +161,19 @@ class RelativeDatetimesParser:
                     break
 
             # If the argument is a datetime keyword (e.g. "year", "month", ...) add the keyword to the list
-            # Prepends a 1 if there wasn't a number set before the keyword (e.g. "months" doesnt make any sense so we prepend it with a 1)
+            # Prepends a 1 if there wasn't a number set before the keyword (e.g. "months (and three days)" doesn't make any sense, so we prepend it with a 1)
             for keyword in DatetimeConstants.ALL:
                 if argument.lower() in keyword.get_all():
                     if not new_data:
-                        # If there is no number before the keyword, we need to add one ourselves
                         new_data.append(1 if preposition != "last" else -1)
                     elif not isinstance(new_data[-1], int):
-                        # If the element before the keyword is not a number we have to add one ourselves
-                        # This occurs when TODO
                         new_data.append(1 if preposition != "last" else -1)
 
                     new_data.append(keyword)
                     not_possible = False
                     break
             else:
-                # If the everything up to the last letter is numeric and the last letter is a valid mini date keyword (e.g. "30d", "10m", ...)
+                # If everything up to the last letter is numeric and the last letter is a valid mini date keyword (e.g. "30d", "10m", ...)
                 # Add the number to the list and add the keyword to the list
                 if parse_int(argument[:-1]) is not None:
                     number = int(argument[:-1]) if preposition != "last" else -int(argument[:-1])
@@ -365,7 +354,8 @@ class ConstantRelativeExtensionsParser:
 
         return None
 
-    def _find_constant(self, argument: str) -> Optional[Constant]:
+    @classmethod
+    def _find_constant(cls, argument: str) -> Optional[Constant]:
         """
         Finds a constant without any preposition or years
         Simply just "tomorrow" or "daylight change"
@@ -373,14 +363,14 @@ class ConstantRelativeExtensionsParser:
         :param argument: The argument to look for
         :return: The constant if found, None otherwise
         """
-
-        for keyword in self.CONSTANT_KEYWORDS:
+        for keyword in cls.CONSTANT_KEYWORDS:
             if argument in keyword.get_all():
                 return keyword
 
         return None
 
-    def _get_preposition(self, string: str) -> Optional[Tuple[str, str]]:
+    @classmethod
+    def _get_preposition(cls, string: str) -> Optional[Tuple[str, str]]:
         """
         Gets the preposition of a string if it exists (e.g. "next)
         :param string: the current string
@@ -390,7 +380,7 @@ class ConstantRelativeExtensionsParser:
 
         # Cut off the preposition if the strings starts with one and save the preposition
         # To differentiate future and past
-        for preposition in self.PREPOSITIONS:
+        for preposition in cls.PREPOSITIONS:
             if string.startswith(preposition):
                 string = string[len(preposition):]
                 break
@@ -401,19 +391,20 @@ class ConstantRelativeExtensionsParser:
 
         return preposition, string
 
-    def _get_preposition_keyword(self, string: str) -> Optional[Tuple[str, str, Union[Constant, RelativeDateTime], str]]:
+    @classmethod
+    def _get_preposition_keyword(cls, string: str) -> Optional[Tuple[str, str, Union[Constant, RelativeDateTime], str]]:
         """
-        Gets the preposition and the constant of a string if it exists (e.g. "next daylight change)
+        Gets the preposition and the constant of a string if it exists (e.g. "next daylight change")
         :param string: the current string
         :return: the preposition, the keyword as the string, the keyword and the new string if found otherwise None
         """
         # Cut off 'at', 'at the' and 'the'
-        for cutoff_word in self.CUTOFF_KEYWORDS:
+        for cutoff_word in cls.CUTOFF_KEYWORDS:
             if string.startswith(cutoff_word):
                 string = string[len(cutoff_word):]
                 string = string.strip()
 
-        preposition, string = self._get_preposition(string)
+        preposition, string = cls._get_preposition(string)
 
         # "Bruteforce" the next arguments
         # Until a keyword has been found
@@ -426,7 +417,7 @@ class ConstantRelativeExtensionsParser:
 
             # Try general keywords (e.g. "afternoon", "tomorrow", ...)
             # TODO: Add support for years (e.g. "monday 2021")
-            keyword = self._find_constant(tryable_keyword)
+            keyword = cls._find_constant(tryable_keyword)
 
             if keyword is not None:
                 break
@@ -438,7 +429,7 @@ class ConstantRelativeExtensionsParser:
             if keyword is not None:
                 keyword = keyword[1]
 
-                if preposition in self.DATETIME_PREPOSITIONS:
+                if preposition in cls.DATETIME_PREPOSITIONS:
                     break
                 else:
                     continue
@@ -455,7 +446,7 @@ class ConstantRelativeExtensionsParser:
             if keyword is not None:
                 keyword = keyword[1]
 
-                if preposition in self.DATETIME_PREPOSITIONS:
+                if preposition in cls.DATETIME_PREPOSITIONS:
                     break
                 else:
                     return None
@@ -464,12 +455,12 @@ class ConstantRelativeExtensionsParser:
             # TODO: This is the second only case where years could also be included
             # e.g. "(monday in) two weeks 2020"
             if len(tryable_keyword.split()) >= 2:
-                number = self._find_number(tryable_keyword.split()[0])
+                number = cls._find_number(tryable_keyword.split()[0])
 
                 if number is None:
                     continue
 
-                datetime_constant = self._find_datetime_constant(" ".join(tryable_keyword.split()[1:]))
+                datetime_constant = cls._find_datetime_constant(" ".join(tryable_keyword.split()[1:]))
 
                 if datetime_constant is None:
                     continue
@@ -601,7 +592,7 @@ class DatetimeDeltaConstantsParser:
                 for kw in DatetimeDeltaConstants.ALL:
                     for alias in kw.get_all():
                         if rest in ("in the " + alias, alias):
-                            value = kw.value
+                            value = kw.value  # the value is either 0 or 12, depending on the keyword
                             break
                     else:
                         continue
@@ -780,7 +771,7 @@ class AbsolutePrepositionParser:
                         new_data = data_before.concatenate(data_before, current_data)
                         returned_data.append(new_data)
                     else:
-                        # Otherwise we cannot concatenate both parts of the data so we just append the current one
+                        # Otherwise, we cannot concatenate both parts of the data, so we just append the current one
                         returned_data.append(current_data)
 
         return returned_data
