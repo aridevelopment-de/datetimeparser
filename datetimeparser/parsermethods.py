@@ -435,7 +435,6 @@ class ConstantRelativeExtensionsParser:
             tryable_keyword = " ".join(arguments[:i])
 
             # Try general keywords (e.g. "afternoon", "tomorrow", ...)
-            # TODO: Add support for years (e.g. "monday 2021")
             result = cls._find_constant(tryable_keyword, arguments[i:])
 
             if result is not None:

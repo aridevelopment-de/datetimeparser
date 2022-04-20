@@ -1,6 +1,23 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+
+class ThrowException:
+    def __str__(self):
+        return "ThrowException"
+
+    def __repr__(self):
+        return "ThrowException"
+
+
+class ReturnNone:
+    def __str__(self):
+        return "ReturnNone"
+
+    def __repr__(self):
+        return "ReturnNone"
+
+
 today = datetime.strptime(datetime.today().strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
 testcases = {
@@ -122,7 +139,7 @@ testcases = {
     },
     # Special testcases
     "special": {
-        "infinity": None,
-        "inf": None
+        "infinity": ThrowException,
+        "inf": ThrowException
     }
 }
