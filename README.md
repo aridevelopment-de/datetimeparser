@@ -480,6 +480,16 @@ We highly appreciate everyone who wants to help our project!
 <li>millennium</li>
 </ul>
 </details><details>
+<summary><code>megaannuums</code></summary>
+<ul>
+<li>megaannuum</li>
+</ul>
+</details><details>
+<summary><code>gigaannuums</code></summary>
+<ul>
+<li>gigaannuum</li>
+</ul>
+</details><details>
 <summary><code>seconds</code></summary>
 <ul>
 <li>second</li>
