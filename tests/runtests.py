@@ -31,9 +31,7 @@ class StatusType:
     WRONG_RESULT = 6
 
 
-def get_testcase_results(
-        testcase: str, expected_value: datetime.datetime = None
-) -> Tuple[int, Optional[Union[str, datetime.datetime]]]:
+def get_testcase_results(testcase: str, expected_value: datetime.datetime = None) -> Tuple[int, Optional[Union[str, datetime.datetime]]]:
     parser = Parser(testcase)
 
     try:
