@@ -149,7 +149,7 @@ class RelativeDatetimesParser:
                     not_possible = False
 
             # If the argument is a number, simply add it to the list
-            if parse_int(argument) is not None:
+            if parse_int(argument):
                 new_data.append(int(argument) if preposition != "last" else -int(argument))
                 not_possible = False
 
@@ -175,7 +175,7 @@ class RelativeDatetimesParser:
             else:
                 # If everything up to the last letter is numeric and the last letter is a valid mini date keyword (e.g. "30d", "10m", ...)
                 # Add the number to the list and add the keyword to the list
-                if parse_int(argument[:-1]) is not None:
+                if parse_int(argument[:-1]):
                     number = int(argument[:-1]) if preposition != "last" else -int(argument[:-1])
                     keyword = argument[-1]
 
@@ -269,7 +269,7 @@ class ConstantsParser:
 
         # If the last argument is a number, it must be a year
         # e.g. "christmas 2024"
-        if parse_int(arguments[-1]) is not None:
+        if parse_int(arguments[-1]):
             year = int(arguments.pop(-1))
             constant = self._find_constant(" ".join(arguments))
 
@@ -278,7 +278,7 @@ class ConstantsParser:
             else:
                 return Method.CONSTANTS, (constant, AbsoluteDateTime(year=year))
         else:
-            # Otherwise search for constants with or without prepositions
+            # Otherwise, search for constants with or without prepositions
             # e.g. "christmas", "tomorrow", "tuesday"
             constant = self._find_constant(string)
 
@@ -328,7 +328,7 @@ class ConstantRelativeExtensionsParser:
         if string == "a":
             return 1
 
-        if parse_int(string) is not None:
+        if parse_int(string):
             return int(string)
 
         for constant in NumberConstants.ALL:
@@ -355,19 +355,37 @@ class ConstantRelativeExtensionsParser:
         return None
 
     @classmethod
-    def _find_constant(cls, argument: str) -> Optional[Constant]:
+    def _find_constant(cls, string: str, rest_arguments: List[str]) -> Optional[Tuple[Constant, Optional[int]]]:
         """
-        Finds a constant without any preposition or years
+        Finds a constant without any preposition
         Simply just "tomorrow" or "daylight change"
+        As of v0.11.8 this function also looks out for years e.g. "tomorrow 2020"
 
-        :param argument: The argument to look for
-        :return: The constant if found, None otherwise
+        :param string: The argument to look for
+        :return: The constant if found and the year if found, None for both in both cases otherwise
         """
-        for keyword in cls.CONSTANT_KEYWORDS:
-            if argument in keyword.get_all():
-                return keyword
+        if not rest_arguments:
+            for keyword in cls.CONSTANT_KEYWORDS:
+                if string in keyword.get_all():
+                    return keyword, None
 
-        return None
+            return None
+        else:
+            # Only the argument directly after the keyword can be a year
+            if rest_arguments[0].isdecimal():
+                year = int(rest_arguments[0])
+                result = cls._find_constant(string, [])
+
+                if result is not None:
+                    return result[0], year
+                else:
+                    # Do we return None or do we return the constant without the year?
+                    # We return None for now because we don't know what the user meant and there haven't been any testcases for that
+                    # particular case yet
+                    return None
+            else:
+                # If it's not a number it can't be a year
+                return cls._find_constant(string, [])
 
     @classmethod
     def _get_preposition(cls, string: str) -> Optional[Tuple[str, str]]:
@@ -392,11 +410,11 @@ class ConstantRelativeExtensionsParser:
         return preposition, string
 
     @classmethod
-    def _get_preposition_keyword(cls, string: str) -> Optional[Tuple[str, str, Union[Constant, RelativeDateTime], str]]:
+    def _get_preposition_keyword(cls, string: str) -> Optional[Tuple[str, str, Union[Constant, RelativeDateTime], Optional[int], str]]:
         """
         Gets the preposition and the constant of a string if it exists (e.g. "next daylight change")
         :param string: the current string
-        :return: the preposition, the keyword as the string, the keyword and the new string if found otherwise None
+        :return: the preposition, the keyword as the string, the keyword, the year and the new string if found otherwise None
         """
         # Cut off 'at', 'at the' and 'the'
         for cutoff_word in cls.CUTOFF_KEYWORDS:
@@ -411,15 +429,17 @@ class ConstantRelativeExtensionsParser:
         # The keyword can either be a constant, an absolute time, a clock time or a constant with a number
         # Unfortunately, we have to implement such parsing methods ourselves because we cannot use other parsers
         arguments = string.split()
+        year = None
 
         for i in range(1, len(arguments) + 1):
             tryable_keyword = " ".join(arguments[:i])
 
             # Try general keywords (e.g. "afternoon", "tomorrow", ...)
             # TODO: Add support for years (e.g. "monday 2021")
-            keyword = cls._find_constant(tryable_keyword)
+            result = cls._find_constant(tryable_keyword, arguments[i:])
 
-            if keyword is not None:
+            if result is not None:
+                keyword, year = result
                 break
 
             # Try datetime delta constants (e.g. "17pm", "17:30", ...)
@@ -470,7 +490,7 @@ class ConstantRelativeExtensionsParser:
         else:
             return None
 
-        return preposition, tryable_keyword, keyword, string
+        return preposition, tryable_keyword, keyword, year, string
 
     def parse(self, string: str) -> Optional[Tuple[Method, Tuple]]:
         """
@@ -486,12 +506,12 @@ class ConstantRelativeExtensionsParser:
         if result is None:
             return None
 
-        first_preposition, tryable_keyword, first_keyword, string = result
-        string = string[len(tryable_keyword):]
+        first_preposition, tryable_keyword, first_keyword, first_year, string = result
+        string = string[len(tryable_keyword) + len(str(first_year if first_year is not None else "")):]
         string = " ".join(string.split())
 
         # There has to be some contents left
-        # Otherwise its not valid
+        # Otherwise it's not valid
         if not string:
             return None
 
@@ -500,8 +520,9 @@ class ConstantRelativeExtensionsParser:
         if result is None:
             return None
 
-        second_preposition, tryable_keyword, second_keyword, string = result
+        second_preposition, tryable_keyword, second_keyword, second_year, string = result
 
+        # Check for incompatible keyword types
         if first_keyword in self.ABSOLUTE_KEYWORDS and second_keyword in self.ABSOLUTE_KEYWORDS:
             return None
 
@@ -514,9 +535,21 @@ class ConstantRelativeExtensionsParser:
         if first_keyword in self.RELATIVE_KEYWORDS or type(second_keyword) in self.RELATIVE_TYPES:
             relative = first_preposition, first_keyword
             absolute = second_preposition, second_keyword
+
+            if first_year is not None:
+                relative += (first_year,)
+
+            if second_year is not None:
+                absolute += (second_year,)
         else:
             relative = second_preposition, second_keyword
             absolute = first_preposition, first_keyword
+
+            if second_year is not None:
+                relative += (second_year,)
+
+            if first_year is not None:
+                absolute += (first_year,)
 
         return Method.CONSTANTS_RELATIVE_EXTENSIONS, (*relative, *absolute)
 
@@ -560,7 +593,7 @@ class DatetimeDeltaConstantsParser:
 
             # If the time does not match a clocktime format, does not contain a colon and is a number
             # e.g. "3(pm|am)", return that time respecting the after_midday flag
-            if not parsed_time and time.count(":") == 0 and parse_int(time) is not None:
+            if not parsed_time and time.count(":") == 0 and parse_int(time):
                 if after_midday is not None:
                     parsed_time = AbsoluteDateTime(hour=(12 if after_midday else 0) + int(time))
                 else:
@@ -702,7 +735,7 @@ class AbsolutePrepositionParser:
                 returned_data.append(1)
                 continue
 
-            if parse_int(argument) is not None:
+            if parse_int(argument):
                 returned_data.append(int(argument))
                 continue
 
@@ -802,7 +835,7 @@ class AbsolutePrepositionParser:
                 return result[1]
 
             # If the result is None there may be just a normal year (e.g. "(three days after) 2018")
-            if parse_int(data) is not None:
+            if parse_int(data):
                 return (AbsoluteDateTime(year=int(data)),)
 
             # Try relative constants (e.g. "(2 hours after) daylight change yesterday")
