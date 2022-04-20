@@ -1,7 +1,7 @@
 import argparse
 import datetime
 
-from typing import Optional, Tuple, Union, List
+from typing import Optional, Tuple, Union
 
 try:
     from testcases import ThrowException, ReturnNone, testcases
@@ -31,7 +31,9 @@ class StatusType:
     WRONG_RESULT = 6
 
 
-def get_testcase_results(testcase: str, expected_value: datetime.datetime = None) -> Tuple[int, Optional[Union[str, datetime.datetime]]]:
+def get_testcase_results(
+        testcase: str, expected_value: datetime.datetime = None
+) -> Tuple[int, Optional[Union[str, datetime.datetime]]]:
     parser = Parser(testcase)
 
     try:
@@ -66,12 +68,12 @@ def get_testcase_results(testcase: str, expected_value: datetime.datetime = None
 
     return StatusType.SUCCESS, evaluator_result
 
-def evaluate_testcases(testcase_results: dict, sort=False, disable_color=False, disable_indent=False):
+
+def evaluate_testcases(testcase_results: dict, disable_color=False, disable_indent=False):
     """
     Evaluates the testcases
 
     :param testcase_results: {category: [{testcase: None, status: None, result: None, info: None, expected_value: None}]}
-    :param sort: If the testcases should be sorted
     :param disable_color: If the color should be disabled
     :param disable_indent: If the indent should be disabled
     :return: None
@@ -166,6 +168,7 @@ def evaluate_testcases(testcase_results: dict, sort=False, disable_color=False, 
 
     exit(int(overall_results[StatusType.SUCCESS] != len_testcases))
 
+
 def main(specified_category: str = None):
     data = {}  # {category: [{testcase: None, status: None, result: None, info: None, expected_value: None}]}
 
@@ -194,14 +197,13 @@ if __name__ == '__main__':
     argument_parser = argparse.ArgumentParser(description="Runs the testcases.")
     argument_parser.add_argument("-t", "--test", help="Runs a specific testcase.", type=str)
     argument_parser.add_argument("-c", "--category", help="Runs a specific category of testcases.", type=str)
-    argument_parser.add_argument("-s", "--sort", help="Sorts the testcases by their status.", action="store_true")
     argument_parser.add_argument("-nc", "--no-colors", help="Disables colored output.", action="store_true")
     argument_parser.add_argument("-ni", "--no-indent", help="Disables the overall indentation.", action="store_true")
     args = argument_parser.parse_args()
 
     if args.test is None:
         result = main(specified_category=args.category)
-        evaluate_testcases(result, sort=args.sort, disable_color=args.no_colors, disable_indent=args.no_indent)
+        evaluate_testcases(result, disable_color=args.no_colors, disable_indent=args.no_indent)
     else:
         status, result = get_testcase_results(args.test, None)
 
@@ -215,5 +217,4 @@ if __name__ == '__main__':
             }]
         }
 
-        evaluate_testcases(resulting_data, sort=args.sort, disable_color=args.no_colors, disable_indent=args.no_indent)
-
+        evaluate_testcases(resulting_data, disable_color=args.no_colors, disable_indent=args.no_indent)
