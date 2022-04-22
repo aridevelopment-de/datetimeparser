@@ -20,7 +20,7 @@ class EvaluatorUtils:
         return dt + timedelta(days=(7 - dt.weekday()))
 
     @staticmethod
-    def absdt_to_datetime(absolute_datetime: AbsoluteDateTime) -> datetime:
+    def absolute_datetime_to_datetime(absolute_datetime: AbsoluteDateTime) -> datetime:
         """
         Transforms an AbsoluteDateTime-object into a datetime-object
         :param absolute_datetime: the absolute_datetime-object
@@ -39,7 +39,7 @@ class EvaluatorUtils:
         return dt
 
     @staticmethod
-    def datetime_to_absdt(dt: datetime) -> AbsoluteDateTime:
+    def datetime_to_absolute_datetime(dt: datetime) -> AbsoluteDateTime:
         """
         Transforms a datetime-object into an AbsoluteDateTime-object
         :param dt: the datetime
@@ -67,23 +67,23 @@ class EvaluatorUtils:
         """
 
         ps = parsed_list
-        for index, element in enumerate(parsed_list):
+        for i, element in enumerate(parsed_list):
             if isinstance(element, Constant) and element.name == "of":
-                if isinstance(ps[index - 1], RelativeDateTime):
-                    if ps[index - 1].years != 0:
-                        ps[index - 1].years -= 1
-                    if ps[index - 1].months != 0:
-                        ps[index - 1].months -= 1
-                    if ps[index - 1].weeks != 0:
-                        if ps[index + 1] in MonthConstants.ALL:
+                if isinstance(ps[i - 1], RelativeDateTime):
+                    if ps[i - 1].years != 0:
+                        ps[i - 1].years -= 1
+                    if ps[i - 1].months != 0:
+                        ps[i - 1].months -= 1
+                    if ps[i - 1].weeks != 0:
+                        if ps[i + 1] in MonthConstants.ALL:
                             try:
-                                year = ps[index + 2].year
-                                parsed_list.pop(index + 2)
+                                year = ps[i + 2].year
+                                parsed_list.pop(i + 2)
                             except IndexError:
                                 year = current_time.year
-                            ps[index + 1] = EvaluatorUtils.datetime_to_absdt(ps[index + 1].time_value(year))
-                        ps[index - 1].days = (EvaluatorUtils.get_week_of(EvaluatorUtils.absdt_to_datetime(ps[index + 1]))).day - 1
-                        ps[index - 1].weeks -= 1
+                            ps[i + 1] = EvaluatorUtils.datetime_to_absolute_datetime(ps[i + 1].time_value(year))
+                        ps[i - 1].days = (EvaluatorUtils.get_week_of(EvaluatorUtils.absolute_datetime_to_datetime(ps[i + 1]))).day - 1
+                        ps[i - 1].weeks -= 1
 
         return [element for element in ps if element not in Keywords.ALL and not isinstance(element, str)]
 
