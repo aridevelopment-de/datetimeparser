@@ -91,7 +91,7 @@ testcases = {
         "next year": today + relativedelta(years=1),
         "eastern 2010": datetime(2010, 4, 4),
         "halloween 2030": datetime(2030, 10, 31),
-        "next april fools day": datetime(today.year, 4, 1),
+        "next april fools day": datetime(2023, 4, 1),
         "thanksgiving": datetime(year=today.year, month=11, day=24),
         "next st patricks day": datetime(year=2023, month=3, day=17),
         "valentine day 2010": datetime(2010, 2, 14),

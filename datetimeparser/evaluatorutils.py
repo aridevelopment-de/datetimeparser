@@ -1,3 +1,5 @@
+from typing import Union
+
 from .baseclasses import *
 from .enums import *
 
@@ -8,28 +10,87 @@ class EvaluatorUtils:
     """
 
     @staticmethod
-    def sanitize_input(parsed_list: list) -> list:
+    def get_week_of(dt: datetime) -> datetime:
         """
-        Removes useless keywords.
+        Returns the first monday after a given date
+        :param dt: datetime
+        :return: datetime
+        """
 
-        :param parsed_list: The list that should be sanitized
-        :return: list
+        return dt + timedelta(days=(7 - dt.weekday()))
+
+    @staticmethod
+    def absdt_to_datetime(absolute_datetime: AbsoluteDateTime) -> datetime:
         """
+        Transforms an AbsoluteDateTime-object into a datetime-object
+        :param absolute_datetime: the absolute_datetime-object
+        :return: datetime
+        """
+
+        dt: datetime = datetime(
+            year=absolute_datetime.year,
+            month=absolute_datetime.month if absolute_datetime.month != 0 else 1,
+            day=absolute_datetime.day if absolute_datetime.day != 0 else 1,
+            hour=absolute_datetime.hour,
+            minute=absolute_datetime.minute,
+            second=absolute_datetime.second
+        )
+
+        return dt
+
+    @staticmethod
+    def datetime_to_absdt(dt: datetime) -> AbsoluteDateTime:
+        """
+        Transforms a datetime-object into an AbsoluteDateTime-object
+        :param dt: the datetime
+        :return: AbsoluteDateTime
+        """
+
+        absdt: AbsoluteDateTime = AbsoluteDateTime(
+            year=dt.year,
+            month=dt.month,
+            day=dt.day,
+            hour=dt.hour,
+            minute=dt.minute,
+            second=dt.second
+        )
+
+        return absdt
+
+    @staticmethod
+    def sanitize_input(current_time: datetime, parsed_list: list) -> list[Union[RelativeDateTime, AbsoluteDateTime, int, Constant]]:
+        """
+        Removes useless keywords
+        :param parsed_list: The list that should be sanitized
+        :param current_time: The current time
+        :return: a list without keywords
+        """
+
+        ps = parsed_list
         for index, element in enumerate(parsed_list):
             if isinstance(element, Constant) and element.name == "of":
-                if isinstance(parsed_list[index - 1], RelativeDateTime):
-                    if parsed_list[index - 1].years != 0:
-                        parsed_list[index - 1].years -= 1
-                    if parsed_list[index - 1].months != 0:
-                        parsed_list[index - 1].months -= 1
+                if isinstance(ps[index - 1], RelativeDateTime):
+                    if ps[index - 1].years != 0:
+                        ps[index - 1].years -= 1
+                    if ps[index - 1].months != 0:
+                        ps[index - 1].months -= 1
+                    if ps[index - 1].weeks != 0:
+                        if ps[index + 1] in MonthConstants.ALL:
+                            try:
+                                year = ps[index + 2].year
+                                parsed_list.pop(index + 2)
+                            except IndexError:
+                                year = current_time.year
+                            ps[index + 1] = EvaluatorUtils.datetime_to_absdt(ps[index + 1].time_value(year))
+                        ps[index - 1].days = (EvaluatorUtils.get_week_of(EvaluatorUtils.absdt_to_datetime(ps[index + 1]))).day - 1
+                        ps[index - 1].weeks -= 1
 
-        return [element for element in parsed_list if element not in Keywords.ALL and not isinstance(element, str)]
+        return [element for element in ps if element not in Keywords.ALL and not isinstance(element, str)]
 
     @staticmethod
     def cut_time(time: datetime) -> datetime:
         """
         Removes the time, only returning the date
-
         :param time: Time with hours, minutes, seconds
         :return: datetime
         """
@@ -39,9 +100,8 @@ class EvaluatorUtils:
     @staticmethod
     def get_base(sanitized_input: list, year: int, current_time: datetime) -> datetime:
         """
-        Takes the last elements from the list and tries to generate a basis for further processing from them.
-        The base consists of at least one constant, to which values are then assigned.
-
+        Takes the last elements from the list and tries to generate a basis for further processing from them
+        The base consists of at least one constant, to which values are then assigned
         :param sanitized_input: The sanitized list
         :param year: The year for the Constant
         :param current_time: The current datetime
@@ -56,7 +116,10 @@ class EvaluatorUtils:
                     return datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
                 return sanitized_input[-2].time_value(sanitized_input[-1].year)
             if sanitized_input[-1].year != 0:
-                return datetime(sanitized_input[-1].year, 1, 1)
+                year = sanitized_input[-1].year
+                month = sanitized_input[-1].month if sanitized_input[-1].month != 0 else 1
+                day = sanitized_input[-1].day if sanitized_input[-1].day != 0 else 1
+                return datetime(year, month, day)
             else:
                 dt = datetime(
                     year=current_time.year if sanitized_input[-1].year == 0 else sanitized_input[-1].year,
@@ -72,13 +135,15 @@ class EvaluatorUtils:
                 dt: datetime = sanitized_input[-1].time_value(year)
                 day: int = sanitized_input[-2]
                 return datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
-            return sanitized_input[-1].time_value(year)
+            if sanitized_input[-1].time_value(year) > current_time:
+                return sanitized_input[-1].time_value(year)
+            else:
+                return sanitized_input[-1].time_value(year + 1)
 
     @staticmethod
     def calc_relative_time(sanitized_list: list) -> RelativeDateTime:
         """
-        Adds all RelativeDateTime-objects in a list together in one single object.
-
+        Adds all RelativeDateTime-objects in a list together in one single object
         :param sanitized_list: The sanitized list
         :return: RelativeDateTime
         """
@@ -100,8 +165,7 @@ class EvaluatorUtils:
     @staticmethod
     def prepare_relative_delta(rel_time: RelativeDateTime) -> relativedelta:
         """
-        Prepares a RelativeDateTime-object for adding to a datetime.
-
+        Prepares a RelativeDateTime-object for adding to a datetime
         :param rel_time: RelativeDateTime-object
         :return: relativedelta
         """
@@ -121,8 +185,7 @@ class EvaluatorUtils:
     @staticmethod
     def remove_milli_seconds(dt: datetime) -> datetime:
         """
-        Cuts milliseconds of.
-
+        Cuts milliseconds of
         :param dt: The time with milliseconds at the end
         :return: datetime
         """
@@ -133,7 +196,6 @@ class EvaluatorUtils:
     def get_offset(con: Constant, offset) -> RelativeDateTime:
         """
         Calculates the UTC-offset from a Constant-object
-
         :param con: the Constant
         :param offset: the UTC-offset from the timezone
         :return: RelativeDateTime

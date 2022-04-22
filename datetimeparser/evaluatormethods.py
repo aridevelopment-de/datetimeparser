@@ -32,7 +32,7 @@ class EvaluatorMethods(EvaluatorUtils):
         return ev_out
 
     def evaluate_constant_relatives(self) -> datetime:
-        sanitized = self.sanitize_input(self.parsed)
+        sanitized = self.sanitize_input(self.current_time, self.parsed)
         base: datetime = self.current_time
         ev_out = None
 
@@ -89,7 +89,7 @@ class EvaluatorMethods(EvaluatorUtils):
 
     def evaluate_absolute_prepositions(self) -> datetime:
         base_year = self.current_time.year
-        sanitized = self.sanitize_input(self.parsed)
+        sanitized = self.sanitize_input(self.current_time, self.parsed)
         base = self.get_base(sanitized, base_year, self.current_time)
         rel_out = self.calc_relative_time(sanitized)
         base += self.prepare_relative_delta(rel_out)
@@ -102,11 +102,11 @@ class EvaluatorMethods(EvaluatorUtils):
 
         if len(self.parsed) == 2:
             if isinstance(self.parsed[0], Constant):
-                object_year: AbsoluteDateTime = self.parsed[1].year
+                object_year: int = self.parsed[1].year
                 dt = object_type.time_value(object_year)
 
                 if self.current_time > dt and object_year == 0:
-                    dt += relativedelta(years=1)
+                    dt = object_type.time_value(object_year + 1)
 
         else:
             if object_type.name == "infinity":
@@ -132,7 +132,7 @@ class EvaluatorMethods(EvaluatorUtils):
                     )
 
             if self.current_time > dt and self.parsed[0] not in Constants.ALL_RELATIVE_CONSTANTS:
-                dt += relativedelta(years=1)
+                dt = object_type.time_value(self.current_time.year + 1)
 
         ev_out = datetime(
             dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second
