@@ -72,19 +72,22 @@ class EvaluatorUtils:
                     relative_dt = parsed_list[idx - 1]
                     if relative_dt.years != 0:
                         relative_dt.years -= 1
+
                     if relative_dt.months != 0:
                         relative_dt.months -= 1
+
                     if relative_dt.weeks != 0:
                         if parsed_list[idx + 1] in MonthConstants.ALL:
                             try:
-                                year = parsed_list[idx + 2].year
-                                parsed_list.pop(idx + 2)
+                                year = parsed_list.pop(idx + 2).year
                             except IndexError:
                                 year = current_time.year
                             parsed_list[idx + 1] = EvaluatorUtils.datetime_to_absolute_datetime(parsed_list[idx + 1].time_value(year))
+
                         relative_dt.days = EvaluatorUtils.get_week_of(
                                                 EvaluatorUtils.absolute_datetime_to_datetime(parsed_list[idx + 1])
                                             ).day - 1
+
                         relative_dt.weeks -= 1
 
         return list(filter(lambda e: e not in Keywords.ALL and not isinstance(e, str), parsed_list))
