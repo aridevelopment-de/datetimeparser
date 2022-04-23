@@ -66,26 +66,28 @@ class EvaluatorUtils:
         :return: a list without keywords
         """
 
-        ps = parsed_list
-        for i, element in enumerate(parsed_list):
+        for idx, element in enumerate(parsed_list):
             if isinstance(element, Constant) and element.name == "of":
-                if isinstance(ps[i - 1], RelativeDateTime):
-                    if ps[i - 1].years != 0:
-                        ps[i - 1].years -= 1
-                    if ps[i - 1].months != 0:
-                        ps[i - 1].months -= 1
-                    if ps[i - 1].weeks != 0:
-                        if ps[i + 1] in MonthConstants.ALL:
+                if isinstance(parsed_list[idx - 1], RelativeDateTime):
+                    relative_dt = parsed_list[idx - 1]
+                    if relative_dt.years != 0:
+                        relative_dt.years -= 1
+                    if relative_dt.months != 0:
+                        relative_dt.months -= 1
+                    if relative_dt.weeks != 0:
+                        if parsed_list[idx + 1] in MonthConstants.ALL:
                             try:
-                                year = ps[i + 2].year
-                                parsed_list.pop(i + 2)
+                                year = parsed_list[idx + 2].year
+                                parsed_list.pop(idx + 2)
                             except IndexError:
                                 year = current_time.year
-                            ps[i + 1] = EvaluatorUtils.datetime_to_absolute_datetime(ps[i + 1].time_value(year))
-                        ps[i - 1].days = (EvaluatorUtils.get_week_of(EvaluatorUtils.absolute_datetime_to_datetime(ps[i + 1]))).day - 1
-                        ps[i - 1].weeks -= 1
+                            parsed_list[idx + 1] = EvaluatorUtils.datetime_to_absolute_datetime(parsed_list[idx + 1].time_value(year))
+                        relative_dt.days = EvaluatorUtils.get_week_of(
+                                                EvaluatorUtils.absolute_datetime_to_datetime(parsed_list[idx + 1])
+                                            ).day - 1
+                        relative_dt.weeks -= 1
 
-        return [element for element in ps if element not in Keywords.ALL and not isinstance(element, str)]
+        return list(filter(lambda e: e not in Keywords.ALL and not isinstance(e, str), parsed_list))
 
     @staticmethod
     def cut_time(time: datetime) -> datetime:
