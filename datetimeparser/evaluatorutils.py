@@ -113,18 +113,25 @@ class EvaluatorUtils:
         :return: datetime
         """
 
+        # If a list contains an AbsoluteDateTime object that give more information about the time
         if isinstance(sanitized_input[-1], AbsoluteDateTime):
+            # The Constant that the AbsoluteDateTime object should be based on (the year)
             if isinstance(sanitized_input[-2], Constant):
+                # An Integer giving the information about the 'x'th of something (f.e. "first of august")
                 if isinstance(sanitized_input[-3], int):
                     dt: datetime = sanitized_input[-2].time_value(sanitized_input[-1].year)
                     day: int = sanitized_input[-3]
                     return datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
                 return sanitized_input[-2].time_value(sanitized_input[-1].year)
+
+            # If a year is given but no months/days, they will be set to '1' because datetime can't handle month/day-values with '0'
             if sanitized_input[-1].year != 0:
                 year = sanitized_input[-1].year
                 month = sanitized_input[-1].month if sanitized_input[-1].month != 0 else 1
                 day = sanitized_input[-1].day if sanitized_input[-1].day != 0 else 1
+
                 return datetime(year, month, day)
+
             else:
                 dt = datetime(
                     year=current_time.year if sanitized_input[-1].year == 0 else sanitized_input[-1].year,
@@ -134,12 +141,18 @@ class EvaluatorUtils:
                     minute=sanitized_input[-1].minute,
                     second=sanitized_input[-1].second
                 )
+
                 return dt
+
+        # If no AbsoluteDatetime is given, the default year will be used instead
         elif isinstance(sanitized_input[-1], Constant):
             if isinstance(sanitized_input[-2], int):
                 dt: datetime = sanitized_input[-1].time_value(year)
                 day: int = sanitized_input[-2]
+
                 return datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
+
+            # Checks if an event already happened this year (f.e. eastern). If so, the next year will be used
             if sanitized_input[-1].time_value(year) > current_time:
                 return sanitized_input[-1].time_value(year)
             else:
