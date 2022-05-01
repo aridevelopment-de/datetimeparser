@@ -53,7 +53,9 @@ testcases = {
         "one quarter before 10pm": datetime(today.year, today.month, today.day, 21, 45, 0),
         "ten quarters after 03:01:10am": datetime(today.year, today.month, today.day, 5, 31, 10),
         "hour past christmas": datetime(today.year, 12, 25, 1),
-        "30 minutes past easter": None
+        "30 minutes past easter": None,
+        # GitHub issue #158
+        "30 hours after 30.03.2020": datetime(year=2020, month=3, day=31, hour=6)
     },
     # Relative Datetimes
     "relative_datetimes": {
