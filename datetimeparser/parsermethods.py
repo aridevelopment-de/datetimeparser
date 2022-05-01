@@ -839,7 +839,7 @@ class AbsolutePrepositionParser:
 
             # If the result is None there may be just a normal year (e.g. "(three days after) 2018")
             if parse_int(data):
-                return (AbsoluteDateTime(year=int(data)),)
+                return AbsoluteDateTime(year=int(data)),
 
             # Try relative constants (e.g. "(2 hours after) daylight change yesterday")
             constant_relative_extensions_parser = ConstantRelativeExtensionsParser()
@@ -851,6 +851,13 @@ class AbsolutePrepositionParser:
             # Try datetime delta constants (e.g. "(two quarters past) 5pm")
             datetime_delta_parser = DatetimeDeltaConstantsParser()
             result = datetime_delta_parser.parse(data)
+
+            if result is not None:
+                return result[1],
+
+            # Try absolute datetime formats (e.g. "(30 hours after) 30.01.2018")
+            absolute_datetime_format_parser = AbsoluteDateFormatsParser()
+            result = absolute_datetime_format_parser.parse(data)
 
             if result is not None:
                 return result[1],
