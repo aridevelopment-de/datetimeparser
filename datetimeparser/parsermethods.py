@@ -160,8 +160,8 @@ class RelativeDatetimesParser:
                     not_possible = False
                     break
 
-            # If the argument is a datetime keyword (e.g. "year", "month", ...) add the keyword to the list
-            # Prepends a 1 if there wasn't a number set before the keyword (e.g. "months (and three days)" doesn't make any sense, so we prepend it with a 1)
+            # If the argument is a datetime keyword (e.g. "year", "month", ...) add the keyword to the list Prepends a 1 if there wasn't
+            # a number set before the keyword (e.g. "months (and three days)" doesn't make any sense, so we prepend it with a 1)
             for keyword in DatetimeConstants.ALL:
                 if argument.lower() in keyword.get_all():
                     if not new_data:
@@ -599,7 +599,11 @@ class DatetimeDeltaConstantsParser:
                     parsed_time = AbsoluteDateTime(hour=int(time))
             elif parsed_time:
                 if after_midday is not None:
-                    parsed_time = AbsoluteDateTime(hour=(12 if after_midday else 0) + parsed_time.hour, minute=parsed_time.minute, second=parsed_time.second)
+                    parsed_time = AbsoluteDateTime(
+                        hour=(12 if after_midday else 0) + parsed_time.hour,
+                        minute=parsed_time.minute,
+                        second=parsed_time.second
+                    )
                 else:
                     parsed_time = AbsoluteDateTime(hour=parsed_time.hour, minute=parsed_time.minute, second=parsed_time.second)
             else:
@@ -835,7 +839,7 @@ class AbsolutePrepositionParser:
 
             # If the result is None there may be just a normal year (e.g. "(three days after) 2018")
             if parse_int(data):
-                return (AbsoluteDateTime(year=int(data)),)
+                return AbsoluteDateTime(year=int(data)),
 
             # Try relative constants (e.g. "(2 hours after) daylight change yesterday")
             constant_relative_extensions_parser = ConstantRelativeExtensionsParser()
@@ -849,7 +853,14 @@ class AbsolutePrepositionParser:
             result = datetime_delta_parser.parse(data)
 
             if result is not None:
-                return (result[1],)
+                return result[1],
+
+            # Try absolute datetime formats (e.g. "(30 hours after) 30.01.2018")
+            absolute_datetime_format_parser = AbsoluteDateFormatsParser()
+            result = absolute_datetime_format_parser.parse(data)
+
+            if result is not None:
+                return result[1],
 
             return None
         else:

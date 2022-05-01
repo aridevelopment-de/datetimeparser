@@ -32,4 +32,4 @@ jobs:
       shell: bash
       working-directory: tests
       run: |
-        python runtests.py -s
+        python runtests.py
