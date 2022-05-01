@@ -1,5 +1,6 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from pytz import timezone
 
 
 class ThrowException:
@@ -18,7 +19,7 @@ class ReturnNone:
         return "ReturnNone"
 
 
-today = datetime.strptime(datetime.today().strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+today = datetime.strptime(datetime.now(tz=timezone("Europe/Berlin")).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
 testcases = {
     # Absolute datetime formats
