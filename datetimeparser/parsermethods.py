@@ -113,15 +113,15 @@ class RelativeDatetimesParser:
         # Checks if the string starts with a preposition
         # And then cuts it off because we need the preposition to differentiate future and past events
         for preposition in self.PREPOSITIONS:
-            if string.startswith(preposition):
-                string = string[len(preposition):]
+            if string.split()[0] == preposition:
+                string = " ".join(string.split()[1:])
                 break
         else:
             preposition = ""
 
         new_data = []
 
-        for argument in string.split():
+        for idx, argument in enumerate(string.split()):
             not_possible = True
             argument = argument.lower().strip(",")
 
@@ -130,7 +130,13 @@ class RelativeDatetimesParser:
                 continue
 
             # an `a` always represents a 1 (e.g. a day = 1 day)
-            if argument.lower() == "a":
+            # But there is one special case: `quarter an hour`. This means 0.25 hours or 15 minutes
+            if argument.lower() in ("a", "an"):
+                if new_data and new_data[-1] == DatetimeConstants.QUARTERS:
+                    if idx + 1 < len(string.split()) and string.split()[idx + 1] in DatetimeConstants.HOURS.get_all():
+                        # We break because there can't be anything after "quarter an hour"
+                        break
+
                 new_data.append(1 if preposition != "last" else -1)
                 not_possible = False
 
@@ -248,8 +254,8 @@ class ConstantsParser:
 
         # Cut off 'at', 'at the' and 'the'
         for cutoff_word in self.CUTOFF_KEYWORDS:
-            if string.startswith(cutoff_word):
-                string = string[len(cutoff_word):]
+            if string.split()[0] == cutoff_word:
+                string = " ".join(string.split()[1:])
 
         # Strip whitespace
         string = " ".join(string.split())
@@ -257,8 +263,8 @@ class ConstantsParser:
         # Cut off the preposition if the strings starts with one and save the preposition
         # To differentiate future and past
         for preposition in self.PREPOSITIONS:
-            if string.startswith(preposition):
-                string = string[len(preposition):]
+            if string.split()[0] == preposition:
+                string = " ".join(string.split()[1:])
                 break
         else:
             preposition = None
@@ -325,7 +331,7 @@ class ConstantRelativeExtensionsParser:
         :return: The number if found, None otherwise
         """
 
-        if string == "a":
+        if string in ("a", "an"):
             return 1
 
         if parse_int(string):
@@ -399,8 +405,8 @@ class ConstantRelativeExtensionsParser:
         # Cut off the preposition if the strings starts with one and save the preposition
         # To differentiate future and past
         for preposition in cls.PREPOSITIONS:
-            if string.startswith(preposition):
-                string = string[len(preposition):]
+            if string.split()[0] == preposition:
+                string = " ".join(string.split()[1:])
                 break
         else:
             preposition = "at"
@@ -418,9 +424,8 @@ class ConstantRelativeExtensionsParser:
         """
         # Cut off 'at', 'at the' and 'the'
         for cutoff_word in cls.CUTOFF_KEYWORDS:
-            if string.startswith(cutoff_word):
-                string = string[len(cutoff_word):]
-                string = string.strip()
+            if string.split()[0] == cutoff_word:
+                string = " ".join(string.split()[1:])
 
         preposition, string = cls._get_preposition(string)
 
@@ -688,7 +693,7 @@ class AbsolutePrepositionParser:
         """
 
         # If none of the known prepositions are in the string, return None
-        if not any(absolute_preposition.name in string for absolute_preposition in self.ABSOLUTE_PREPOSITION_TOKENS):
+        if not any(absolute_preposition.name in string.split() for absolute_preposition in self.ABSOLUTE_PREPOSITION_TOKENS):
             return None
 
         word = None
@@ -706,7 +711,7 @@ class AbsolutePrepositionParser:
         relative = string[:char_count - len(word) - 2]
         absolute = string[char_count:]
 
-        # There may be more prepositions in the absolute part so we try it again via recursion
+        # There may be more prepositions in the absolute part, so we try it again via recursion
         recursion_result = self._split_data(absolute)
 
         if recursion_result is not None:
@@ -734,7 +739,7 @@ class AbsolutePrepositionParser:
                 continue
 
             # 'a' means the same as '1' (e.g. 'a day' => '1 day')
-            if argument == "a":
+            if argument in ("a", "an"):
                 returned_data.append(1)
                 continue
 
@@ -745,19 +750,18 @@ class AbsolutePrepositionParser:
             # '1st', '1.', 'first', ...
             # 'one', 'two', 'three', ...
             # 'seconds', 'minutes', 'hours', ...
-            for keyword in self.RELATIVE_DATETIME_CONSTANTS if preposition != "past" else (*self.RELATIVE_DATETIME_CONSTANTS, self.RELATIVE_TIME_CONSTANTS):
-                for alias in keyword.get_all():
-                    if alias == argument:
-                        if keyword in DatetimeConstants.ALL:
-                            if not returned_data or not isinstance(returned_data[-1], int):
-                                # For cases like 'day and month (before christmas)'
-                                returned_data.append(1)
+            for keyword in self.RELATIVE_DATETIME_CONSTANTS:
+                if argument in keyword.get_all():
+                    if keyword in DatetimeConstants.ALL:
+                        if not returned_data or not isinstance(returned_data[-1], int):
+                            # For cases like 'day and month (before christmas)'
+                            returned_data.append(1)
 
-                            returned_data.append(keyword)
-                        else:
-                            returned_data.append(keyword.value)
+                        returned_data.append(keyword)
+                    else:
+                        returned_data.append(keyword.value)
 
-                        break
+                    break
                 else:
                     continue
 
@@ -825,11 +829,11 @@ class AbsolutePrepositionParser:
         if isinstance(data, str):
             # Try constants (e.g. "(three days after) christmas")
             constants_parser = ConstantsParser()
-            constants_parser.CONSTANT_KEYWORDS = (*Constants.ALL, *DatetimeDeltaConstants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL)
+            constants_parser.CONSTANT_KEYWORDS = (*Constants.ALL, *DatetimeDeltaConstants.ALL, *DatetimeConstants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL)
             constants_parser.PREPOSITIONS = ("last", "next", "this", "previous")
             constants_parser.PAST_PREPOSITIONS = ("last", "previous")
             constants_parser.FUTURE_PREPOSITIONS = ("next", "this")
-            constants_parser.CUTOFF_KEYWORDS = ("at the", "the", "at")
+            constants_parser.CUTOFF_KEYWORDS = ("at the", "the", "at", "an", "a")
 
             result = constants_parser.parse(data)
 
