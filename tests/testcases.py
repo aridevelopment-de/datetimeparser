@@ -78,6 +78,11 @@ testcases = {
         "next three months": today + relativedelta(months=3),
         "today": datetime(today.year, today.month, today.day),
         "now": today,
+        # GitHub issue #132
+        # Will be parsed in absolute preposition but Method Signature wil be relative datetimes
+        "two halves of an hour": None,
+        "ten quarters of an hour": None,
+        "half of a day": None
     },
     # Constants
     "constants": {
