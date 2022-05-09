@@ -759,7 +759,10 @@ class AbsolutePrepositionParser:
 
                         returned_data.append(keyword)
                     else:
-                        returned_data.append(keyword.value)
+                        if returned_data and isinstance(returned_data[-1], int):
+                            returned_data[-1] *= keyword.value
+                        else:
+                            returned_data.append(keyword.value)
 
                     break
                 else:
@@ -816,13 +819,42 @@ class AbsolutePrepositionParser:
 
         return returned_data
 
-    def _parse_absolute_statement(self, data: Union[str, Tuple]) -> Optional:
+    def _cleanse_absolute_statement(self, absolute_statement, relative_data: List[Union[int, Constant, RelativeDateTime]], preposition: str) -> Optional[Tuple]:
+        """
+        Method name is misleading
+        This method "cleanses" the data in cases like "(halve of) an hour" or "(three of) a week"
+
+        :param absolute_statement: The absolute statement
+        :param relative_data: The already parsed relative data
+        :param preposition: The preposition
+        :return: the new relative and absolute data
+        """
+        if isinstance(relative_data[-1], int) or isinstance(relative_data[-1], float) and preposition.lower() in Keywords.OF.get_all():
+            # If the last entry is a mathematical constant, remove it
+            delta = relative_data.pop()
+
+            # The first element after the preposition has to be DatetimeConstants
+            if not absolute_statement[0] in DatetimeConstants.ALL:
+                return None
+
+            # Now merge the delta with the first element
+            relative_data.append(RelativeDatetimeHelper.from_keyword(absolute_statement.pop(0), delta))
+
+            return relative_data, absolute_statement
+
+        return None
+
+    def _parse_absolute_statement(self, data: Union[str, Tuple], relative_data: List[Union[int, Constant, RelativeDateTime]], preposition: str) -> Optional[Tuple]:
         """
         Parses constant values like "christmas", "previous st. patricks day", ..
         If the input is a Tuple containing the absolute preposition tokens, we return the result of`_convert_tokens`
         This happens because strings like "(10 days after) 3 months before christmas" are also valid
 
+        A special case is being applied to cases like "(halve of) an hour"
+
         :param data: Either the string to parse or a Tuple containing absolute preposition tokens
+        :param relative_data: The already parsed relative data
+        :param preposition: The preposition
         :return: The parsed result (no typing specified because there are just too many values)
         """
 
@@ -838,8 +870,15 @@ class AbsolutePrepositionParser:
             result = constants_parser.parse(data)
 
             if result is not None:
-                # The first element is the Method signature (Method.CONSTANTS)
-                return result[1]
+                # May be something like "(halve of) an hour"
+                # See Issue #132 for details
+                cleansed_data = self._cleanse_absolute_statement(list(result[1]).copy(), relative_data.copy(), preposition)
+
+                if cleansed_data is None:
+                    return result[1]
+                else:
+                    relative_cleansed_data, absolute_cleansed_data = cleansed_data
+                    return True, relative_cleansed_data, absolute_cleansed_data  # True signalizes that the data got cleansed successfully
 
             # If the result is None there may be just a normal year (e.g. "(three days after) 2018")
             if parse_int(data):
@@ -879,6 +918,8 @@ class AbsolutePrepositionParser:
         """
 
         returned_data = []
+        relative_data: List[Union[int, Constant, RelativeDateTime]] = []
+        preposition: str = ""
 
         # Choose the right parsing method for the specific data types
         for i, data_part in enumerate(tokens):
@@ -904,10 +945,22 @@ class AbsolutePrepositionParser:
                 else:
                     raise ValueError("No preposition given")
             elif data_part["type"] == "absolute":
-                absolute_data = self._parse_absolute_statement(data_part["data"])
+                absolute_data = self._parse_absolute_statement(data_part["data"], relative_data, preposition)
 
                 if absolute_data is None:
                     return None
+
+                if absolute_data[0] is True:
+                    # See Issue #132 for details
+                    _, relative_parsed_data, absolute_parsed_data = absolute_data
+
+                    if not absolute_parsed_data:
+                        return Method.RELATIVE_DATETIMES, relative_parsed_data[0]  # noqa
+
+                    for absolute_part_data in absolute_parsed_data:
+                        returned_data.append(absolute_part_data)
+
+                    break
 
                 for absolute_part_data in absolute_data:
                     returned_data.append(absolute_part_data)
@@ -932,5 +985,9 @@ class AbsolutePrepositionParser:
 
         if data is None:
             return None
+
+        if data[0] == Method.RELATIVE_DATETIMES:
+            # See Issue #132 for details
+            return data  # noqa
 
         return Method.ABSOLUTE_PREPOSITIONS, data
