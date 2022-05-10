@@ -20,12 +20,11 @@ class ReturnNone:
 
 
 class Expected:
-    zone = timezone("Europe/Berlin")
-    today = datetime.strptime(datetime.now(tz=zone).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+    TODAY = datetime.strptime(datetime.now(tz=timezone("Europe/Berlin")).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
     def __new__(
             cls, now: bool = False, delta: relativedelta = None,
-            year: int = None, month: int = None, day: int = None, hour: int = 0, minute: int = 0, second: int = 0,
+            year: int = None, month: int = None, day: int = None, hour: int = 0, minute: int = 0, second: int = 0
     ) -> datetime:
         """
         Base class for creating expected times for testcases.
@@ -40,21 +39,20 @@ class Expected:
         :param hour: the base hour, Default: 0
         :param minute: the base minute, Default: 0
         :param second: the base second, Default: 0
-
         """
         excepted_time: datetime
 
         if not now:
             excepted_time = datetime(
-                year=cls.today.year if not year else year,
-                month=cls.today.month if not month else month,
-                day=cls.today.day if not day else day,
+                year=year or cls.TODAY.year,
+                month=month or cls.TODAY.month,
+                day=day or cls.TODAY.day,
                 hour=hour,
                 minute=minute,
                 second=second
             )
         else:
-            excepted_time = cls.today
+            excepted_time = cls.TODAY
 
         if delta:
             excepted_time += delta
