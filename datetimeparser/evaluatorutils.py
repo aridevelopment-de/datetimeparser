@@ -58,7 +58,7 @@ class EvaluatorUtils:
         return absdt
 
     @staticmethod
-    def sanitize_input(current_time: datetime, parsed_list: list) -> list[Union[RelativeDateTime, AbsoluteDateTime, int, Constant]]:
+    def sanitize_input(current_time: datetime, parsed_list: list) -> List[Union[RelativeDateTime, AbsoluteDateTime, int, Constant]]:
         """
         Removes useless keywords
         :param parsed_list: The list that should be sanitized
