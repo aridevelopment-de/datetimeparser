@@ -115,6 +115,9 @@ testcases = {
         "next three months": Expected(now=True, delta=relativedelta(months=3)),
         "today": Expected(),
         "now": Expected(now=True),
+        # GitHub issue #176
+        "10 days after pi-day": Expected(year=2023, month=3, day=14, delta=relativedelta(days=10)),
+        "10 days before tau day": Expected(month=6, day=28, delta=relativedelta(days=-10)),
     },
     # Constants
     "constants": {
@@ -148,9 +151,7 @@ testcases = {
         "end of the year": Expected(month=12, day=31, hour=23, minute=59, second=59),
         # GitHub issue #176
         "piday": Expected(year=2023, month=3, day=14),
-        "10 days after pi-day": Expected(year=2023, month=3, day=14, delta=relativedelta(days=10)),
         "tauday": Expected(month=6, day=28),
-        "10 days before tau day": Expected(month=6, day=28, delta=relativedelta(days=-10)),
     },
     # Constant Relative Extensions
     "constants_relative_expressions": {
