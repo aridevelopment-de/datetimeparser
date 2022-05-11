@@ -94,7 +94,10 @@ testcases = {
         "hour past christmas": Expected(month=12, day=25, hour=1),
         "30 minutes past easter": None,
         # GitHub issue #158
-        "30 hours after 30.03.2020": Expected(year=2020, month=3, day=31, hour=6)
+        "30 hours after 30.03.2020": Expected(year=2020, month=3, day=31, hour=6),
+        # GitHub issue #176
+        "10 days after pi-day": Expected(year=2023, month=3, day=14, delta=relativedelta(days=10)),
+        "10 days before tau day": Expected(month=6, day=28, delta=relativedelta(days=-10)),
     },
     # Relative Datetimes
     "relative_datetimes": {
@@ -146,6 +149,9 @@ testcases = {
         "begin of advent of code 2022": Expected(year=2022, month=12, day=1, hour=6),
         "end of aoc 2022": Expected(year=2022, month=12, day=26, hour=6),
         "end of the year": Expected(month=12, day=31, hour=23, minute=59, second=59),
+        # GitHub issue #176
+        "piday": Expected(year=2023, month=3, day=14),
+        "tauday": Expected(month=6, day=28),
     },
     # Constant Relative Extensions
     "constants_relative_expressions": {

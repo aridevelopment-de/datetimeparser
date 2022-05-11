@@ -34,6 +34,10 @@ class Constants:
                                   time_value=lambda year_time: datetime(year=year_time, month=3, day=17))
     VALENTINES_DAY = Constant('valentines day', ['valentine', 'valentine day'], options=[ConstantOption.YEAR_VARIABLE],
                               time_value=lambda year_time: datetime(year=year_time, month=2, day=14))
+    PI_DAY = Constant("pi day", ["piday", "pi-day"], options=[ConstantOption.YEAR_VARIABLE],
+                      time_value=lambda year_time: datetime(year=year_time, month=3, day=14))
+    TAU_DAY = Constant("tau day", ["tauday", "tau-day"], options=[ConstantOption.YEAR_VARIABLE],
+                       time_value=lambda year_time: datetime(year=year_time, month=6, day=28))
 
     SUMMER_BEGIN = Constant('summer begin', ['summer', 'begin of summer', 'begin of the summer'], options=[ConstantOption.YEAR_VARIABLE],
                             time_value=lambda year_time: datetime(year=year_time, month=6, day=1))
@@ -42,12 +46,14 @@ class Constants:
     SPRING_BEGIN = Constant('spring begin', ['spring', 'begin of spring', 'begin of the spring'], options=[ConstantOption.YEAR_VARIABLE],
                             time_value=lambda year_time: datetime(year=year_time, month=3, day=1))
     FALL_BEGIN = Constant('fall begin',
-                          ['fall', 'begin of fall', 'begin of the fall', 'autumn begin', 'autumn', 'begin of autumn', 'begin of the autumn'],
+                          ['fall', 'begin of fall', 'begin of the fall', 'autumn begin', 'autumn', 'begin of autumn',
+                           'begin of the autumn'],
                           options=[ConstantOption.YEAR_VARIABLE], time_value=lambda year_time: datetime(year=year_time, month=9, day=1))
     SUMMER_END = Constant('summer end', ['end of summer', 'end of the summer'], options=[ConstantOption.YEAR_VARIABLE],
                           time_value=lambda year_time: datetime(year=year_time, month=8, day=31, hour=23, minute=59, second=59))
     WINTER_END = Constant('winter end', ['end of winter', 'end of the winter'], options=[ConstantOption.YEAR_VARIABLE],
-                          time_value=lambda year_time: datetime(year=year_time, month=2, day=days_feb(year_time), hour=23, minute=59, second=59))
+                          time_value=lambda year_time: datetime(year=year_time, month=2, day=days_feb(year_time), hour=23, minute=59,
+                                                                second=59))
     SPRING_END = Constant('spring end', ['end of spring', 'end of the spring'], options=[ConstantOption.YEAR_VARIABLE],
                           time_value=lambda year_time: datetime(year=year_time, month=5, day=31, hour=23, minute=59, second=59))
     FALL_END = Constant('fall end', ['end of fall', 'end of the fall', 'autumn end', 'end of autumn', 'end of the autumn'],
@@ -61,11 +67,16 @@ class Constants:
     LUNCHTIME = Constant('lunchtime', ['lunch'], options=[ConstantOption.YEAR_VARIABLE, ConstantOption.DATE_VARIABLE])
 
     # advent of code always starts at midnight 1st december in SET (5 hours negative UTC offset)
-    BEGIN_AOC = Constant('aoc begin', ['aoc', 'begin of aoc', 'begin of the aoc', 'advent of code begin', 'advent of code', 'begin of advent of code', 'begin of the advent of code'],
-                         options=[ConstantOption.YEAR_VARIABLE], time_value=lambda year_time: datetime(year=year_time, month=12, day=1, hour=0),
+    BEGIN_AOC = Constant('aoc begin',
+                         ['aoc', 'begin of aoc', 'begin of the aoc', 'advent of code begin', 'advent of code', 'begin of advent of code',
+                          'begin of the advent of code'],
+                         options=[ConstantOption.YEAR_VARIABLE],
+                         time_value=lambda year_time: datetime(year=year_time, month=12, day=1, hour=0),
                          offset=-5)
-    END_AOC = Constant('aoc end', ['end of aoc', 'end of the aoc', 'advent of code end', 'end of advent of code', 'end of the advent of code'],
-                       options=[ConstantOption.YEAR_VARIABLE], time_value=lambda year_time: datetime(year=year_time, month=12, day=26, hour=0),
+    END_AOC = Constant('aoc end',
+                       ['end of aoc', 'end of the aoc', 'advent of code end', 'end of advent of code', 'end of the advent of code'],
+                       options=[ConstantOption.YEAR_VARIABLE],
+                       time_value=lambda year_time: datetime(year=year_time, month=12, day=26, hour=0),
                        offset=-5)
 
     END_OF_YEAR = Constant('end of year', ['the end of year', 'the end of the year', 'end of the year'],
@@ -76,13 +87,19 @@ class Constants:
 
     INFINITY = Constant('infinity', ['inf'], value=None)
 
-    TODAY = Constant('today', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day))
-    TOMORROW = Constant('tomorrow', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day) + relativedelta(days=1))
-    YESTERDAY = Constant('yesterday', options=[ConstantOption.TIME_VARIABLE], time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day) - relativedelta(days=1))
+    TODAY = Constant('today', options=[ConstantOption.TIME_VARIABLE],
+                     time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day))
+    TOMORROW = Constant('tomorrow', options=[ConstantOption.TIME_VARIABLE],
+                        time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day) + relativedelta(
+                            days=1))
+    YESTERDAY = Constant('yesterday', options=[ConstantOption.TIME_VARIABLE],
+                         time_value=lambda _: datetime(datetime.today().year, datetime.today().month, datetime.today().day) - relativedelta(
+                             days=1))
     NOW = Constant('now', ['at the moment', 'current time', 'current time now'], time_value=lambda _: datetime.now())
 
     ALL = [
         CHRISTMAS, HOLY_EVE, SILVESTER, EASTERN, NICHOLAS, HALLOWEEN, APRIL_FOOLS_DAY, THANKSGIVING, SAINT_PATRICKS_DAY, VALENTINES_DAY,
+        PI_DAY, TAU_DAY,
         SUMMER_END, WINTER_END, SPRING_END, FALL_END, SUMMER_BEGIN, WINTER_BEGIN, SPRING_BEGIN, FALL_BEGIN,
         MORNING, EVENING, LUNCHTIME,
         BEGIN_AOC, END_AOC,
@@ -201,7 +218,8 @@ class NumberCountConstants:
     # Reversed to avoid conflicts with other constants
     ALL = [FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH, TENTH,
            ELEVENTH, TWELFTH, THIRTEENTH, FOURTEENTH, FIFTEENTH, SIXTEENTH, SEVENTEENTH, EIGHTEENTH, NINETEENTH, TWENTIETH,
-           TWENTY_FIRST, TWENTY_SECOND, TWENTY_THIRD, TWENTY_FOURTH, TWENTY_FIFTH, TWENTY_SIXTH, TWENTY_SEVENTH, TWENTY_EIGHTH, TWENTY_NINTH,
+           TWENTY_FIRST, TWENTY_SECOND, TWENTY_THIRD, TWENTY_FOURTH, TWENTY_FIFTH, TWENTY_SIXTH, TWENTY_SEVENTH, TWENTY_EIGHTH,
+           TWENTY_NINTH,
            THIRTIETH, THIRTY_FIRST][::-1]
 
 
