@@ -95,6 +95,9 @@ testcases = {
         "30 minutes past easter": None,
         # GitHub issue #158
         "30 hours after 30.03.2020": Expected(year=2020, month=3, day=31, hour=6)
+        # GitHub issue #176
+        "10 days after pi-day": Expected(year=2023, month=3, day=14, delta=relativedelta(days=10)),
+        "10 days before tau day": Expected(month=6, day=28, delta=relativedelta(days=-10)),
     },
     # Relative Datetimes
     "relative_datetimes": {
@@ -115,9 +118,6 @@ testcases = {
         "next three months": Expected(now=True, delta=relativedelta(months=3)),
         "today": Expected(),
         "now": Expected(now=True),
-        # GitHub issue #176
-        "10 days after pi-day": Expected(year=2023, month=3, day=14, delta=relativedelta(days=10)),
-        "10 days before tau day": Expected(month=6, day=28, delta=relativedelta(days=-10)),
     },
     # Constants
     "constants": {
