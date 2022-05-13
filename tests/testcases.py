@@ -23,7 +23,7 @@ class Expected:
     TODAY = datetime.strptime(datetime.now(tz=timezone("Europe/Berlin")).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
     def __new__(
-            cls, now: bool = False, delta: relativedelta = None,
+            cls, now: bool = False, delta: relativedelta = None, time_sensitive: bool = False,
             year: int = None, month: int = None, day: int = None, hour: int = 0, minute: int = 0, second: int = 0
     ) -> datetime:
         """
@@ -33,6 +33,7 @@ class Expected:
 
         :param now: states, if the base time should be this moment (with seconds)
         :param delta: adds a relativedelta time to the base time
+        :param time_sensitive: states if a time is behind the current time, that the next year will be used
         :param year: the base year, Default: this year
         :param month: the base month, Default: this month
         :param day: the base day, Default: this day
@@ -57,6 +58,9 @@ class Expected:
         if delta:
             excepted_time += delta
 
+        if time_sensitive and excepted_time <= cls.TODAY:
+            excepted_time += relativedelta(years=1)
+
         return excepted_time
 
 
@@ -74,13 +78,13 @@ testcases = {
     },
     # Absolute prepositions
     "absolute_prepositions": {
-        "second day after christmas": Expected(month=12, day=27),
-        "3rd week of august": Expected(month=8, day=22),
-        "4. week of august": Expected(month=8, day=29),
-        "1st of august": Expected(month=8, day=1),
+        "second day after christmas": Expected(time_sensitive=True, month=12, day=27),
+        "3rd week of august": Expected(time_sensitive=True, month=8, day=22),
+        "4. week of august": Expected(time_sensitive=True, month=8, day=29),
+        "1st of august": Expected(time_sensitive=True, month=8, day=1),
         "fifth month of 2021": Expected(year=2021, month=5, day=1),
         "three days after the fifth of august 2018": Expected(year=2018, month=8, day=8),
-        "second day after august": Expected(year=2022, month=8, day=3),
+        "second day after august": Expected(time_sensitive=True, month=8, day=3),
         "3 months before the fifth week of august 2020": Expected(year=2020, month=5, day=31),
         "10 days and 2 hours after 3 months before christmas 2020": Expected(year=2020, month=10, day=5, hour=2),
         "a day and 3 minutes after 4 months before christmas 2021": Expected(year=2021, month=8, day=26, minute=3),
@@ -96,8 +100,8 @@ testcases = {
         # GitHub issue #158
         "30 hours after 30.03.2020": Expected(year=2020, month=3, day=31, hour=6),
         # GitHub issue #176
-        "10 days after pi-day": Expected(year=2023, month=3, day=14, delta=relativedelta(days=10)),
-        "10 days before tau day": Expected(month=6, day=28, delta=relativedelta(days=-10)),
+        "10 days after pi-day": Expected(time_sensitive=True, month=3, day=14, delta=relativedelta(days=10)),
+        "10 days before tau day": Expected(time_sensitive=True, month=6, day=28, delta=relativedelta(days=-10)),
     },
     # Relative Datetimes
     "relative_datetimes": {
@@ -121,11 +125,11 @@ testcases = {
     },
     # Constants
     "constants": {
-        "next christmas": Expected(month=12, day=25),
-        "at the next christmas": Expected(month=12, day=25),
-        "the next christmas": Expected(month=12, day=25),
-        "christmas": Expected(month=12, day=25),
-        "new years eve": Expected(month=12, day=31),
+        "next christmas": Expected(time_sensitive=True, month=12, day=25),
+        "at the next christmas": Expected(time_sensitive=True, month=12, day=25),
+        "the next christmas": Expected(time_sensitive=True, month=12, day=25),
+        "christmas": Expected(time_sensitive=True, month=12, day=25),
+        "new years eve": Expected(time_sensitive=True, month=12, day=31),
         "xmas 2025": Expected(year=2025, month=12, day=25),
         "next friday": None,
         "next second": Expected(now=True, delta=relativedelta(seconds=1)),
@@ -134,24 +138,24 @@ testcases = {
         "next year": Expected(now=True, delta=relativedelta(years=1)),
         "eastern 2010": Expected(year=2010, month=4, day=4),
         "halloween 2030": Expected(year=2030, month=10, day=31),
-        "next april fools day": Expected(year=2023, month=4, day=1),
-        "thanksgiving": Expected(month=11, day=24),
-        "next st patricks day": Expected(year=2023, month=3, day=17),
+        "next april fools day": Expected(time_sensitive=True, month=4, day=1),
+        "thanksgiving": Expected(time_sensitive=True, month=11, day=24),
+        "next st patricks day": Expected(time_sensitive=True, month=3, day=17),
         "valentine day 2010": Expected(year=2010, month=2, day=14),
-        "summer": Expected(month=6, day=1),
+        "summer": Expected(time_sensitive=True, month=6, day=1),
         "winter 2021": Expected(year=2021, month=12, day=1),
-        "next spring": Expected(year=2023, month=3, day=1),
+        "next spring": Expected(time_sensitive=True, month=3, day=1),
         "begin of fall 2010": Expected(year=2010, month=9, day=1),
-        "summer end": Expected(month=8, day=31, hour=23, minute=59, second=59),
-        "end of winter": Expected(year=2023, month=2, day=28, hour=23, minute=59, second=59),
-        "end of the spring": Expected(month=5, day=31, hour=23, minute=59, second=59),
+        "summer end": Expected(time_sensitive=True, month=8, day=31, hour=23, minute=59, second=59),
+        "end of winter": Expected(time_sensitive=True, month=2, day=28, hour=23, minute=59, second=59),
+        "end of the spring": Expected(time_sensitive=True, month=5, day=31, hour=23, minute=59, second=59),
         "end of autumn 2020": Expected(year=2020, month=11, day=30, hour=23, minute=59, second=59),
         "begin of advent of code 2022": Expected(year=2022, month=12, day=1, hour=6),
         "end of aoc 2022": Expected(year=2022, month=12, day=26, hour=6),
-        "end of the year": Expected(month=12, day=31, hour=23, minute=59, second=59),
+        "end of the year": Expected(time_sensitive=True, month=12, day=31, hour=23, minute=59, second=59),
         # GitHub issue #176
-        "piday": Expected(year=2023, month=3, day=14),
-        "tauday": Expected(month=6, day=28),
+        "piday": Expected(time_sensitive=True, month=3, day=14),
+        "tauday": Expected(time_sensitive=True, month=6, day=28),
     },
     # Constant Relative Extensions
     "constants_relative_expressions": {
