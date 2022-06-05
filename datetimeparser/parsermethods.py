@@ -934,3 +934,8 @@ class AbsolutePrepositionParser:
             return None
 
         return Method.ABSOLUTE_PREPOSITIONS, data
+
+
+class PrefixedRelativeDatetimeParser:
+    def parse(self, string: str) -> Optional[Union[MethodEnum, Any]]:
+        return None

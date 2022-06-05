@@ -289,3 +289,4 @@ class Method:
     CONSTANTS_RELATIVE_EXTENSIONS = MethodEnum('constants_relative_extensions')
     DATETIME_DELTA_CONSTANTS = MethodEnum('datetime_delta_constants')
     RELATIVE_DATETIMES = MethodEnum('relative_datetimes')
+    PREFIXED_RELATIVE_DATETIMES = MethodEnum('prefixed_relative_datetimes')
