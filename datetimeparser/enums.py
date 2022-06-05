@@ -209,6 +209,7 @@ class DatetimeConstants:
     SECONDS = Constant('seconds', ['second', 'sec', 'secs'])
     MINUTES = Constant('minutes', ['minute', 'min', 'mins'])
     QUARTERS = Constant('quarters', ['quarter', 'qtr', 'qtrs'])
+    HALVES = Constant('halves', ['half'])
     HOURS = Constant('hours', ['hour'])
     DAYS = Constant('days', ['day'])
     WEEKS = Constant('weeks', ['week'])
@@ -221,7 +222,7 @@ class DatetimeConstants:
     MEGAANNUMS = Constant('megaannuums', ['megaannuum'])  # 1,000,000 years
     GIGAANNUMS = Constant('gigaannuums', ['gigaannuum'])  # 1,000,000,000 years
 
-    TIME = [SECONDS, MINUTES, QUARTERS, HOURS]
+    TIME = [SECONDS, MINUTES, QUARTERS, HALVES, HOURS]
     DATE = [DAYS, WEEKS, MONTHS, YEARS, DECADES, CENTURIES, MILLENNIUMS, MEGAANNUMS, GIGAANNUMS]
     ALL = [*DATE, *TIME]
 

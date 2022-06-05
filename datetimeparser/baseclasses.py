@@ -18,7 +18,7 @@ class Printable:
 
 class Concatenable(Printable):
     @classmethod
-    def _concatenate(cls, new, o1, o2):
+    def _concatenate(cls, new, o1, o2, may_add=False):
         for field in cls.FIELDS:
             d1 = getattr(o1, field)
             d2 = getattr(o2, field)
@@ -27,7 +27,10 @@ class Concatenable(Printable):
                 continue
 
             if d1 != 0 and d2 != 0:
-                setattr(new, field, d2)
+                if may_add:
+                    setattr(new, field, d1 + d2)
+                else:
+                    setattr(new, field, d2)
 
             if d1 == 0:
                 setattr(new, field, d2)
@@ -66,8 +69,8 @@ class RelativeDateTime(Concatenable):
         self.seconds = seconds
 
     @classmethod
-    def concatenate(cls, o1: 'RelativeDateTime', o2: 'RelativeDateTime') -> 'RelativeDateTime':
-        return cls._concatenate(RelativeDateTime(), o1, o2)
+    def concatenate(cls, o1: 'RelativeDateTime', o2: 'RelativeDateTime', may_add: bool = False) -> 'RelativeDateTime':
+        return cls._concatenate(RelativeDateTime(), o1, o2, may_add)
 
 
 class Constant(Printable):

@@ -1,5 +1,5 @@
 import re
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, Any
 
 from .enums import *
 from .baseclasses import *
@@ -46,6 +46,8 @@ class RelativeDatetimeHelper:
             return RelativeDateTime(hours=delta)
         elif keyword == DatetimeConstants.QUARTERS:
             return RelativeDateTime(minutes=15 * delta)
+        elif keyword == DatetimeConstants.HALVES:
+            return RelativeDateTime(minutes=30 * delta)
         elif keyword == DatetimeConstants.MINUTES:
             return RelativeDateTime(minutes=delta)
         elif keyword == DatetimeConstants.SECONDS:
@@ -120,6 +122,7 @@ class RelativeDatetimesParser:
             preposition = ""
 
         new_data = []
+        skip_until_hour = False
 
         for idx, argument in enumerate(string.split()):
             not_possible = True
@@ -129,13 +132,21 @@ class RelativeDatetimesParser:
             if argument.lower() in self.SKIPPABLE_KEYWORDS:
                 continue
 
+            # Skip if `skip_until_hour` has been set and the keyword is not DatetimeConstants.HOURS
+            if skip_until_hour is True:
+                if argument in DatetimeConstants.HOURS.get_all():
+                    skip_until_hour = False
+
+                continue
+
             # an `a` always represents a 1 (e.g. a day = 1 day)
             # But there is one special case: `quarter an hour`. This means 0.25 hours or 15 minutes
             if argument.lower() in ("a", "an"):
-                if new_data and new_data[-1] == DatetimeConstants.QUARTERS:
+                if new_data and new_data[-1] in (DatetimeConstants.QUARTERS, DatetimeConstants.HALVES):
                     if idx + 1 < len(string.split()) and string.split()[idx + 1] in DatetimeConstants.HOURS.get_all():
-                        # We break because there can't be anything after "quarter an hour"
-                        break
+                        # We skip the iteration until the keyword "hour" has been reached. There might be still something left
+                        skip_until_hour = True
+                        continue
 
                 new_data.append(1 if preposition != "last" else -1)
                 not_possible = False
@@ -212,7 +223,7 @@ class RelativeDatetimesParser:
 
             if type_ in DatetimeConstants.ALL:
                 relative_date = RelativeDatetimeHelper.from_keyword(type_, number)
-                date = RelativeDateTime.concatenate(relative_date, date)
+                date = RelativeDateTime.concatenate(relative_date, date, may_add=True)
 
         return Method.RELATIVE_DATETIMES, date
 
@@ -938,4 +949,11 @@ class AbsolutePrepositionParser:
 
 class PrefixedRelativeDatetimeParser:
     def parse(self, string: str) -> Optional[Union[MethodEnum, Any]]:
+        """
+        Parses strings like "half of an hour", "quarter an hour", "half an hour"
+        This was essentially build for #132 as some parts of the grammar couldn't fit in RelativeDatetimeParser and AbsolutePrepositionParser
+
+        :param string: The input string
+        :returns: None if the string couldn't be parsed otherwise the parsed result
+        """
         return None
