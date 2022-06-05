@@ -945,15 +945,3 @@ class AbsolutePrepositionParser:
             return None
 
         return Method.ABSOLUTE_PREPOSITIONS, data
-
-
-class PrefixedRelativeDatetimeParser:
-    def parse(self, string: str) -> Optional[Union[MethodEnum, Any]]:
-        """
-        Parses strings like "half of an hour", "quarter an hour", "half an hour"
-        This was essentially build for #132 as some parts of the grammar couldn't fit in RelativeDatetimeParser and AbsolutePrepositionParser
-
-        :param string: The input string
-        :returns: None if the string couldn't be parsed otherwise the parsed result
-        """
-        return None
