@@ -6,8 +6,7 @@ from .parsermethods import (
     ConstantsParser,
     ConstantRelativeExtensionsParser,
     DatetimeDeltaConstantsParser,
-    AbsolutePrepositionParser,
-    PrefixedRelativeDatetimeParser
+    AbsolutePrepositionParser
 )
 
 
@@ -18,7 +17,6 @@ class Parser:
         ConstantsParser().parse,
         ConstantRelativeExtensionsParser().parse,
         DatetimeDeltaConstantsParser().parse,
-        PrefixedRelativeDatetimeParser().parse,
         AbsolutePrepositionParser().parse
     )
 
