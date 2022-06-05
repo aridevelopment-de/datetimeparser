@@ -1,6 +1,7 @@
 from .baseclasses import *
 from .enums import *
 from .evaluatorutils import EvaluatorUtils
+from .exceptions import InvalidValue
 
 
 class EvaluatorMethods(EvaluatorUtils):
@@ -109,8 +110,8 @@ class EvaluatorMethods(EvaluatorUtils):
                     dt = object_type.time_value(object_year + 1)
 
         else:
-            if object_type.name == "infinity":
-                raise ValueError("'infinity' isn't a valid time")
+            if object_type.name == "infinity":  # TODO: has to be improved for more invalid constants if needed
+                raise InvalidValue(object_type.name)
 
             elif object_type in WeekdayConstants.ALL:
                 dt: datetime = datetime.strptime(

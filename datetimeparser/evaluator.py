@@ -5,6 +5,7 @@ from typing import Union
 from .baseclasses import AbsoluteDateTime, RelativeDateTime
 from .enums import Method
 from .evaluatormethods import EvaluatorMethods
+from .exceptions import FailedEvaluation, InvalidValue
 
 
 class Evaluator:
@@ -17,7 +18,7 @@ class Evaluator:
         try:
             tiz = timezone(tz)
         except UnknownTimeZoneError:
-            raise ValueError("Unknown timezone: {}".format(tz))
+            raise InvalidValue(f"Unknown timezone: '{tz}'")
 
         self.parsed_object_type = parsed_object[0]
         self.parsed_object_content: Union[list, AbsoluteDateTime, RelativeDateTime] = parsed_object[1]
@@ -49,4 +50,4 @@ class Evaluator:
         if ev_out:
             return ev_out
         else:
-            raise ValueError
+            raise FailedEvaluation(self.parsed_object_content)

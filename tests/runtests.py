@@ -116,7 +116,7 @@ def evaluate_testcases(testcase_results: dict, disable_color=False, disable_inde
                 elif StatusType.NO_VALIDATION < status < StatusType.WRONG_RESULT:
                     if status in (StatusType.PARSER_RETURNS_NONE, StatusType.EVALUATOR_RETURNS_NONE):
                         message = f"{Colors.ANSI_CYAN}{'Parser' if status == StatusType.PARSER_RETURNS_NONE else 'Evaluator'} {Colors.ANSI_BOLD_WHITE}returned {Colors.ANSI_LIGHT_RED}None"
-                    elif status in (StatusType.PARSER_EXCEPTION, StatusType.EVALUATOR_RETURNS_NONE):
+                    elif status in (StatusType.PARSER_EXCEPTION, StatusType.EVALUATOR_EXCEPTION):
                         message = f"{Colors.ANSI_CYAN}{'Parser' if status == StatusType.PARSER_EXCEPTION else 'Evaluator'} {Colors.ANSI_BOLD_WHITE}raised an {Colors.ANSI_LIGHT_RED}exception: {Colors.ANSI_WHITE}{info}"
                     else:
                         continue
@@ -132,7 +132,7 @@ def evaluate_testcases(testcase_results: dict, disable_color=False, disable_inde
                 elif StatusType.NO_VALIDATION < status < StatusType.WRONG_RESULT:
                     if status in (StatusType.PARSER_RETURNS_NONE, StatusType.EVALUATOR_RETURNS_NONE):
                         message = f"{'Parser' if status == StatusType.PARSER_RETURNS_NONE else 'Evaluator'} returned None"
-                    elif status in (StatusType.PARSER_EXCEPTION, StatusType.EVALUATOR_RETURNS_NONE):
+                    elif status in (StatusType.PARSER_EXCEPTION, StatusType.EVALUATOR_EXCEPTION):
                         message = f"{'Parser' if status == StatusType.PARSER_EXCEPTION else 'Evaluator'} raised an exception: {info}"
                     else:
                         continue
