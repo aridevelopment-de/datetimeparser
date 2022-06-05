@@ -125,8 +125,6 @@ class DatetimeDeltaConstants:
 
 class NumberConstants:
     # Presented to you by github copilot
-    QUARTER = Constant('quarter', alias=['quarters', 'qtr', 'qtrs'], value=0.25)
-    HALVE = Constant('half', alias=['halve', 'halves', 'halfs'], value=0.5)
     ONE = Constant('one', value=1)
     TWO = Constant('two', value=2)
     THREE = Constant('three', value=3)
@@ -160,7 +158,7 @@ class NumberConstants:
     THIRTY_ONE = Constant('thirty one', alias=["thirtyone", "thirty-one"], value=31)
 
     # Reversed to avoid conflicts with other constants (one is included in twenty one)
-    ALL = [QUARTER, HALVE, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN,
+    ALL = [ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN,
            ELEVEN, TWELVE, THIRTEEN, FOURTEEN, FIFTEEN, SIXTEEN, SEVENTEEN, EIGHTEEN, NINETEEN, TWENTY,
            TWENTY_ONE, TWENTY_TWO, TWENTY_THREE, TWENTY_FOUR, TWENTY_FIVE, TWENTY_SIX, TWENTY_SEVEN, TWENTY_EIGHT, TWENTY_NINE,
            THIRTY, THIRTY_ONE][::-1]
