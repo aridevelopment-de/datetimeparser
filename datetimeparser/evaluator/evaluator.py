@@ -2,10 +2,10 @@ from datetime import datetime
 from pytz import timezone, UnknownTimeZoneError
 from typing import Union
 
-from .baseclasses import AbsoluteDateTime, RelativeDateTime
-from .enums import Method
-from .evaluatormethods import EvaluatorMethods
-from .exceptions import FailedEvaluation, InvalidValue
+from datetimeparser.utils.baseclasses import AbsoluteDateTime, RelativeDateTime
+from datetimeparser.utils.enums import Method
+from datetimeparser.evaluator.evaluatormethods import EvaluatorMethods
+from datetimeparser.utils.exceptions import FailedEvaluation, InvalidValue
 
 
 class Evaluator:

@@ -1,8 +1,8 @@
 import re
 from typing import Optional, Tuple, Union
 
-from .enums import *
-from .baseclasses import *
+from datetimeparser.utils.enums import *
+from datetimeparser.utils.baseclasses import *
 
 
 def parse_int(text: str) -> bool:
