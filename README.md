@@ -115,6 +115,18 @@ We highly appreciate everyone who wants to help our project!
 <li>valentine day</li>
 </ul>
 </details><details>
+<summary><code>pi day</code></summary>
+<ul>
+<li>piday</li>
+<li>pi-day</li>
+</ul>
+</details><details>
+<summary><code>tau day</code></summary>
+<ul>
+<li>tauday</li>
+<li>tau-day</li>
+</ul>
+</details><details>
 <summary><code>summer end</code></summary>
 <ul>
 <li>end of summer</li>
