@@ -2,6 +2,7 @@ from typing import Union
 
 from datetimeparser.utils.baseclasses import *
 from datetimeparser.utils.enums import *
+from datetimeparser.utils.exceptions import InvalidValue
 
 
 class EvaluatorUtils:
@@ -181,9 +182,10 @@ class EvaluatorUtils:
         return ev_out
 
     @staticmethod
-    def prepare_relative_delta(rel_time: RelativeDateTime) -> relativedelta:
+    def add_relative_delta(base_time: datetime, rel_time: RelativeDateTime) -> datetime:
         """
         Prepares a RelativeDateTime-object for adding to a datetime
+        :param base_time: DateTime-object the time should be added too
         :param rel_time: RelativeDateTime-object
         :return: relativedelta
         """
@@ -198,17 +200,12 @@ class EvaluatorUtils:
             seconds=rel_time.seconds
         )
 
-        return rel
+        try:
+            out = base_time + rel
+        except ValueError as e:
+            raise InvalidValue(e.args[0])
 
-    @staticmethod
-    def remove_milli_seconds(dt: datetime) -> datetime:
-        """
-        Cuts milliseconds of
-        :param dt: The time with milliseconds at the end
-        :return: datetime
-        """
-
-        return datetime.strptime(dt.strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+        return out
 
     @staticmethod
     def get_offset(con: Constant, offset) -> RelativeDateTime:
