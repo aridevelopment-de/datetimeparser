@@ -1,7 +1,7 @@
 from typing import Union
 
-from .baseclasses import *
-from .enums import *
+from datetimeparser.utils.baseclasses import *
+from datetimeparser.utils.enums import *
 
 
 class EvaluatorUtils:

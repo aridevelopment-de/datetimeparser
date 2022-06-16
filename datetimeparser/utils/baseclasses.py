@@ -3,7 +3,7 @@ from __future__ import annotations  # noqa: I2041
 from typing import Callable, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from datetimeparser.enums import ConstantOption  # noqa: I2041
+    from datetimeparser.utils.enums import ConstantOption  # noqa: I2041
 
 
 class Printable:

@@ -1,7 +1,7 @@
-from .baseclasses import *
-from .enums import *
-from .evaluatorutils import EvaluatorUtils
-from .exceptions import InvalidValue
+from datetimeparser.evaluator.evaluatorutils import EvaluatorUtils
+from datetimeparser.utils.baseclasses import *
+from datetimeparser.utils.enums import *
+from datetimeparser.utils.exceptions import InvalidValue
 
 
 class EvaluatorMethods(EvaluatorUtils):
