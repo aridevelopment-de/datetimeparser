@@ -182,11 +182,12 @@ class EvaluatorUtils:
         return ev_out
 
     @staticmethod
-    def add_relative_delta(base_time: datetime, rel_time: RelativeDateTime) -> datetime:
+    def add_relative_delta(base_time: datetime, rel_time: RelativeDateTime, current_time: datetime) -> datetime:
         """
         Prepares a RelativeDateTime-object for adding to a datetime
         :param base_time: DateTime-object the time should be added too
         :param rel_time: RelativeDateTime-object
+        :param current_time: current datetime
         :return: relativedelta
         """
 
@@ -201,6 +202,8 @@ class EvaluatorUtils:
         )
 
         try:
+            if base_time > current_time > base_time + rel:
+                rel.years += 1
             out = base_time + rel
         except ValueError as e:
             raise InvalidValue(e.args[0])
