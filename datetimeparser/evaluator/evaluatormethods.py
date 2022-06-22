@@ -46,7 +46,7 @@ class EvaluatorMethods(EvaluatorUtils):
             ev_out = datetime(base.year, base.month, base.day, hour, minute, sec)
 
         elif isinstance(sanitized[-1], RelativeDateTime):
-            base = self.add_relative_delta(base, sanitized[-1])
+            base = self.add_relative_delta(base, sanitized[-1], self.current_time)
 
             if sanitized[-2] in WeekdayConstants.ALL:
                 base = self.cut_time(base)
@@ -93,7 +93,7 @@ class EvaluatorMethods(EvaluatorUtils):
         sanitized = self.sanitize_input(self.current_time, self.parsed)
         base = self.get_base(sanitized, base_year, self.current_time)
         rel_out = self.calc_relative_time(sanitized)
-        base = self.add_relative_delta(base, rel_out)
+        base = self.add_relative_delta(base, rel_out, self.current_time)
 
         return base
 
@@ -140,14 +140,14 @@ class EvaluatorMethods(EvaluatorUtils):
         )
 
         if object_type.offset:
-            ev_out = self.add_relative_delta(ev_out, self.get_offset(object_type, self.offset))
+            ev_out = self.add_relative_delta(ev_out, self.get_offset(object_type, self.offset), self.current_time)
 
         return ev_out
 
     def evaluate_relative_datetime(self) -> datetime:
         out: datetime = self.current_time
 
-        out = self.add_relative_delta(out, self.parsed)
+        out = self.add_relative_delta(out, self.parsed, self.current_time)
         ev_out = datetime(
             out.year, out.month, out.day, out.hour, out.minute, out.second
         )
