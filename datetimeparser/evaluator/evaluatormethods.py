@@ -132,8 +132,11 @@ class EvaluatorMethods(EvaluatorUtils):
                         second=dt[2]
                     )
 
-            if self.current_time > dt and self.parsed[0] not in Constants.ALL_RELATIVE_CONSTANTS:
+            if self.current_time >= dt and self.parsed[0] not in (Constants.ALL_RELATIVE_CONSTANTS and WeekdayConstants.ALL):
                 dt = object_type.time_value(self.current_time.year + 1)
+
+            if self.current_time >= dt and self.parsed[0] in WeekdayConstants.ALL:
+                dt += relativedelta(days=7)
 
         ev_out = datetime(
             dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second
