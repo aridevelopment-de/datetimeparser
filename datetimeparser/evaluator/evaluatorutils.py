@@ -150,8 +150,11 @@ class EvaluatorUtils:
             if isinstance(sanitized_input[-2], int):
                 dt: datetime = sanitized_input[-1].time_value(year)
                 day: int = sanitized_input[-2]
-
-                return datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
+                out = datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
+                if out > current_time:
+                    return out
+                out += relativedelta(years=1)
+                return out
 
             # Checks if an event already happened this year (f.e. eastern). If so, the next year will be used
             if sanitized_input[-1].time_value(year) > current_time:
