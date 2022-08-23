@@ -225,7 +225,7 @@ class ConstantsParser:
     FUTURE_PREPOSITIONS = ("next", "this")
 
     # Order is important because "at" and "the" are both in "at the"
-    CUTOFF_KEYWORDS = ("at the", "in the", "at", "the")
+    CUTOFF_KEYWORDS = ("at the", "in the", "at", "the", "after")
 
     def _find_constant(self, argument: str) -> Optional[Constant]:
         """
