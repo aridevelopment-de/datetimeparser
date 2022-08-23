@@ -771,7 +771,10 @@ class AbsolutePrepositionParser:
 
         return returned_data
 
-    def _concatenate_relative_data(self, relative_data_tokens: List[Union[int, Constant]], preposition: str) -> List[Union[int, Constant, RelativeDateTime]]:
+    def _concatenate_relative_data(
+            self, relative_data_tokens: List[Union[int, Constant]],
+            preposition: str
+    ) -> List[Union[int, Constant, RelativeDateTime]]:
         """
         Concatenates [1, RelativeDate(DAY), 2, RelativeDate(MONTH)] into [RelativeDate(days=1, months=2)]
         respecting the preposition (future and past)
@@ -829,7 +832,9 @@ class AbsolutePrepositionParser:
         if isinstance(data, str):
             # Try constants (e.g. "(three days after) christmas")
             constants_parser = ConstantsParser()
-            constants_parser.CONSTANT_KEYWORDS = (*Constants.ALL, *DatetimeDeltaConstants.ALL, *DatetimeConstants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL)
+            constants_parser.CONSTANT_KEYWORDS = (
+                *Constants.ALL, *DatetimeDeltaConstants.ALL, *DatetimeConstants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL
+            )
             constants_parser.PREPOSITIONS = ("last", "next", "this", "previous")
             constants_parser.PAST_PREPOSITIONS = ("last", "previous")
             constants_parser.FUTURE_PREPOSITIONS = ("next", "this")
