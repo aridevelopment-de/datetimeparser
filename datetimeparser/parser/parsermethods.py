@@ -250,12 +250,12 @@ class ConstantsParser:
         :param string: The string to parse
         :return: A tuple containing the method and the data or None
         """
-        string = string.lower()
+        string = " ".join(string.lower().split())
 
         # Cut off 'at', 'at the' and 'the'
         for cutoff_word in self.CUTOFF_KEYWORDS:
-            if string.split()[0] == cutoff_word:
-                string = " ".join(string.split()[1:])
+            if string.split()[:len(cutoff_word.split())] == cutoff_word.split():
+                string = " ".join(string.split()[len(cutoff_word.split()):])
 
         # Strip whitespace
         string = " ".join(string.split())
@@ -424,8 +424,8 @@ class ConstantRelativeExtensionsParser:
         """
         # Cut off 'at', 'at the' and 'the'
         for cutoff_word in cls.CUTOFF_KEYWORDS:
-            if string.split()[0] == cutoff_word:
-                string = " ".join(string.split()[1:])
+            if string.split()[:len(cutoff_word.split())] == cutoff_word.split():
+                string = " ".join(string.split()[len(cutoff_word.split()):])
 
         preposition, string = cls._get_preposition(string)
 
