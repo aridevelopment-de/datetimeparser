@@ -225,7 +225,7 @@ class ConstantsParser:
     FUTURE_PREPOSITIONS = ("next", "this")
 
     # Order is important because "at" and "the" are both in "at the"
-    CUTOFF_KEYWORDS = ("at the", "in the", "at", "the")
+    CUTOFF_KEYWORDS = ("at the", "in the", "at", "the", "after")
 
     def _find_constant(self, argument: str) -> Optional[Constant]:
         """
@@ -250,12 +250,12 @@ class ConstantsParser:
         :param string: The string to parse
         :return: A tuple containing the method and the data or None
         """
-        string = string.lower()
+        string = " ".join(string.lower().split())
 
         # Cut off 'at', 'at the' and 'the'
         for cutoff_word in self.CUTOFF_KEYWORDS:
-            if string.split()[0] == cutoff_word:
-                string = " ".join(string.split()[1:])
+            if string.split()[:len(cutoff_word.split())] == cutoff_word.split():
+                string = " ".join(string.split()[len(cutoff_word.split()):])
 
         # Strip whitespace
         string = " ".join(string.split())
@@ -424,8 +424,8 @@ class ConstantRelativeExtensionsParser:
         """
         # Cut off 'at', 'at the' and 'the'
         for cutoff_word in cls.CUTOFF_KEYWORDS:
-            if string.split()[0] == cutoff_word:
-                string = " ".join(string.split()[1:])
+            if string.split()[:len(cutoff_word.split())] == cutoff_word.split():
+                string = " ".join(string.split()[len(cutoff_word.split()):])
 
         preposition, string = cls._get_preposition(string)
 
@@ -771,7 +771,10 @@ class AbsolutePrepositionParser:
 
         return returned_data
 
-    def _concatenate_relative_data(self, relative_data_tokens: List[Union[int, Constant]], preposition: str) -> List[Union[int, Constant, RelativeDateTime]]:
+    def _concatenate_relative_data(
+            self, relative_data_tokens: List[Union[int, Constant]],
+            preposition: str
+    ) -> List[Union[int, Constant, RelativeDateTime]]:
         """
         Concatenates [1, RelativeDate(DAY), 2, RelativeDate(MONTH)] into [RelativeDate(days=1, months=2)]
         respecting the preposition (future and past)
@@ -829,7 +832,9 @@ class AbsolutePrepositionParser:
         if isinstance(data, str):
             # Try constants (e.g. "(three days after) christmas")
             constants_parser = ConstantsParser()
-            constants_parser.CONSTANT_KEYWORDS = (*Constants.ALL, *DatetimeDeltaConstants.ALL, *DatetimeConstants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL)
+            constants_parser.CONSTANT_KEYWORDS = (
+                *Constants.ALL, *DatetimeDeltaConstants.ALL, *DatetimeConstants.ALL, *MonthConstants.ALL, *WeekdayConstants.ALL
+            )
             constants_parser.PREPOSITIONS = ("last", "next", "this", "previous")
             constants_parser.PAST_PREPOSITIONS = ("last", "previous")
             constants_parser.FUTURE_PREPOSITIONS = ("next", "this")

@@ -122,6 +122,8 @@ testcases = {
         "next three months": Expected(now=True, delta=relativedelta(months=3)),
         "today": Expected(),
         "now": Expected(now=True),
+        # GitHub issue #45
+        "after lunchtime": None
     },
     # Constants
     "constants": {
@@ -156,6 +158,9 @@ testcases = {
         # GitHub issue #176
         "piday": Expected(time_sensitive=True, month=3, day=14),
         "tauday": Expected(time_sensitive=True, month=6, day=28),
+        # GitHub issue #45
+        "in the morning": None,
+        "in the evening": None,
     },
     # Constant Relative Extensions
     "constants_relative_expressions": {

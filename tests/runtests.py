@@ -149,8 +149,8 @@ def evaluate_testcases(testcase_results: dict, disable_color=False, disable_inde
         print(f"{Colors.ANSI_YELLOW}No validation tests:        {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.NO_VALIDATION]}/{len_testcases}")
         print(f"{Colors.ANSI_RED}Wrong result tests:         {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.WRONG_RESULT]}/{len_testcases}")
         print()
-        print(f"{Colors.ANSI_RED}Parser returned None:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_EXCEPTION]}/{len_testcases}")
-        print(f"{Colors.ANSI_LIGHT_RED}{Colors.ANSI_UNDERLINE}Parser exceptions:          {Colors.ANSI_RESET}{Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_RETURNS_NONE]}/{len_testcases}")
+        print(f"{Colors.ANSI_RED}Parser returned None:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_RETURNS_NONE]}/{len_testcases}")
+        print(f"{Colors.ANSI_LIGHT_RED}{Colors.ANSI_UNDERLINE}Parser exceptions:          {Colors.ANSI_RESET}{Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_EXCEPTION]}/{len_testcases}")
         print(f"{Colors.ANSI_RED}Evaluator returned None:    {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.EVALUATOR_RETURNS_NONE]}/{len_testcases}")
         print(f"{Colors.ANSI_LIGHT_RED}{Colors.ANSI_UNDERLINE}Evaluator exceptions:       {Colors.ANSI_RESET}{Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.EVALUATOR_EXCEPTION]}/{len_testcases}")
     else:
