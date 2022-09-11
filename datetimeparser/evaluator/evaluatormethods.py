@@ -90,8 +90,11 @@ class EvaluatorMethods(EvaluatorUtils):
 
     def evaluate_absolute_prepositions(self) -> datetime:
         base_year = self.current_time.year
-        sanitized = self.sanitize_input(self.current_time, self.parsed)
-        base = self.get_base(sanitized, base_year, self.current_time)
+        sanitized, given_year = self.sanitize_input(self.current_time, self.parsed)
+        if not given_year:
+            base = self.get_base(sanitized, base_year, self.current_time)
+        else:
+            base = self.get_base(sanitized, given_year, self.current_time, forced=True)
         rel_out = self.calc_relative_time(sanitized)
         base = self.add_relative_delta(base, rel_out, self.current_time)
 

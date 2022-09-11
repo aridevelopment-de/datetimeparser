@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Any, Union
 
 from datetimeparser.utils.baseclasses import *
 from datetimeparser.utils.enums import *
@@ -19,6 +19,19 @@ class EvaluatorUtils:
         """
 
         return dt + timedelta(days=(7 - dt.weekday()))
+
+    @staticmethod
+    def x_week_of_month(relative_dt: RelativeDateTime, idx: int, parsed: list[Any, ...], year):
+
+        parsed[idx + 1] = EvaluatorUtils.datetime_to_absolute_datetime(parsed[idx + 1].time_value(year))
+
+        relative_dt.days = EvaluatorUtils.get_week_of(
+            EvaluatorUtils.absolute_datetime_to_datetime(parsed[idx + 1])
+        ).day - 1
+
+        relative_dt.weeks -= 1
+
+        return parsed
 
     @staticmethod
     def absolute_datetime_to_datetime(absolute_datetime: AbsoluteDateTime) -> datetime:
@@ -59,7 +72,9 @@ class EvaluatorUtils:
         return absdt
 
     @staticmethod
-    def sanitize_input(current_time: datetime, parsed_list: list) -> List[Union[RelativeDateTime, AbsoluteDateTime, int, Constant]]:
+    def sanitize_input(
+            current_time: datetime, parsed_list: list
+    ) -> tuple[List[Union[RelativeDateTime, AbsoluteDateTime, int, Constant]], int]:
         """
         Removes useless keywords
         :param parsed_list: The list that should be sanitized
@@ -67,6 +82,7 @@ class EvaluatorUtils:
         :return: a list without keywords
         """
 
+        given_year = 0
         for idx, element in enumerate(parsed_list):
             if isinstance(element, Constant) and element.name == "of":
                 if isinstance(parsed_list[idx - 1], RelativeDateTime):
@@ -81,17 +97,21 @@ class EvaluatorUtils:
                         if parsed_list[idx + 1] in MonthConstants.ALL:
                             try:
                                 year = parsed_list.pop(idx + 2).year
+                                given_year = year
                             except IndexError:
                                 year = current_time.year
-                            parsed_list[idx + 1] = EvaluatorUtils.datetime_to_absolute_datetime(parsed_list[idx + 1].time_value(year))
 
-                        relative_dt.days = EvaluatorUtils.get_week_of(
-                                                EvaluatorUtils.absolute_datetime_to_datetime(parsed_list[idx + 1])
-                                            ).day - 1
+                            pars1, pars2 = parsed_list.copy(), parsed_list.copy()
+                            ghost_parsed_list = EvaluatorUtils.x_week_of_month(relative_dt, idx, pars1, year)
+                            test_out = EvaluatorUtils.add_relative_delta(
+                                EvaluatorUtils.absolute_datetime_to_datetime(ghost_parsed_list[-1]),
+                                ghost_parsed_list[0],
+                                current_time
+                            )
+                            if current_time > test_out and not given_year:
+                                parsed_list = EvaluatorUtils.x_week_of_month(relative_dt, idx, pars2, year+1)
 
-                        relative_dt.weeks -= 1
-
-        return list(filter(lambda e: e not in Keywords.ALL and not isinstance(e, str), parsed_list))
+        return list(filter(lambda e: e not in Keywords.ALL and not isinstance(e, str), parsed_list)), given_year
 
     @staticmethod
     def cut_time(time: datetime) -> datetime:
@@ -104,13 +124,14 @@ class EvaluatorUtils:
         return datetime(time.year, time.month, time.day, 0, 0, 0)
 
     @staticmethod
-    def get_base(sanitized_input: list, year: int, current_time: datetime) -> datetime:
+    def get_base(sanitized_input: list, year: int, current_time: datetime, forced: bool = False) -> datetime:
         """
         Takes the last elements from the list and tries to generate a basis for further processing from them
         The base consists of at least one constant, to which values are then assigned
         :param sanitized_input: The sanitized list
         :param year: The year for the Constant
         :param current_time: The current datetime
+        :param forced: If a given year should be used regardless of current time
         :return: datetime
         """
 
@@ -151,13 +172,14 @@ class EvaluatorUtils:
                 dt: datetime = sanitized_input[-1].time_value(year)
                 day: int = sanitized_input[-2]
                 out = datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
-                if out > current_time:
+
+                if out > current_time or forced:
                     return out
                 out += relativedelta(years=1)
                 return out
 
             # Checks if an event already happened this year (f.e. eastern). If so, the next year will be used
-            if sanitized_input[-1].time_value(year) > current_time:
+            if sanitized_input[-1].time_value(year) > current_time or forced:
                 return sanitized_input[-1].time_value(year)
             else:
                 return sanitized_input[-1].time_value(year + 1)
