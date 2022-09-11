@@ -378,9 +378,14 @@ class ConstantRelativeExtensionsParser:
             return None
         else:
             # Only the argument directly after the keyword can be a year
+            # Except for cases like tomorrow 12 o'clock
             if rest_arguments[0].isdecimal():
                 year = int(rest_arguments[0])
                 result = cls._find_constant(string, [])
+
+                # Check the exception via a DatetimeDeltaConstantsParser and set year to None.
+                if DatetimeDeltaConstantsParser().parse(" ".join(rest_arguments)) is not None:
+                    year = None
 
                 if result is not None:
                     return result[0], year
@@ -443,6 +448,8 @@ class ConstantRelativeExtensionsParser:
             result = cls._find_constant(tryable_keyword, arguments[i:])
 
             if result is not None:
+                # Year might also be a clock time (such as (tomorrow) 12 (o' clock))
+                # If that's the case, year will be None
                 keyword, year = result
                 break
 
@@ -510,6 +517,7 @@ class ConstantRelativeExtensionsParser:
         if result is None:
             return None
 
+        # Identify the first parts of the string and cutoff keyword + year if a year exists (there might also be no year)
         first_preposition, tryable_keyword, first_keyword, first_year, string = result
         string = string[len(tryable_keyword) + len(str(first_year if first_year is not None else "")):]
         string = " ".join(string.split())
@@ -596,7 +604,7 @@ class DatetimeDeltaConstantsParser:
                     continue
 
             # If the time does not match a clocktime format, does not contain a colon and is a number
-            # e.g. "3(pm|am)", return that time respecting the after_midday flag
+            # e.g. "3(pm|am)" or "3 o'clock", return that time respecting the after_midday flag
             if not parsed_time and time.count(":") == 0 and parse_int(time):
                 if after_midday is not None:
                     parsed_time = AbsoluteDateTime(hour=(12 if after_midday else 0) + int(time))
@@ -620,7 +628,7 @@ class DatetimeDeltaConstantsParser:
 
             # If there's no more content left
             # Return the parsed time
-            if not data:
+            if not data or (len(data) == 1 and data[0].lower() == 'o\'clock'):
                 return Method.DATETIME_DELTA_CONSTANTS, parsed_time
             else:
                 # Otherwise search for constants like
