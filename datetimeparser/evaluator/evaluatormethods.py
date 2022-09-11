@@ -121,7 +121,6 @@ class EvaluatorMethods(EvaluatorUtils):
 
             else:
                 dt = object_type.time_value(self.current_time.year)
-
                 if isinstance(dt, tuple):
                     dt = datetime(
                         year=self.current_time.year,
@@ -131,6 +130,7 @@ class EvaluatorMethods(EvaluatorUtils):
                         minute=dt[1],
                         second=dt[2]
                     )
+                    return dt
 
             if self.current_time >= dt and self.parsed[0] not in (Constants.ALL_RELATIVE_CONSTANTS and WeekdayConstants.ALL):
                 dt = object_type.time_value(self.current_time.year + 1)
