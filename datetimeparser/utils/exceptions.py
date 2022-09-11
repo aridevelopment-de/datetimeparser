@@ -1,3 +1,6 @@
+from typing import Union
+
+
 class EvaluatorException(Exception):
     """
     Base class for Evaluator Exceptions
@@ -12,7 +15,7 @@ class EvaluatorException(Exception):
 
 
 class FailedEvaluation(EvaluatorException):
-    def __init__(self, tried: str | list = None):
+    def __init__(self, tried: Union[str, list, None] = None):
 
         super().__init__(type(self).__name__, f"Cannot evaluate {tried} into datetime")
 

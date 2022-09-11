@@ -3,17 +3,17 @@ Main module which provides the parse function.
 """
 
 __all__ = ['parse', '__version__', '__author__']
-__version__ = "0.13.4"
+__version__ = "0.13.5"
 __author__ = "aridevelopment"
 
 import datetime
-from typing import Union
+from typing import Optional
 
 from datetimeparser.evaluator import Evaluator
 from datetimeparser.parser import Parser
 
 
-def parse(datetime_string: str, timezone: str = "Europe/Berlin") -> Union[datetime.datetime, None]:
+def parse(datetime_string: str, timezone: str = "Europe/Berlin") -> Optional[datetime.datetime]:
     """
     Parses a datetime string and returns a datetime object.
     If the datetime string cannot be parsed, None is returned.
