@@ -33,7 +33,7 @@ class EvaluatorMethods(EvaluatorUtils):
         return ev_out
 
     def evaluate_constant_relatives(self) -> datetime:
-        sanitized = self.sanitize_input(self.current_time, self.parsed)
+        sanitized, _ = self.sanitize_input(self.current_time, self.parsed)
         base: datetime = self.current_time
         ev_out = None
 
