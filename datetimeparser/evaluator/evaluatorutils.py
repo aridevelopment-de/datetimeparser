@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any, Tuple, Union
 
 from datetimeparser.utils.baseclasses import *
 from datetimeparser.utils.enums import *
@@ -21,7 +21,7 @@ class EvaluatorUtils:
         return dt + timedelta(days=(7 - dt.weekday()))
 
     @staticmethod
-    def x_week_of_month(relative_dt: RelativeDateTime, idx: int, parsed: list[Any, ...], year):
+    def x_week_of_month(relative_dt: RelativeDateTime, idx: int, parsed: List[Union[Any]], year):
 
         parsed[idx + 1] = EvaluatorUtils.datetime_to_absolute_datetime(parsed[idx + 1].time_value(year))
 
@@ -74,7 +74,7 @@ class EvaluatorUtils:
     @staticmethod
     def sanitize_input(
             current_time: datetime, parsed_list: list
-    ) -> tuple[List[Union[RelativeDateTime, AbsoluteDateTime, int, Constant]], int]:
+    ) -> Tuple[List[Union[RelativeDateTime, AbsoluteDateTime, int, Constant]], int]:
         """
         Removes useless keywords
         :param parsed_list: The list that should be sanitized
