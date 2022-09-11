@@ -33,7 +33,7 @@ class EvaluatorMethods(EvaluatorUtils):
         return ev_out
 
     def evaluate_constant_relatives(self) -> datetime:
-        sanitized = self.sanitize_input(self.current_time, self.parsed)
+        sanitized, _ = self.sanitize_input(self.current_time, self.parsed)
         base: datetime = self.current_time
         ev_out = None
 
@@ -90,8 +90,11 @@ class EvaluatorMethods(EvaluatorUtils):
 
     def evaluate_absolute_prepositions(self) -> datetime:
         base_year = self.current_time.year
-        sanitized = self.sanitize_input(self.current_time, self.parsed)
-        base = self.get_base(sanitized, base_year, self.current_time)
+        sanitized, given_year = self.sanitize_input(self.current_time, self.parsed)
+        if not given_year:
+            base = self.get_base(sanitized, base_year, self.current_time)
+        else:
+            base = self.get_base(sanitized, given_year, self.current_time, forced=True)
         rel_out = self.calc_relative_time(sanitized)
         base = self.add_relative_delta(base, rel_out, self.current_time)
 
@@ -121,7 +124,6 @@ class EvaluatorMethods(EvaluatorUtils):
 
             else:
                 dt = object_type.time_value(self.current_time.year)
-
                 if isinstance(dt, tuple):
                     dt = datetime(
                         year=self.current_time.year,
@@ -131,6 +133,7 @@ class EvaluatorMethods(EvaluatorUtils):
                         minute=dt[1],
                         second=dt[2]
                     )
+                    return dt
 
             if self.current_time >= dt and self.parsed[0] not in (Constants.ALL_RELATIVE_CONSTANTS and WeekdayConstants.ALL):
                 dt = object_type.time_value(self.current_time.year + 1)

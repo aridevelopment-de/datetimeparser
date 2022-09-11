@@ -3,7 +3,7 @@ Main module which provides the parse function.
 """
 
 __all__ = ['parse', '__version__', '__author__']
-__version__ = "0.13.3"
+__version__ = "0.13.4"
 __author__ = "aridevelopment"
 
 import datetime
