@@ -1,4 +1,13 @@
 from datetime import datetime, timedelta
+import math
+
+
+def day_of_year(dt: datetime) -> int:
+    n1 = math.floor(275 * dt.month / 9)
+    n2 = math.floor((dt.month + 9) / 12)
+    n3 = (1 + math.floor((dt.year - 4 * math.floor(dt.year / 4) + 2) / 3))
+
+    return n1 - (n2 * n3) + dt.day - 30
 
 
 def eastern_calc(year_time: int) -> datetime:
@@ -34,3 +43,42 @@ def days_feb(year_time: int) -> int:
 
 def year_start(year_time: int) -> datetime:
     return datetime(year=year_time, month=1, day=1)
+
+
+def calc_sun_time(dt: datetime, timezone: tuple[float, float, float], sunrise: bool = True) -> datetime:
+    """
+    Calculates the time for sunrise and sunset based on coordinates and a date
+    :param dt: The date for calculating the sunset
+    :param timezone: A tuple with longitude and magnitude and timezone offset
+    :param sunrise: If True the sunrise will be calculated if False the sunset
+    :returns: The time for the sunrise/sunset
+    """
+
+    to_rad: float = math.pi / 180
+    day: int = day_of_year(dt)
+    longitude_to_hour = timezone[0] / 15
+
+    b = timezone[1] * to_rad
+    h = -50 * to_rad / 60
+
+    time_equation = -0.171 * math.sin(0.0337 * day + 0.465) - 0.1299 * math.sin(0.01787 * day - 0.168)
+    declination = 0.4095 * math.sin(0.016906 * (day - 80.086))
+
+    time_difference = 12 * math.acos((math.sin(h) - math.sin(b) * math. sin(declination)) / (math.cos(b) * math.cos(declination))) / math.pi
+
+    if sunrise:
+        time = 12 - time_difference
+    else:
+        time = 12 + time_difference
+
+    time: float = (time - time_equation) + longitude_to_hour + timezone[2]
+
+    hour: int = int(time)
+    minutes_left: float = time - int(time)
+    minutes_with_seconds = minutes_left * 60
+    minute: int = int(minutes_with_seconds)
+    second: int = int((minutes_with_seconds - minute) * 60)
+
+    out: datetime = datetime(year=dt.year, month=dt.month, day=dt.day, hour=hour, minute=minute, second=second)
+
+    return out
