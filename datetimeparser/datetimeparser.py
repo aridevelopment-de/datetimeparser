@@ -2,7 +2,7 @@
 Main module which provides the parse function.
 """
 
-__all__ = ['parse', '__version__', '__author__', 'Result']
+__all__ = ['parse', 'Result', '__version__', '__author__']
 __version__ = "0.13.5"
 __author__ = "aridevelopment"
 
