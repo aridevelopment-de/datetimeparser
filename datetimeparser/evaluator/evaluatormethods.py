@@ -2,6 +2,7 @@ from datetimeparser.evaluator.evaluatorutils import EvaluatorUtils
 from datetimeparser.utils.baseclasses import *
 from datetimeparser.utils.enums import *
 from datetimeparser.utils.exceptions import InvalidValue
+from datetimeparser.utils.formulars import calc_sun_time
 
 
 class EvaluatorMethods(EvaluatorUtils):
@@ -9,16 +10,18 @@ class EvaluatorMethods(EvaluatorUtils):
     Evaluates a datetime-object from a given list returned from the parser
     """
 
-    def __init__(self, parsed, current_time: datetime, offset: timedelta = None):
+    def __init__(self, parsed, current_time: datetime, coordinates: tuple[float, float], offset: timedelta = None):
         """
         :param parsed: object returned from the parser
         :param current_time: the current datetime
+        :param coordinates: coordinates from the timezone
         :param offset: the UTC-offset from the current timezone. Default: None
         """
 
         self.parsed = parsed
         self.current_time = current_time
         self.offset = offset
+        self.coordinates = coordinates
 
     def evaluate_absolute_date_formats(self) -> datetime:
         ev_out = datetime(
@@ -122,6 +125,15 @@ class EvaluatorMethods(EvaluatorUtils):
                     "%Y-%m-%d %H:%M:%S"
                 )
 
+            elif object_type.name == "sunset" or object_type.name == "sunrise":
+                ofs = self.offset.total_seconds()/60/60  # -> to hours
+                # TODO: at the moment summer and winter time change the result for the offset around 1 hour
+                dt = calc_sun_time(
+                    self.current_time,
+                    (self.coordinates[0], self.coordinates[1], ofs),  # something does not work properly, Berlin works with offset 0, Dubai not, idk why
+                    object_type.name == "sunrise"
+                )
+
             else:
                 dt = object_type.time_value(self.current_time.year)
                 if isinstance(dt, tuple):
@@ -135,7 +147,9 @@ class EvaluatorMethods(EvaluatorUtils):
                     )
                     return dt
 
-            if self.current_time >= dt and self.parsed[0] not in (Constants.ALL_RELATIVE_CONSTANTS and WeekdayConstants.ALL):
+            if self.current_time >= dt and self.parsed[0] not in (
+                    Constants.ALL_RELATIVE_CONSTANTS and WeekdayConstants.ALL and DatetimeDeltaConstants.CHANGING
+            ):
                 dt = object_type.time_value(self.current_time.year + 1)
 
             if self.current_time >= dt and self.parsed[0] in WeekdayConstants.ALL:

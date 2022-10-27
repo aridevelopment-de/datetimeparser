@@ -45,10 +45,11 @@ def get_testcase_results(testcase: str, expected_value: datetime.datetime = None
     if parser_result is None:
         return StatusType.PARSER_RETURNS_NONE, None
 
-    evaluator = Evaluator(parser_result, tz="Europe/Berlin")
+    evaluator = Evaluator(parser_result, tz="Europe/Berlin", coordinates=(13.41053, 52.52437))
+    # Berlin (13.41053, 52.52437), Dubai (55.2962, 25.2684)
 
     try:
-        evaluator_result = evaluator.evaluate()
+        evaluator_result, _, _ = evaluator.evaluate()
     except BaseException as error:
         if expected_value == ThrowException:
             return StatusType.SUCCESS, "Evaluator threw exception but it was expected"

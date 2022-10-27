@@ -49,7 +49,7 @@ def calc_sun_time(dt: datetime, timezone: tuple[float, float, float], sunrise: b
     """
     Calculates the time for sunrise and sunset based on coordinates and a date
     :param dt: The date for calculating the sunset
-    :param timezone: A tuple with longitude and magnitude and timezone offset
+    :param timezone: A tuple with longitude and latitude and timezone offset
     :param sunrise: If True the sunrise will be calculated if False the sunset
     :returns: The time for the sunrise/sunset
     """
