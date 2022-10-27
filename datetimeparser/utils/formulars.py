@@ -57,7 +57,6 @@ def calc_sun_time(dt: datetime, timezone: tuple[float, float, float], sunrise: b
     to_rad: float = math.pi / 180
     day: int = day_of_year(dt)
     longitude_to_hour = timezone[0] / 15
-
     b = timezone[1] * to_rad
     h = -50 * to_rad / 60
 
@@ -66,12 +65,12 @@ def calc_sun_time(dt: datetime, timezone: tuple[float, float, float], sunrise: b
 
     time_difference = 12 * math.acos((math.sin(h) - math.sin(b) * math. sin(declination)) / (math.cos(b) * math.cos(declination))) / math.pi
 
-    if sunrise:
-        time = 12 - time_difference
+    if sunrise:  # woz -> True time at location
+        woz = 12 - time_difference
     else:
-        time = 12 + time_difference
+        woz = 12 + time_difference
 
-    time: float = (time - time_equation) + longitude_to_hour + timezone[2]
+    time: float = (woz - time_equation) - longitude_to_hour + timezone[2]
 
     hour: int = int(time)
     minutes_left: float = time - int(time)
@@ -82,3 +81,4 @@ def calc_sun_time(dt: datetime, timezone: tuple[float, float, float], sunrise: b
     out: datetime = datetime(year=dt.year, month=dt.month, day=dt.day, hour=hour, minute=minute, second=second)
 
     return out
+

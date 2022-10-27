@@ -3,6 +3,7 @@ from datetimeparser.utils.baseclasses import *
 from datetimeparser.utils.enums import *
 from datetimeparser.utils.exceptions import InvalidValue
 from datetimeparser.utils.formulars import calc_sun_time
+from datetimeparser.utils.geometry import TimeZoneManager
 
 
 class EvaluatorMethods(EvaluatorUtils):
@@ -10,7 +11,7 @@ class EvaluatorMethods(EvaluatorUtils):
     Evaluates a datetime-object from a given list returned from the parser
     """
 
-    def __init__(self, parsed, current_time: datetime, coordinates: tuple[float, float], offset: timedelta = None):
+    def __init__(self, parsed, current_time: datetime, coordinates: tuple[float, float], timezone: str, offset: timedelta = None):
         """
         :param parsed: object returned from the parser
         :param current_time: the current datetime
@@ -22,6 +23,7 @@ class EvaluatorMethods(EvaluatorUtils):
         self.current_time = current_time
         self.offset = offset
         self.coordinates = coordinates
+        self.timezone = timezone
 
     def evaluate_absolute_date_formats(self) -> datetime:
         ev_out = datetime(
@@ -128,9 +130,11 @@ class EvaluatorMethods(EvaluatorUtils):
             elif object_type.name == "sunset" or object_type.name == "sunrise":
                 ofs = self.offset.total_seconds()/60/60  # -> to hours
                 # TODO: at the moment summer and winter time change the result for the offset around 1 hour
+                if not self.coordinates:
+                    self.coordinates = TimeZoneManager().get_coordinates(self.timezone)
                 dt = calc_sun_time(
                     self.current_time,
-                    (self.coordinates[0], self.coordinates[1], ofs),  # something does not work properly, Berlin works with offset 0, Dubai not, idk why
+                    (self.coordinates[0], self.coordinates[1], ofs),
                     object_type.name == "sunrise"
                 )
 

@@ -45,7 +45,7 @@ def get_testcase_results(testcase: str, expected_value: datetime.datetime = None
     if parser_result is None:
         return StatusType.PARSER_RETURNS_NONE, None
 
-    evaluator = Evaluator(parser_result, tz="Europe/Berlin", coordinates=(13.41053, 52.52437))
+    evaluator = Evaluator(parser_result, tz="Europe/Berlin", coordinates=None)
     # Berlin (13.41053, 52.52437), Dubai (55.2962, 25.2684)
 
     try:
