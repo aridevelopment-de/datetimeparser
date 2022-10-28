@@ -109,7 +109,7 @@ class EvaluatorUtils:
                                 current_time
                             )
                             if current_time > test_out and not given_year:
-                                parsed_list = EvaluatorUtils.x_week_of_month(relative_dt, idx, pars2, year+1)
+                                parsed_list = EvaluatorUtils.x_week_of_month(relative_dt, idx, pars2, year + 1)
 
         return list(filter(lambda e: e not in Keywords.ALL and not isinstance(e, str), parsed_list)), given_year
 

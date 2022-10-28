@@ -81,4 +81,3 @@ def calc_sun_time(dt: datetime, timezone: tuple[float, float, float], sunrise: b
     out: datetime = datetime(year=dt.year, month=dt.month, day=dt.day, hour=hour, minute=minute, second=second)
 
     return out
-

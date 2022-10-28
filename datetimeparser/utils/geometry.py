@@ -10,9 +10,9 @@ class TimeZoneManager(TimezoneFinder):
         coords = self.get_geometry(tz_name=timezone, coords_as_pairs=True)
 
         while not isinstance(coords[0], tuple):
-            coords = coords[len(coords)//2]
+            coords = coords[len(coords) // 2]
 
-        coords: tuple[float, float] = coords[len(coords)//2]
+        coords: tuple[float, float] = coords[len(coords) // 2]
 
         # timezone = self.timezone_at(lng=coords[0] + 1, lat=coords[1])
         # TODO: needs to be improved, at the moment it's just a small fix, not tested if it works with all timezones

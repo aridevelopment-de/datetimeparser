@@ -133,7 +133,7 @@ class EvaluatorMethods(EvaluatorUtils):
                 )
 
             elif object_type.name == "sunset" or object_type.name == "sunrise":
-                ofs = self.offset.total_seconds()/60/60  # -> to hours
+                ofs = self.offset.total_seconds() / 60 / 60  # -> to hours
                 # TODO: at the moment summer and winter time change the result for the offset around 1 hour
                 if not self.coordinates:
                     self.coordinates = TimeZoneManager().get_coordinates(self.timezone)
