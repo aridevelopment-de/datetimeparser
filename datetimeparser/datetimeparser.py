@@ -25,8 +25,8 @@ def parse(
     :param datetime_string: The datetime string to parse.
     :param timezone: The timezone to use. Should be a valid timezone for pytz.timezone(). Default: Europe/Berlin
     :param coordinates: A tuple containing longitude and latitude. If coordinates are given, the timezone will be calculated,
-        independently of the given timezone param
-        NOTE: It takes a longer time to calculate the timezone, it can happen that it takes up to 30 seconds for a result
+        independently of the given timezone param.
+        NOTE: It can take some seconds until a result is returned
     :return: A result object containing the returned time, the timezone and optional coordinates.
              If the process fails, None will be returned
     """

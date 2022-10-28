@@ -1,3 +1,5 @@
+from typing import Any, Optional
+
 from datetimeparser.evaluator.evaluatorutils import EvaluatorUtils
 from datetimeparser.utils.baseclasses import *
 from datetimeparser.utils.enums import *
@@ -11,10 +13,13 @@ class EvaluatorMethods(EvaluatorUtils):
     Evaluates a datetime-object from a given list returned from the parser
     """
 
-    def __init__(self, parsed, current_time: datetime, coordinates: tuple[float, float], timezone: str, offset: timedelta = None):
+    def __init__(
+            self, parsed: Any, current_time: datetime, timezone: str, coordinates: Optional[tuple[float, float]], offset: timedelta = None
+    ):
         """
         :param parsed: object returned from the parser
         :param current_time: the current datetime
+        :param timezone: the given timezone
         :param coordinates: coordinates from the timezone
         :param offset: the UTC-offset from the current timezone. Default: None
         """
@@ -105,7 +110,7 @@ class EvaluatorMethods(EvaluatorUtils):
 
         return base
 
-    def evaluate_constants(self) -> datetime:
+    def evaluate_constants(self) -> tuple[datetime, Optional[tuple[float, float]]]:
         dt: datetime = self.current_time
         object_type: Constant = self.parsed[0]
 
@@ -132,6 +137,7 @@ class EvaluatorMethods(EvaluatorUtils):
                 # TODO: at the moment summer and winter time change the result for the offset around 1 hour
                 if not self.coordinates:
                     self.coordinates = TimeZoneManager().get_coordinates(self.timezone)
+
                 dt = calc_sun_time(
                     self.current_time,
                     (self.coordinates[0], self.coordinates[1], ofs),
@@ -149,7 +155,7 @@ class EvaluatorMethods(EvaluatorUtils):
                         minute=dt[1],
                         second=dt[2]
                     )
-                    return dt
+                    return dt, self.coordinates
 
             if self.current_time >= dt and self.parsed[0] not in (
                     Constants.ALL_RELATIVE_CONSTANTS and WeekdayConstants.ALL and DatetimeDeltaConstants.CHANGING
@@ -166,7 +172,7 @@ class EvaluatorMethods(EvaluatorUtils):
         if object_type.offset:
             ev_out = self.add_relative_delta(ev_out, self.get_offset(object_type, self.offset), self.current_time)
 
-        return ev_out
+        return ev_out, self.coordinates
 
     def evaluate_relative_datetime(self) -> datetime:
         out: datetime = self.current_time

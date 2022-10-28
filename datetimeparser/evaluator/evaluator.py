@@ -32,8 +32,9 @@ class Evaluator:
         self.coordinates = coordinates
 
     def evaluate(self) -> Union[tuple[datetime, str, tuple[float, float]], None]:
-        ev_out = None
-        ev = EvaluatorMethods(self.parsed_object_content, self.current_datetime, self.coordinates, self.timezone.zone, self.offset)
+        ev_out: Optional[datetime] = None
+        coordinates: Optional[tuple[float, float]] = None
+        ev = EvaluatorMethods(self.parsed_object_content, self.current_datetime, self.timezone.zone, self.coordinates, self.offset)
 
         if self.parsed_object_type == Method.ABSOLUTE_DATE_FORMATS:
             ev_out = ev.evaluate_absolute_date_formats()
@@ -42,7 +43,7 @@ class Evaluator:
             ev_out = ev.evaluate_absolute_prepositions()
 
         if self.parsed_object_type == Method.CONSTANTS:
-            ev_out = ev.evaluate_constants()
+            ev_out, coordinates = ev.evaluate_constants()
 
         if self.parsed_object_type == Method.RELATIVE_DATETIMES:
             ev_out = ev.evaluate_relative_datetime()
@@ -54,6 +55,6 @@ class Evaluator:
             ev_out = ev.evaluate_datetime_delta_constants()
 
         if ev_out:
-            return ev_out, self.timezone.zone, self.coordinates
+            return ev_out, self.timezone.zone, self.coordinates or coordinates
         else:
             raise FailedEvaluation(self.parsed_object_content)
