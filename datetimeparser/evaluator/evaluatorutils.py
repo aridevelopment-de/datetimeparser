@@ -1,3 +1,4 @@
+import pytz
 from typing import Any, Tuple, Union
 
 from datetimeparser.utils.baseclasses import *
@@ -252,3 +253,8 @@ class EvaluatorUtils:
                 off += con.offset
 
             return RelativeDateTime(hours=off + offset.seconds / 3600 + offset.days * 24)
+
+    @staticmethod
+    def daylight_saving(tz: str):
+        """checks if a timezone currently saves daylight (winter-/summer-time)"""
+        return bool(datetime.now(pytz.timezone(tz)).dst())

@@ -171,6 +171,8 @@ class EvaluatorMethods(EvaluatorUtils):
 
         if object_type.offset:
             ev_out = self.add_relative_delta(ev_out, self.get_offset(object_type, self.offset), self.current_time)
+            if self.daylight_saving(self.timezone):
+                ev_out -= timedelta(hours=1)
 
         return ev_out, self.coordinates
 
