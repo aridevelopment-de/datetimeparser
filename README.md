@@ -29,17 +29,17 @@ Below you can find some examples of how datetimeparser can be used.
 ```python
 from datetimeparser import parse
 
-print(parse("next 3 years and 2 months"))
-# <Result: time='2025-12-28 11:57:25', timezone='Europe/Berlin', coordinates='None'>
+print(parse("next 3 years and 2 months").time)
+# 2025-12-28 11:57:25
 
-print(parse("begin of advent of code 2022"))
-# <Result: time='2022-12-01 06:00:00', timezone='Europe/Berlin', coordinates='None'>
+print(parse("begin of advent of code 2022").time)
+# 2022-12-01 06:00:00
 
-print(parse("in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds"))
-# <Result: time='2024-01-22 17:04:26', timezone='Europe/Berlin', coordinates='None'>
+print(parse("in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds").time)
+# 2024-01-22 17:04:26
 
-print(parse("10 days and 2 hours after 3 months before christmas 2020"))
-# <Result: time='2020-10-05 02:00:00', timezone='Europe/Berlin', coordinates='None'>
+print(parse("10 days and 2 hours after 3 months before christmas 2020").time)
+# 2020-10-05 02:00:00
 
 print(parse("sunrise"))
 # <Result: time='2022-10-28 08:15:19', timezone='Europe/Berlin', coordinates=[longitude='7.188402', latitude='50.652927999999996]'>

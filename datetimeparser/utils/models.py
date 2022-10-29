@@ -2,6 +2,15 @@ from datetime import datetime
 
 
 class Result:
+    """
+    The returned Result by the parse function, containing the output information
+
+    - Attributes:
+        - time (datetime): The parsed time
+        - timezone (str): The used timezone
+        - coordinates (Optional[tuple[float, float]]): Coordinates used for parsing
+
+    """
     time: datetime
     timezone: str
     coordinates: tuple[float, float]
