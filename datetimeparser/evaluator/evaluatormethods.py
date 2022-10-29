@@ -1,7 +1,11 @@
+from typing import Any, Optional
+
 from datetimeparser.evaluator.evaluatorutils import EvaluatorUtils
 from datetimeparser.utils.baseclasses import *
 from datetimeparser.utils.enums import *
 from datetimeparser.utils.exceptions import InvalidValue
+from datetimeparser.utils.formulars import calc_sun_time
+from datetimeparser.utils.geometry import TimeZoneManager
 
 
 class EvaluatorMethods(EvaluatorUtils):
@@ -9,16 +13,22 @@ class EvaluatorMethods(EvaluatorUtils):
     Evaluates a datetime-object from a given list returned from the parser
     """
 
-    def __init__(self, parsed, current_time: datetime, offset: timedelta = None):
+    def __init__(
+            self, parsed: Any, current_time: datetime, timezone: str, coordinates: Optional[tuple[float, float]], offset: timedelta = None
+    ):
         """
         :param parsed: object returned from the parser
         :param current_time: the current datetime
+        :param timezone: the given timezone
+        :param coordinates: coordinates from the timezone
         :param offset: the UTC-offset from the current timezone. Default: None
         """
 
         self.parsed = parsed
         self.current_time = current_time
         self.offset = offset
+        self.coordinates = coordinates
+        self.timezone = timezone
 
     def evaluate_absolute_date_formats(self) -> datetime:
         ev_out = datetime(
@@ -100,7 +110,7 @@ class EvaluatorMethods(EvaluatorUtils):
 
         return base
 
-    def evaluate_constants(self) -> datetime:
+    def evaluate_constants(self) -> tuple[datetime, Optional[tuple[float, float]]]:
         dt: datetime = self.current_time
         object_type: Constant = self.parsed[0]
 
@@ -122,6 +132,18 @@ class EvaluatorMethods(EvaluatorUtils):
                     "%Y-%m-%d %H:%M:%S"
                 )
 
+            elif object_type.name == "sunset" or object_type.name == "sunrise":
+                ofs = self.offset.total_seconds() / 60 / 60  # -> to hours
+                # TODO: at the moment summer and winter time change the result for the offset around 1 hour
+                if not self.coordinates:
+                    self.coordinates = TimeZoneManager().get_coordinates(self.timezone)
+
+                dt = calc_sun_time(
+                    self.current_time,
+                    (self.coordinates[0], self.coordinates[1], ofs),
+                    object_type.name == "sunrise"
+                )
+
             else:
                 dt = object_type.time_value(self.current_time.year)
                 if isinstance(dt, tuple):
@@ -133,9 +155,11 @@ class EvaluatorMethods(EvaluatorUtils):
                         minute=dt[1],
                         second=dt[2]
                     )
-                    return dt
+                    return dt, self.coordinates
 
-            if self.current_time >= dt and self.parsed[0] not in (Constants.ALL_RELATIVE_CONSTANTS and WeekdayConstants.ALL):
+            if self.current_time >= dt and self.parsed[0] not in (
+                    Constants.ALL_RELATIVE_CONSTANTS and WeekdayConstants.ALL and DatetimeDeltaConstants.CHANGING
+            ):
                 dt = object_type.time_value(self.current_time.year + 1)
 
             if self.current_time >= dt and self.parsed[0] in WeekdayConstants.ALL:
@@ -148,7 +172,7 @@ class EvaluatorMethods(EvaluatorUtils):
         if object_type.offset:
             ev_out = self.add_relative_delta(ev_out, self.get_offset(object_type, self.offset), self.current_time)
 
-        return ev_out
+        return ev_out, self.coordinates
 
     def evaluate_relative_datetime(self) -> datetime:
         out: datetime = self.current_time
