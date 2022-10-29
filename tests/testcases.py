@@ -79,8 +79,8 @@ testcases = {
     # Absolute prepositions
     "absolute_prepositions": {
         "second day after christmas": Expected(time_sensitive=True, month=12, day=27),
-        "3rd week of august": Expected(time_sensitive=True, month=8, day=22),
-        "4. week of august": Expected(time_sensitive=True, month=8, day=29),
+        "3rd week of august": Expected(time_sensitive=True, month=8, day=14),
+        "4. week of august": Expected(time_sensitive=True, month=8, day=21),
         "1st of august": Expected(time_sensitive=True, month=8, day=1),
         "fifth month of 2021": Expected(year=2021, month=5, day=1),
         "three days after the fifth of august 2018": Expected(year=2018, month=8, day=8),
