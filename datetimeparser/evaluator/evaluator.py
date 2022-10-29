@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone, UnknownTimeZoneError
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 from datetimeparser.utils.baseclasses import AbsoluteDateTime, RelativeDateTime
 from datetimeparser.utils.enums import Method
@@ -10,7 +10,7 @@ from datetimeparser.utils.geometry import TimeZoneManager
 
 
 class Evaluator:
-    def __init__(self, parsed_object, tz="Europe/Berlin", coordinates: Optional[tuple[float, float]] = None):
+    def __init__(self, parsed_object, tz="Europe/Berlin", coordinates: Optional[Tuple[float, float]] = None):
         """
         :param parsed_object: the parsed object from parser
         :param tz: the timezone for the datetime
@@ -31,9 +31,9 @@ class Evaluator:
         self.timezone = tiz
         self.coordinates = coordinates
 
-    def evaluate(self) -> Union[tuple[datetime, str, tuple[float, float]], None]:
+    def evaluate(self) -> Union[Tuple[datetime, str, Tuple[float, float]], None]:
         ev_out: Optional[datetime] = None
-        coordinates: Optional[tuple[float, float]] = None
+        coordinates: Optional[Tuple[float, float]] = None
         ev = EvaluatorMethods(self.parsed_object_content, self.current_datetime, self.timezone.zone, self.coordinates, self.offset)
 
         if self.parsed_object_type == Method.ABSOLUTE_DATE_FORMATS:

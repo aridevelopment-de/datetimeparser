@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Tuple
 
 
 class Result:
@@ -13,9 +14,9 @@ class Result:
     """
     time: datetime
     timezone: str
-    coordinates: tuple[float, float]
+    coordinates: Tuple[float, float]
 
-    def __init__(self, time: datetime, timezone: str, coordinates: tuple[float, float] = None):
+    def __init__(self, time: datetime, timezone: str, coordinates: Tuple[float, float] = None):
         self.time = time
         self.timezone = timezone
         self.coordinates = coordinates

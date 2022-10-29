@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Tuple
 import math
 
 
@@ -45,7 +46,7 @@ def year_start(year_time: int) -> datetime:
     return datetime(year=year_time, month=1, day=1)
 
 
-def calc_sun_time(dt: datetime, timezone: tuple[float, float, float], sunrise: bool = True) -> datetime:
+def calc_sun_time(dt: datetime, timezone: Tuple[float, float, float], sunrise: bool = True) -> datetime:
     """
     Calculates the time for sunrise and sunset based on coordinates and a date
     :param dt: The date for calculating the sunset

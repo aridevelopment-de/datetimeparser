@@ -6,7 +6,7 @@ __all__ = ['parse', 'Result', '__version__', '__author__']
 __version__ = "0.14.0"
 __author__ = "aridevelopment"
 
-from typing import Optional
+from typing import Optional, Tuple
 
 from datetimeparser.evaluator import Evaluator
 from datetimeparser.parser import Parser
@@ -16,7 +16,7 @@ from datetimeparser.utils.models import Result
 def parse(
         datetime_string: str,
         timezone: str = "Europe/Berlin",
-        coordinates: Optional[tuple[float, float]] = None
+        coordinates: Optional[Tuple[float, float]] = None
 ) -> Optional[Result]:
     """
     Parses a datetime string and returns a datetime object.

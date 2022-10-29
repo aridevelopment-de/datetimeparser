@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 from datetimeparser.evaluator.evaluatorutils import EvaluatorUtils
 from datetimeparser.utils.baseclasses import *
@@ -14,7 +14,7 @@ class EvaluatorMethods(EvaluatorUtils):
     """
 
     def __init__(
-            self, parsed: Any, current_time: datetime, timezone: str, coordinates: Optional[tuple[float, float]], offset: timedelta = None
+            self, parsed: Any, current_time: datetime, timezone: str, coordinates: Optional[Tuple[float, float]], offset: timedelta = None
     ):
         """
         :param parsed: object returned from the parser
@@ -110,7 +110,7 @@ class EvaluatorMethods(EvaluatorUtils):
 
         return base
 
-    def evaluate_constants(self) -> tuple[datetime, Optional[tuple[float, float]]]:
+    def evaluate_constants(self) -> Tuple[datetime, Optional[Tuple[float, float]]]:
         dt: datetime = self.current_time
         object_type: Constant = self.parsed[0]
 
