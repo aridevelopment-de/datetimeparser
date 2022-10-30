@@ -1,4 +1,5 @@
 from timezonefinder import TimezoneFinder
+from typing import Tuple
 
 
 class TimeZoneManager(TimezoneFinder):
@@ -6,13 +7,13 @@ class TimeZoneManager(TimezoneFinder):
     def __init__(self):
         super(TimeZoneManager, self).__init__(in_memory=True)
 
-    def get_coordinates(self, timezone: str) -> tuple[float, float]:
+    def get_coordinates(self, timezone: str) -> Tuple[float, float]:
         coords = self.get_geometry(tz_name=timezone, coords_as_pairs=True)
 
-        while not isinstance(coords[0], tuple):
+        while not isinstance(coords[0], Tuple):
             coords = coords[len(coords) // 2]
 
-        coords: tuple[float, float] = coords[len(coords) // 2]
+        coords: Tuple[float, float] = coords[len(coords) // 2]
 
         # timezone = self.timezone_at(lng=coords[0] + 1, lat=coords[1])
         # TODO: needs to be improved, at the moment it's just a small fix, not tested if it works with all timezones
