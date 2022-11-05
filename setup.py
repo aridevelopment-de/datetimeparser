@@ -1,11 +1,15 @@
+import re
 from distutils.core import setup
 from pathlib import Path
-
-from datetimeparser.datetimeparser import __version__
 
 
 # for the readme
 this_directory = Path(__file__).parent
+__version__ = re.search(
+  r"^__version__\s*=\s*[\'\"]([^\'\"]*)[\'\"]",
+  this_directory.joinpath("datetimeparser/datetimeparser.py").read_text(encoding="utf-8"),
+  re.MULTILINE
+).group(1)
 long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
 setup(
