@@ -1,5 +1,5 @@
-import pytz
 from typing import Any, Tuple, Union
+from zoneinfo import ZoneInfo
 
 from datetimeparser.utils.baseclasses import *
 from datetimeparser.utils.enums import *
@@ -257,4 +257,4 @@ class EvaluatorUtils:
     @staticmethod
     def daylight_saving(tz: str):
         """checks if a timezone currently saves daylight (winter-/summer-time)"""
-        return bool(datetime.now(pytz.timezone(tz)).dst())
+        return bool(datetime.now(ZoneInfo(tz)).dst())

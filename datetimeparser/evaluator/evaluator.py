@@ -1,6 +1,6 @@
 from datetime import datetime
-from pytz import timezone, UnknownTimeZoneError
 from typing import Optional, Tuple, Union
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from datetimeparser.utils.baseclasses import AbsoluteDateTime, RelativeDateTime
 from datetimeparser.utils.enums import Method
@@ -20,21 +20,21 @@ class Evaluator:
         if coordinates:
             tz = TimeZoneManager().timezone_at(lng=coordinates[0], lat=coordinates[1])
         try:
-            tiz = timezone(tz)
-        except UnknownTimeZoneError:
+            tiz = ZoneInfo(tz)
+        except ZoneInfoNotFoundError:
             raise InvalidValue(f"Unknown timezone: '{tz}'")
 
         self.parsed_object_type = parsed_object[0]
         self.parsed_object_content: Union[list, AbsoluteDateTime, RelativeDateTime] = parsed_object[1]
         self.current_datetime: datetime = datetime.strptime(datetime.strftime(datetime.now(tz=tiz), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
         self.offset = tiz.utcoffset(self.current_datetime)
-        self.timezone = tiz
+        self.timezone: ZoneInfo = tiz
         self.coordinates = coordinates
 
     def evaluate(self) -> Union[Tuple[datetime, str, Tuple[float, float]], None]:
         ev_out: Optional[datetime] = None
         coordinates: Optional[Tuple[float, float]] = None
-        ev = EvaluatorMethods(self.parsed_object_content, self.current_datetime, self.timezone.zone, self.coordinates, self.offset)
+        ev = EvaluatorMethods(self.parsed_object_content, self.current_datetime, self.timezone.key, self.coordinates, self.offset)
 
         if self.parsed_object_type == Method.ABSOLUTE_DATE_FORMATS:
             ev_out = ev.evaluate_absolute_date_formats()
@@ -55,6 +55,6 @@ class Evaluator:
             ev_out = ev.evaluate_datetime_delta_constants()
 
         if ev_out:
-            return ev_out, self.timezone.zone, self.coordinates or coordinates
+            return ev_out, self.timezone.key, self.coordinates or coordinates
         else:
             raise FailedEvaluation(self.parsed_object_content)

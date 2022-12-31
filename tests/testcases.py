@@ -1,6 +1,6 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from pytz import timezone
+from zoneinfo import ZoneInfo
 
 
 class ThrowException:
@@ -20,7 +20,7 @@ class ReturnNone:
 
 
 class Expected:
-    TODAY = datetime.strptime(datetime.now(tz=timezone("Europe/Berlin")).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+    TODAY = datetime.strptime(datetime.now(tz=ZoneInfo("Europe/Berlin")).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
     def __new__(
             cls, now: bool = False, delta: relativedelta = None, time_sensitive: bool = False,
