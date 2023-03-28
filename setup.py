@@ -16,7 +16,7 @@ setup(
   name='python-datetimeparser',
   long_description_content_type="text/markdown",
   long_description=long_description,
-  version=".".join(__version__.split(".")[:2]) + "rc1." + __version__.split(".")[2],  # version number: https://peps.python.org/pep-0440/
+  version=__version__,
   license='MIT',
   description='A parser library built for parsing the english language into datetime objects.',
   author='Ari24',
