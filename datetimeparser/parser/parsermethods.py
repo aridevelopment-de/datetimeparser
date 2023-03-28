@@ -764,7 +764,7 @@ class AbsolutePrepositionParser:
             for keyword in self.RELATIVE_DATETIME_CONSTANTS:
                 if argument in keyword.get_all():
                     if keyword in DatetimeConstants.ALL:
-                        if not returned_data or not isinstance(returned_data[-1], int):
+                        if not returned_data or (not isinstance(returned_data[-1], int) and not returned_data[-1] in NumberCountConstants.ALL):
                             # For cases like 'day and month (before christmas)'
                             returned_data.append(1)
 
