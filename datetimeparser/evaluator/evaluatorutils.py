@@ -112,6 +112,10 @@ class EvaluatorUtils:
                             if current_time > test_out and not given_year:
                                 parsed_list = EvaluatorUtils.x_week_of_month(relative_dt, idx, pars2, year + 1)
 
+                else:
+                    if isinstance(parsed_list[idx + 1], AbsoluteDateTime):
+                        given_year = parsed_list[idx + 1].year
+
         return list(filter(lambda e: e not in Keywords.ALL and not isinstance(e, str), parsed_list)), given_year
 
     @staticmethod
@@ -124,8 +128,7 @@ class EvaluatorUtils:
 
         return datetime(time.year, time.month, time.day, 0, 0, 0)
 
-    @staticmethod
-    def get_base(sanitized_input: list, year: int, current_time: datetime, forced: bool = False) -> datetime:
+    def get_base(self, sanitized_input: list, year: int, current_time: datetime, forced: bool = False) -> datetime:
         """
         Takes the last elements from the list and tries to generate a basis for further processing from them
         The base consists of at least one constant, to which values are then assigned
@@ -140,12 +143,45 @@ class EvaluatorUtils:
         if isinstance(sanitized_input[-1], AbsoluteDateTime):
             # The Constant that the AbsoluteDateTime object should be based on (the year)
             if isinstance(sanitized_input[-2], Constant):
+                print(sanitized_input[-2].name, sanitized_input)
                 # An Integer giving the information about the 'x'th of something (f.e. "first of august")
                 if isinstance(sanitized_input[-3], int):
                     dt: datetime = sanitized_input[-2].time_value(sanitized_input[-1].year)
                     day: int = sanitized_input[-3]
                     return datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
-                return sanitized_input[-2].time_value(sanitized_input[-1].year)
+
+                if sanitized_input[-2].time_value:
+                    dt = sanitized_input[-2].time_value(sanitized_input[-1].year)
+                    print(dt)
+
+                    if isinstance(sanitized_input[-3], Constant) and sanitized_input[-3].value:
+                        dt += relativedelta(days=sanitized_input[-3].value - 1)
+                    elif isinstance(sanitized_input[-3], Constant) and not sanitized_input[-3].value:
+                        val = sanitized_input[-4].value
+
+                        if sanitized_input[-3].name == "days":
+                            return datetime(dt.year, dt.month, val, dt.hour, dt.minute, dt.second)
+                        if sanitized_input[-3].name == "weeks":
+                            dt = self.get_week_of(dt)
+                            return dt + relativedelta(weeks=val-1)
+                        if sanitized_input[-3].name == "months":
+                            return datetime(dt.year, val, dt.day, dt.hour, dt.minute, dt.second)
+
+                        days_dict = {x.name: x.time_value(dt) for x in WeekdayConstants.ALL}
+                        if sanitized_input[-3].name in days_dict:
+                            dt = datetime.strptime(days_dict.get(sanitized_input[-3].name), "%Y-%m-%d %H:%M:%S")
+                            dt += relativedelta(weeks=val - 1)
+
+                    return dt
+
+                else:
+                    if sanitized_input[-3].value:
+                        val: int = sanitized_input[-3].value
+
+                        if sanitized_input[-2].name == "days":
+                            return datetime(sanitized_input[-1].year, 1, val, 0, 0, 0)
+                        if sanitized_input[-2].name == "months":
+                            return datetime(sanitized_input[-1].year, val, 1, 0, 0, 0)
 
             # If a year is given but no months/days, they will be set to '1' because datetime can't handle month/day-values with '0'
             if sanitized_input[-1].year != 0:
@@ -169,8 +205,8 @@ class EvaluatorUtils:
 
         # If no AbsoluteDatetime is given, the default year will be used instead
         elif isinstance(sanitized_input[-1], Constant):
+            dt: datetime = sanitized_input[-1].time_value(year)
             if isinstance(sanitized_input[-2], int):
-                dt: datetime = sanitized_input[-1].time_value(year)
                 day: int = sanitized_input[-2]
                 out = datetime(dt.year, dt.month, day, dt.hour, dt.minute, dt.second)
 
@@ -178,6 +214,19 @@ class EvaluatorUtils:
                     return out
                 out += relativedelta(years=1)
                 return out
+            else:
+                if len(sanitized_input) == 3:
+                    val: int = sanitized_input[-3].value
+
+                    if sanitized_input[-2].name == "days":
+                        return datetime(dt.year, dt.month, dt.day + val, dt.hour, dt.minute, dt.second)
+                    if sanitized_input[-2].name == "weeks":
+                        dt = self.get_week_of(dt)
+                        return dt + relativedelta(weeks=val)
+                    if sanitized_input[-2].name == "months":
+                        return datetime(dt.year, dt.month + val, dt.day, dt.hour, dt.minute, dt.second)
+                if not isinstance(sanitized_input[-2], RelativeDateTime):
+                    return datetime(dt.year, dt.month, sanitized_input[-2].value, dt.hour, dt.minute, dt.second)
 
             # Checks if an event already happened this year (f.e. eastern). If so, the next year will be used
             if sanitized_input[-1].time_value(year) > current_time or forced:
