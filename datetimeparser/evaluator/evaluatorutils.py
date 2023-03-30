@@ -143,7 +143,6 @@ class EvaluatorUtils:
         if isinstance(sanitized_input[-1], AbsoluteDateTime):
             # The Constant that the AbsoluteDateTime object should be based on (the year)
             if isinstance(sanitized_input[-2], Constant):
-                print(sanitized_input[-2].name, sanitized_input)
                 # An Integer giving the information about the 'x'th of something (f.e. "first of august")
                 if isinstance(sanitized_input[-3], int):
                     dt: datetime = sanitized_input[-2].time_value(sanitized_input[-1].year)
@@ -152,7 +151,6 @@ class EvaluatorUtils:
 
                 if sanitized_input[-2].time_value:
                     dt = sanitized_input[-2].time_value(sanitized_input[-1].year)
-                    print(dt)
 
                     if isinstance(sanitized_input[-3], Constant) and sanitized_input[-3].value:
                         dt += relativedelta(days=sanitized_input[-3].value - 1)
