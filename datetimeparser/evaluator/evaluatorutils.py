@@ -172,14 +172,13 @@ class EvaluatorUtils:
 
                     return dt
 
-                else:
-                    if sanitized_input[-3].value:
-                        val: int = sanitized_input[-3].value
+                elif sanitized_input[-3].value:
+                    val: int = sanitized_input[-3].value
 
-                        if sanitized_input[-2].name == "days":
-                            return datetime(sanitized_input[-1].year, 1, val, 0, 0, 0)
-                        if sanitized_input[-2].name == "months":
-                            return datetime(sanitized_input[-1].year, val, 1, 0, 0, 0)
+                    if sanitized_input[-2].name == "days":
+                        return datetime(sanitized_input[-1].year, 1, val, 0, 0, 0)
+                    if sanitized_input[-2].name == "months":
+                        return datetime(sanitized_input[-1].year, val, 1, 0, 0, 0)
 
             # If a year is given but no months/days, they will be set to '1' because datetime can't handle month/day-values with '0'
             if sanitized_input[-1].year != 0:
