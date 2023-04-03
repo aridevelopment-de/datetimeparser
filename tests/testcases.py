@@ -106,6 +106,8 @@ testcases = {
         # GitHub issue #176
         "10 days after pi-day": Expected(time_sensitive=True, month=3, day=14, delta=relativedelta(days=10)),
         "10 days before tau day": Expected(time_sensitive=True, month=6, day=28, delta=relativedelta(days=-10)),
+        # GitHub issue #198
+        "second monday of august 2023": Expected(year=2023, month=8, day=14),
     },
     # Relative Datetimes
     "relative_datetimes": {

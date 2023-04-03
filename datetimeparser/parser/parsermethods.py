@@ -676,6 +676,7 @@ class AbsolutePrepositionParser:
     )
 
     RELATIVE_DATETIME_CONSTANTS = (*NumberCountConstants.ALL, *NumberConstants.ALL, *DatetimeConstants.ALL)
+    ABSOLUTE_RELATIVE_DATETIME_CONSTANTS = (*WeekdayConstants.ALL, *MonthConstants.ALL)
     RELATIVE_TIME_CONSTANTS = DatetimeConstants.ALL
 
     RELATIVE_DATA_SKIPPABLE_WORDS = (
@@ -755,26 +756,40 @@ class AbsolutePrepositionParser:
                 returned_data.append(int(argument))
                 continue
 
+            found_keyword = False
+
             # '1st', '1.', 'first', ...
             # 'one', 'two', 'three', ...
             # 'seconds', 'minutes', 'hours', ...
             for keyword in self.RELATIVE_DATETIME_CONSTANTS:
                 if argument in keyword.get_all():
                     if keyword in DatetimeConstants.ALL:
-                        if not returned_data or not isinstance(returned_data[-1], int):
+                        if not returned_data or (not isinstance(returned_data[-1], int) and not returned_data[-1] in NumberCountConstants.ALL):
                             # For cases like 'day and month (before christmas)'
                             returned_data.append(1)
 
                         returned_data.append(keyword)
+                    elif keyword in NumberCountConstants.ALL:
+                        if not returned_data:
+                            # The keyword comes before the actual datetime constant 'second (monday of August)'
+                            returned_data.append(keyword)
                     else:
                         returned_data.append(keyword.value)
 
+                    found_keyword = True
                     break
-                else:
-                    continue
 
-                break
-            else:
+            # 'monday', 'tuesday', 'wednesday', ...
+            # 'january', 'february', 'march', ...
+            # GitHub issue #198
+            for keyword in self.ABSOLUTE_RELATIVE_DATETIME_CONSTANTS:
+                if argument in keyword.get_all():
+                    returned_data.append(keyword)
+
+                    found_keyword = True
+                    break
+
+            if not found_keyword:
                 return None
 
         return returned_data
@@ -824,6 +839,9 @@ class AbsolutePrepositionParser:
                     else:
                         # Otherwise, we cannot concatenate both parts of the data, so we just append the current one
                         returned_data.append(current_data)
+            elif value in NumberCountConstants.ALL and unit in (*DatetimeConstants.ALL, *WeekdayConstants.ALL, *MonthConstants.ALL):
+                returned_data.append(value)
+                returned_data.append(unit)
 
         return returned_data
 
