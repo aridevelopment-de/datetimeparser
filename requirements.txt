@@ -1,3 +1,4 @@
 python-dateutil
-pytz
+timezonefinder
 typing
+tzdata

@@ -1,19 +1,22 @@
+import re
 from distutils.core import setup
 from pathlib import Path
-
-from datetimeparser.datetimeparser import __version__
 
 
 # for the readme
 this_directory = Path(__file__).parent
+__version__ = re.search(
+  r"^__version__\s*=\s*[\'\"]([^\'\"]*)[\'\"]",
+  this_directory.joinpath("datetimeparser/datetimeparser.py").read_text(encoding="utf-8"),
+  re.MULTILINE
+).group(1)
 long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
 setup(
   name='python-datetimeparser',
   long_description_content_type="text/markdown",
   long_description=long_description,
-  packages=['datetimeparser'],
-  version=".".join(__version__.split(".")[:2]) + "rc1." + __version__.split(".")[2],  # version number: https://peps.python.org/pep-0440/
+  version=__version__,
   license='MIT',
   description='A parser library built for parsing the english language into datetime objects.',
   author='Ari24',
@@ -24,7 +27,8 @@ setup(
   install_requires=[
           'python-dateutil',
           'pytz',
-          'typing'
+          'typing',
+          'timezonefinder'
       ],
   classifiers=[
     'Development Status :: 4 - Beta',      # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package

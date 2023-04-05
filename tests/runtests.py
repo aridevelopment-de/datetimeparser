@@ -45,10 +45,11 @@ def get_testcase_results(testcase: str, expected_value: datetime.datetime = None
     if parser_result is None:
         return StatusType.PARSER_RETURNS_NONE, None
 
-    evaluator = Evaluator(parser_result, tz="Europe/Berlin")
+    evaluator = Evaluator(parser_result, tz="Europe/Berlin", coordinates=None)
+    # Berlin (13.41053, 52.52437), Dubai (55.2962, 25.2684)
 
     try:
-        evaluator_result = evaluator.evaluate()
+        evaluator_result, _, _ = evaluator.evaluate()
     except BaseException as error:
         if expected_value == ThrowException:
             return StatusType.SUCCESS, "Evaluator threw exception but it was expected"
@@ -116,7 +117,7 @@ def evaluate_testcases(testcase_results: dict, disable_color=False, disable_inde
                 elif StatusType.NO_VALIDATION < status < StatusType.WRONG_RESULT:
                     if status in (StatusType.PARSER_RETURNS_NONE, StatusType.EVALUATOR_RETURNS_NONE):
                         message = f"{Colors.ANSI_CYAN}{'Parser' if status == StatusType.PARSER_RETURNS_NONE else 'Evaluator'} {Colors.ANSI_BOLD_WHITE}returned {Colors.ANSI_LIGHT_RED}None"
-                    elif status in (StatusType.PARSER_EXCEPTION, StatusType.EVALUATOR_RETURNS_NONE):
+                    elif status in (StatusType.PARSER_EXCEPTION, StatusType.EVALUATOR_EXCEPTION):
                         message = f"{Colors.ANSI_CYAN}{'Parser' if status == StatusType.PARSER_EXCEPTION else 'Evaluator'} {Colors.ANSI_BOLD_WHITE}raised an {Colors.ANSI_LIGHT_RED}exception: {Colors.ANSI_WHITE}{info}"
                     else:
                         continue
@@ -132,7 +133,7 @@ def evaluate_testcases(testcase_results: dict, disable_color=False, disable_inde
                 elif StatusType.NO_VALIDATION < status < StatusType.WRONG_RESULT:
                     if status in (StatusType.PARSER_RETURNS_NONE, StatusType.EVALUATOR_RETURNS_NONE):
                         message = f"{'Parser' if status == StatusType.PARSER_RETURNS_NONE else 'Evaluator'} returned None"
-                    elif status in (StatusType.PARSER_EXCEPTION, StatusType.EVALUATOR_RETURNS_NONE):
+                    elif status in (StatusType.PARSER_EXCEPTION, StatusType.EVALUATOR_EXCEPTION):
                         message = f"{'Parser' if status == StatusType.PARSER_EXCEPTION else 'Evaluator'} raised an exception: {info}"
                     else:
                         continue
@@ -149,8 +150,8 @@ def evaluate_testcases(testcase_results: dict, disable_color=False, disable_inde
         print(f"{Colors.ANSI_YELLOW}No validation tests:        {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.NO_VALIDATION]}/{len_testcases}")
         print(f"{Colors.ANSI_RED}Wrong result tests:         {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.WRONG_RESULT]}/{len_testcases}")
         print()
-        print(f"{Colors.ANSI_RED}Parser returned None:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_EXCEPTION]}/{len_testcases}")
-        print(f"{Colors.ANSI_LIGHT_RED}{Colors.ANSI_UNDERLINE}Parser exceptions:          {Colors.ANSI_RESET}{Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_RETURNS_NONE]}/{len_testcases}")
+        print(f"{Colors.ANSI_RED}Parser returned None:       {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_RETURNS_NONE]}/{len_testcases}")
+        print(f"{Colors.ANSI_LIGHT_RED}{Colors.ANSI_UNDERLINE}Parser exceptions:          {Colors.ANSI_RESET}{Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.PARSER_EXCEPTION]}/{len_testcases}")
         print(f"{Colors.ANSI_RED}Evaluator returned None:    {Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.EVALUATOR_RETURNS_NONE]}/{len_testcases}")
         print(f"{Colors.ANSI_LIGHT_RED}{Colors.ANSI_UNDERLINE}Evaluator exceptions:       {Colors.ANSI_RESET}{Colors.ANSI_BOLD_WHITE}{overall_results[StatusType.EVALUATOR_EXCEPTION]}/{len_testcases}")
     else:

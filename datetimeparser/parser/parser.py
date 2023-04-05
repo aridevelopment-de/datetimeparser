@@ -1,12 +1,12 @@
 import string as string_utils
 
-from .parsermethods import (
+from datetimeparser.parser.parsermethods import (
     AbsoluteDateFormatsParser,
-    RelativeDatetimesParser,
-    ConstantsParser,
+    AbsolutePrepositionParser,
     ConstantRelativeExtensionsParser,
+    ConstantsParser,
     DatetimeDeltaConstantsParser,
-    AbsolutePrepositionParser
+    RelativeDatetimesParser
 )
 
 

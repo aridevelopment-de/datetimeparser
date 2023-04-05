@@ -29,17 +29,27 @@ Below you can find some examples of how datetimeparser can be used.
 ```python
 from datetimeparser import parse
 
-print(parse("next 3 years and 2 months"))
-# 2025-04-06 11:43:28
+print(parse("next 3 years and 2 months").time)
+# 2025-12-28 11:57:25
 
-print(parse("begin of advent of code 2022"))
+print(parse("begin of advent of code 2022").time)
 # 2022-12-01 06:00:00
 
-print(parse("in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds"))
-# 2023-05-01 17:59:52
+print(parse("in 1 Year 2 months 3 weeks 4 days 5 hours 6 minutes 7 seconds").time)
+# 2024-01-22 17:04:26
 
-print(parse("10 days and 2 hours after 3 months before christmas 2020"))
+print(parse("10 days and 2 hours after 3 months before christmas 2020").time)
 # 2020-10-05 02:00:00
+
+print(parse("sunrise"))
+# <Result: time='2022-10-28 08:15:19', timezone='Europe/Berlin', coordinates=[longitude='7.188402', latitude='50.652927999999996]'>
+
+print(parse("sunrise", timezone="Asia/Dubai"))
+# <Result: time='2022-10-28 06:23:17', timezone='Asia/Dubai', coordinates=[longitude='55.455098', latitude='25.269651999999997]'>
+
+# https://www.timeanddate.com/sun/japan/tokyo states that the sunset today (2022-10-28) is at '16:50' in Tokyo
+print(parse("sunset", coordinates=(139.839478, 	35.652832)))  # (Tokyo in Japan)
+# <Result: time='2022-10-28 16:50:04', timezone='Asia/Tokyo', coordinates=[longitude='139.839478', latitude='35.652832]'>
 ```
 
 ## Installation
@@ -113,6 +123,18 @@ We highly appreciate everyone who wants to help our project!
 <ul>
 <li>valentine</li>
 <li>valentine day</li>
+</ul>
+</details><details>
+<summary><code>pi day</code></summary>
+<ul>
+<li>piday</li>
+<li>pi-day</li>
+</ul>
+</details><details>
+<summary><code>tau day</code></summary>
+<ul>
+<li>tauday</li>
+<li>tau-day</li>
 </ul>
 </details><details>
 <summary><code>summer end</code></summary>

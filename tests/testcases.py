@@ -1,6 +1,6 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from pytz import timezone
+from zoneinfo import ZoneInfo
 
 
 class ThrowException:
@@ -20,7 +20,7 @@ class ReturnNone:
 
 
 class Expected:
-    TODAY = datetime.strptime(datetime.now(tz=timezone("Europe/Berlin")).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+    TODAY = datetime.strptime(datetime.now(tz=ZoneInfo("Europe/Berlin")).strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
 
     def __new__(
             cls, now: bool = False, delta: relativedelta = None, time_sensitive: bool = False,
@@ -64,6 +64,10 @@ class Expected:
         return excepted_time
 
 
+def is_leap_year(year: int) -> bool:
+    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+
+
 testcases = {
     # Absolute datetime formats
     "absolute_datetime_formats": {
@@ -79,8 +83,8 @@ testcases = {
     # Absolute prepositions
     "absolute_prepositions": {
         "second day after christmas": Expected(time_sensitive=True, month=12, day=27),
-        "3rd week of august": Expected(time_sensitive=True, month=8, day=22),
-        "4. week of august": Expected(time_sensitive=True, month=8, day=29),
+        "3rd week of august": None,  # Removed, because 3rd week of August is different for each year
+        "4. week of august": None,  # Same reasoning as above
         "1st of august": Expected(time_sensitive=True, month=8, day=1),
         "fifth month of 2021": Expected(year=2021, month=5, day=1),
         "three days after the fifth of august 2018": Expected(year=2018, month=8, day=8),
@@ -102,6 +106,8 @@ testcases = {
         # GitHub issue #176
         "10 days after pi-day": Expected(time_sensitive=True, month=3, day=14, delta=relativedelta(days=10)),
         "10 days before tau day": Expected(time_sensitive=True, month=6, day=28, delta=relativedelta(days=-10)),
+        # GitHub issue #198
+        "second monday of august 2023": Expected(year=2023, month=8, day=14),
     },
     # Relative Datetimes
     "relative_datetimes": {
@@ -122,6 +128,8 @@ testcases = {
         "next three months": Expected(now=True, delta=relativedelta(months=3)),
         "today": Expected(),
         "now": Expected(now=True),
+        # GitHub issue #45
+        "after lunchtime": None
     },
     # Constants
     "constants": {
@@ -139,7 +147,7 @@ testcases = {
         "eastern 2010": Expected(year=2010, month=4, day=4),
         "halloween 2030": Expected(year=2030, month=10, day=31),
         "next april fools day": Expected(time_sensitive=True, month=4, day=1),
-        "thanksgiving": Expected(time_sensitive=True, month=11, day=24),
+        "thanksgiving": Expected(time_sensitive=True, month=11, day=23),
         "next st patricks day": Expected(time_sensitive=True, month=3, day=17),
         "valentine day 2010": Expected(year=2010, month=2, day=14),
         "summer": Expected(time_sensitive=True, month=6, day=1),
@@ -147,7 +155,8 @@ testcases = {
         "next spring": Expected(time_sensitive=True, month=3, day=1),
         "begin of fall 2010": Expected(year=2010, month=9, day=1),
         "summer end": Expected(time_sensitive=True, month=8, day=31, hour=23, minute=59, second=59),
-        "end of winter": Expected(time_sensitive=True, month=2, day=28, hour=23, minute=59, second=59),
+        f"end of winter {datetime.today().year}": Expected(year=datetime.today().year, month=2, day=28 + is_leap_year(datetime.today().year),
+                                                           hour=23, minute=59, second=59),
         "end of the spring": Expected(time_sensitive=True, month=5, day=31, hour=23, minute=59, second=59),
         "end of autumn 2020": Expected(year=2020, month=11, day=30, hour=23, minute=59, second=59),
         "begin of advent of code 2022": Expected(year=2022, month=12, day=1, hour=6),
@@ -156,6 +165,9 @@ testcases = {
         # GitHub issue #176
         "piday": Expected(time_sensitive=True, month=3, day=14),
         "tauday": Expected(time_sensitive=True, month=6, day=28),
+        # GitHub issue #45
+        "in the morning": None,
+        "in the evening": None,
     },
     # Constant Relative Extensions
     "constants_relative_expressions": {
